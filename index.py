@@ -49,10 +49,13 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_8.clicked.connect(self.Open_ResetPassword_Page)
         self.pushButton_17.clicked.connect(self.Sales_Page)
         self.pushButton_30.clicked.connect(self.get_client_id)
+        self.pushButton_31.clicked.connect(self.Chick_analyst_category)
+        self.pushButton_32.clicked.connect(self.get_total_price)
 
     def Sales_Page(self):
         global client_id_glob
         global chick_if_add_new
+        analyst_name = self.comboBox_16.currentText()
         # client_name='تتتب'
         # client_age=16
         client_genus = 'kdk'
@@ -62,7 +65,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         # client_genus = self.comboBox_14.currentText()
         client_doctor = self.comboBox_15.currentText()
         # analyst_client = self.comboBox_22.currentText()
-        analyst_name = self.comboBox_16.currentText()
+
         analyst_or_clients_notes = self.textEdit.toPlainText()
         analyst_lineEdit_result = self.lineEdit_21.text()
         analyst_combo_result = self.comboBox_17.currentText()
@@ -70,14 +73,15 @@ class mainapp(QMainWindow, FORM_CLASS):
         client_id = self.spinBox.value()
         latest_result = 1
         self.cur.execute('''
-           INSERT INTO addclient (client_name,client_age,client_genus,client_doctor)
-           VALUES (%s,%s,%s,%s)
-        ''', (client_name, client_age, client_genus, client_doctor))
+           INSERT INTO addclient (client_name,client_age,client_genus,client_doctor,date)
+           VALUES (%s,%s,%s,%s,%s)
+        ''', (client_name, client_age, client_genus, client_doctor, datetime.datetime.now()))
         self.db.commit()
         self.cur.execute(''' SELECT * FROM addclient ''')
         client_data = self.cur.fetchall()
         self.cur.execute('''SELECT price FROM addanalyst WHERE name = %s''', (analyst_name,))
         analyst_price = self.cur.fetchone()
+
         self.cur.execute('''SELECT id FROM addclient WHERE client_name = %s''', (client_name,))
         real_client_id = self.cur.fetchone()
 
@@ -86,17 +90,55 @@ class mainapp(QMainWindow, FORM_CLASS):
         total_price = 1
 
         self.cur.execute('''
-           INSERT INTO addnewitem (client_name,client_id,client_age,genus,doctor_name,notes,analyst_name,analyst_result,price,total_price)
-           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+           INSERT INTO addnewitem (client_name,client_id,client_age,genus,doctor_name,notes,analyst_name,analyst_result,price,total_price,date)
+           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         ''', (
             client_name, real_client_id, client_age, client_genus, client_doctor, analyst_or_clients_notes,
             analyst_name,
             latest_result,
-            data, total_price))
+            analyst_price, total_price, datetime.datetime.now()))
         self.db.commit()
         chick_if_add_new = True
         self.Show_All_one_client_analyst()
+
+        # client_age = self.spinBox_7.setValue(0)
+        # client_genus = self.comboBox_14.setCurrentIndex(0)
+        # client_doctor = self.comboBox_15.setCurrentIndex(0)
+        # # analyst_client = self.comboBox_22.setCurrentIndex(0)
+        # analyst_name = self.comboBox_16.setCurrentIndex(0)
+        # analyst_or_clients_notes = self.textEdit.setToPlainText()
+        # analyst_lineEdit_result = self.lineEdit_21.setText('')
+        # analyst_combo_result = self.comboBox_17.setCurrentIndex(0)
+        # analyst_number_result = self.spinBox_8.setValue(0)
+        # client_id = self.spinBox.setValue(0)
         chick_if_add_new = False
+
+    def get_total_price(self):
+        total_price = 0
+        for row in range(0, self.tableWidget_5.rowCount() - 1):
+            a = self.tableWidget_5.item(row, 4).text()
+            if type(a) != int:
+                a=0
+            total_price += int(a)
+        self.lineEdit_24.setText(str(total_price))
+
+    def Chick_analyst_category(self):
+        analyst_name = self.comboBox_16.currentText()
+        self.cur.execute('''SELECT category FROM addanalyst WHERE name = %s''', (analyst_name,))
+        analyst_category = self.cur.fetchone()
+
+        if analyst_category == 'spinbox':
+            self.comboBox_17.hide()
+            self.lineEdit_21.hide()
+            self.spinBox_8.show()
+        if analyst_category == 'combo':
+            self.lineEdit_21.hide()
+            self.spinBox_8.hide()
+            self.comboBox_17.show()
+        if analyst_category == 'edit combo':
+            self.lineEdit_21.hide()
+            self.spinBox_8.hide()
+            self.comboBox_17.setEditable(True)
 
     def Show_All_one_client_analyst(self):
         global client_id_glob
@@ -106,16 +148,27 @@ class mainapp(QMainWindow, FORM_CLASS):
              SELECT client_name,analyst_name,analyst_result,doctor_name FROM addnewitem WHERE client_name = %s
         ''', (client_name,))
         analyst_data = self.cur.fetchall()
-        print(analyst_data)
 
         if client_id_glob != 0 and chick_if_add_new != True:
+
             self.cur.execute('''
-                         SELECT client_name,analyst_name,analyst_result,doctor_name,client_id FROM addnewitem WHERE client_id = %s
+                         SELECT client_name,analyst_name,analyst_result,doctor_name,client_id,client_age,genus,notes FROM addnewitem WHERE client_id = %s
                     ''', (client_id_glob,))
             analyst_data = self.cur.fetchall()
-            print(analyst_data)
-            print(client_id_glob)
-            # print(client_id_glob)
+            # need doctor name enabled i will make it with current text
+
+            self.lineEdit_20.setText(analyst_data[0][0])
+            self.lineEdit_20.setEnabled(False)
+            self.spinBox_7.setValue(int(analyst_data[0][5]))
+            self.spinBox_7.setEnabled(False)
+            if analyst_data[0][6] == 'ذكر':
+                self.comboBox_14.setCurrentIndex(0)
+                self.comboBox_14.setEnabled(False)
+            if analyst_data[0][6] == 'انثى':
+                self.comboBox_14.setCurrentIndex(1)
+                self.comboBox_14.setEnabled(False)
+            self.textEdit.setPlainText(str(analyst_data[0][7]))
+            self.textEdit.setEnabled(False)
         self.tableWidget_5.setRowCount(0)
         self.tableWidget_5.insertRow(0)
 
@@ -125,6 +178,17 @@ class mainapp(QMainWindow, FORM_CLASS):
                 col += 1
             row_pos = self.tableWidget_5.rowCount()
             self.tableWidget_5.insertRow(row_pos)
+        if self.spinBox.value() == 0:
+            self.tableWidget_5.setRowCount(0)
+            self.tableWidget_5.insertRow(0)
+            self.lineEdit_20.setText('')
+            self.spinBox_7.setValue(0)
+            self.comboBox_14.setCurrentIndex(0)
+            self.textEdit.setPlainText('')
+            self.lineEdit_20.setEnabled(True)
+            self.spinBox_7.setEnabled(True)
+            self.comboBox_14.setEnabled(True)
+            self.textEdit.setEnabled(True)
         self.Show_All_The_Sales()
 
     def get_client_id(self):
@@ -133,7 +197,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.Show_All_one_client_analyst()
 
     def Show_All_The_Sales(self):
-        self.cur.execute(''' SELECT * FROM addclient''')
+        self.cur.execute(''' SELECT * FROM addclient ORDER BY -date''')
         analyst_data = self.cur.fetchall()
         self.tableWidget_6.setRowCount(0)
         self.tableWidget_6.insertRow(0)

@@ -3088,9 +3088,9 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          </property>
          <property name="geometry">
           <rect>
-           <x>60</x>
+           <x>210</x>
            <y>81</y>
-           <width>501</width>
+           <width>351</width>
            <height>41</height>
           </rect>
          </property>
@@ -3374,9 +3374,9 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          </property>
          <property name="geometry">
           <rect>
-           <x>560</x>
+           <x>570</x>
            <y>573</y>
-           <width>121</width>
+           <width>111</width>
            <height>51</height>
           </rect>
          </property>
@@ -3398,9 +3398,9 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          </property>
          <property name="geometry">
           <rect>
-           <x>310</x>
-           <y>575</y>
-           <width>241</width>
+           <x>392</x>
+           <y>577</y>
+           <width>161</width>
            <height>51</height>
           </rect>
          </property>
@@ -3440,9 +3440,9 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
         <widget class="QSpinBox" name="spinBox">
          <property name="geometry">
           <rect>
-           <x>260</x>
+           <x>210</x>
            <y>24</y>
-           <width>301</width>
+           <width>351</width>
            <height>41</height>
           </rect>
          </property>
@@ -3455,7 +3455,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
           <rect>
            <x>54</x>
            <y>20</y>
-           <width>171</width>
+           <width>141</width>
            <height>51</height>
           </rect>
          </property>
@@ -3467,6 +3467,50 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          </property>
          <property name="text">
           <string>بحث</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_31">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>55</x>
+           <y>74</y>
+           <width>141</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>13</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>تطبيق</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_32">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>330</x>
+           <y>579</y>
+           <width>51</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>13</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </widget>
