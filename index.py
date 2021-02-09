@@ -25,12 +25,14 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.tabWidget.tabBar().setVisible(False)
         self.DB_Connect()
         self.handel_buttons()
-
+        self.Show_All_The_Sales()
+        self.Show_all_analysts_in_combo()
     def DB_Connect(self):
         self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel')
         self.cur = self.db.cursor()
 
     def handel_buttons(self):
+
         self.lineEdit_22.hide()
         self.lineEdit_23.hide()
         self.label_42.hide()
@@ -51,6 +53,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_30.clicked.connect(self.get_client_id)
         self.pushButton_31.clicked.connect(self.Chick_analyst_category)
         self.pushButton_32.clicked.connect(self.get_total_price)
+        self.pushButton_33.clicked.connect(self.Show_analyst_in_Edit_Or_Delete)
 
     def Sales_Page(self):
         global client_id_glob
@@ -118,7 +121,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         for row in range(0, self.tableWidget_5.rowCount() - 1):
             a = self.tableWidget_5.item(row, 4).text()
             if type(a) != int:
-                a=0
+                a = 0
             total_price += int(a)
         self.lineEdit_24.setText(str(total_price))
 
@@ -208,9 +211,53 @@ class mainapp(QMainWindow, FORM_CLASS):
             row_pos = self.tableWidget_6.rowCount()
             self.tableWidget_6.insertRow(row_pos)
 
+    def Show_All_The_Analysts(self):
+        self.cur.execute(''' SELECT name,category,default_result1,default_result2,price FROM addanalyst''')
+        analyst_data = self.cur.fetchall()
+        self.tableWidget_7.setRowCount(0)
+        self.tableWidget_7.insertRow(0)
+        for row, form in enumerate(analyst_data):
+            for col, item in enumerate(form):
+                self.tableWidget_7.setItem(row, col, QTableWidgetItem(str(item)))
+                col += 1
+            row_pos = self.tableWidget_7.rowCount()
+            self.tableWidget_7.insertRow(row_pos)
+    def Add_Analyst(self):
+        analyst_name=self.lineEdit_28.text()
+        analyst_result_category=self.comboBox_22.currentText()
+        analyst_result1=self.doubleSpinBox_3.value()
+        analyst_result2=self.doubleSpinBox_2.value()
+        analyst_price = self.doubleSpinBox.value()
+        date=datetime.datetime.now()
+        self.cur.execute(''' INSERT INTO addanalyst (name,default_result1,default_result2,price,category,date) VALUES(%s,%s,%s,%s,%s,%s) ''',(analyst_name,analyst_result1,analyst_result2,analyst_result_category,analyst_price,date))
+    def Show_analyst_in_Edit_Or_Delete(self):
+        analyst_current_name=self.comboBox_21.currentText()
+        self.cur.execute(''' SELECT name,default_result1,default_result2,price,category,date FROM addanalyst WHERE name=%s ''',(analyst_current_name,))
+        data=self.cur.fetchall()
+        print(data)
+        analyst_name = self.lineEdit_29.setText(str(data[0][0]))
+        analyst_result_category = self.comboBox_23.setCurrentIndex(0)
+        analyst_result1 = self.doubleSpinBox_4.setValue(data[0][1])
+        analyst_result2 = self.doubleSpinBox_5.setValue(data[0][2])
+        analyst_price = self.doubleSpinBox_6.setValue(data[0][3])
+    def Edit_Or_Delete_Analyst(self):
+        analyst_current_name=self.comboBox_21.currentText()
+        analyst_name=self.lineEdit_29.text()
+        analyst_result_category=self.comboBox_23.currentText()
+        analyst_result1=self.doubleSpinBox_4.value()
+        analyst_result2=self.doubleSpinBox_5.value()
+        analyst_price = self.doubleSpinBox_6.value()
+        date=datetime.datetime.now()
+        self.cur.execute(''' UPDATE  addanalyst SET name=%s,default_result1=%s,default_result2=%s,price=%s,category=%s,date=%s ''',(analyst_name,analyst_result1,analyst_result2,analyst_result_category,analyst_price,date))
+    def Show_all_analysts_in_combo(self):
+        self.cur.execute(''' SELECT name FROM addanalyst ''')
+        data=self.cur.fetchall()
+        for i in data:
+            self.comboBox_21.addItem(str(i[0]))
+
     def Open_Sales_Page(self):
         self.tabWidget.setCurrentIndex(3)
-        self.Show_All_The_Sales()
+
 
     def Open_Login_Page(self):
         self.tabWidget.setCurrentIndex(0)
@@ -226,6 +273,7 @@ class mainapp(QMainWindow, FORM_CLASS):
 
     def Open_Analyse_Page(self):
         self.tabWidget.setCurrentIndex(4)
+        self.Show_All_The_Analysts()
 
     def Open_ResetPassword_Page(self):
         self.tabWidget.setCurrentIndex(1)

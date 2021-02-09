@@ -2303,7 +2303,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
      </font>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -2553,7 +2553,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
        <enum>Qt::RightToLeft</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_17">
        <attribute name="title">
@@ -2748,7 +2748,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>120</y>
+           <y>110</y>
            <width>981</width>
            <height>451</height>
           </rect>
@@ -3512,6 +3512,10 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          <property name="text">
           <string/>
          </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/view.png</normaloff>:/view.png</iconset>
+         </property>
         </widget>
        </widget>
       </widget>
@@ -3654,7 +3658,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
        <enum>Qt::RightToLeft</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_8">
        <attribute name="title">
@@ -3664,7 +3668,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
         <property name="geometry">
          <rect>
           <x>340</x>
-          <y>9</y>
+          <y>30</y>
           <width>241</width>
           <height>41</height>
          </rect>
@@ -3687,7 +3691,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>3</y>
+          <y>26</y>
           <width>241</width>
           <height>51</height>
          </rect>
@@ -3706,7 +3710,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
         <property name="geometry">
          <rect>
           <x>670</x>
-          <y>9</y>
+          <y>30</y>
           <width>271</width>
           <height>41</height>
          </rect>
@@ -3727,7 +3731,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>70</y>
+          <y>100</y>
           <width>981</width>
           <height>541</height>
          </rect>
@@ -3760,9 +3764,19 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
         <property name="locale">
          <locale language="Arabic" country="Iraq"/>
         </property>
+        <row>
+         <property name="text">
+          <string/>
+         </property>
+        </row>
         <column>
          <property name="text">
           <string>اسم التحليل</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>نوع النتيجة</string>
          </property>
         </column>
         <column>
@@ -3789,7 +3803,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
        <widget class="QGroupBox" name="groupBox_4">
         <property name="geometry">
          <rect>
-          <x>10</x>
+          <x>520</x>
           <y>20</y>
           <width>491</width>
           <height>621</height>
@@ -3808,7 +3822,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          <property name="geometry">
           <rect>
            <x>350</x>
-           <y>60</y>
+           <y>100</y>
            <width>121</width>
            <height>51</height>
           </rect>
@@ -3829,7 +3843,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>60</y>
+           <y>100</y>
            <width>321</width>
            <height>51</height>
           </rect>
@@ -3844,7 +3858,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          <property name="geometry">
           <rect>
            <x>338</x>
-           <y>260</y>
+           <y>270</y>
            <width>151</width>
            <height>51</height>
           </rect>
@@ -3865,7 +3879,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>160</y>
+           <y>460</y>
            <width>321</width>
            <height>51</height>
           </rect>
@@ -3906,7 +3920,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          <property name="geometry">
           <rect>
            <x>12</x>
-           <y>260</y>
+           <y>270</y>
            <width>321</width>
            <height>51</height>
           </rect>
@@ -3916,7 +3930,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          <property name="geometry">
           <rect>
            <x>360</x>
-           <y>160</y>
+           <y>460</y>
            <width>111</width>
            <height>51</height>
           </rect>
@@ -3937,7 +3951,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          <property name="geometry">
           <rect>
            <x>60</x>
-           <y>490</y>
+           <y>540</y>
            <width>371</width>
            <height>51</height>
           </rect>
@@ -3952,11 +3966,72 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
           <string>اضافة</string>
          </property>
         </widget>
+        <widget class="QLabel" name="label_56">
+         <property name="geometry">
+          <rect>
+           <x>360</x>
+           <y>180</y>
+           <width>111</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>12</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>نوع النتيجة</string>
+         </property>
+        </widget>
+        <widget class="QComboBox" name="comboBox_22">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>190</y>
+           <width>321</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <item>
+          <property name="text">
+           <string>----------------------</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>حقل كتابة</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>اختيارات</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>اختيارات وحقل كتابة</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>اعداد</string>
+          </property>
+         </item>
+        </widget>
        </widget>
        <widget class="QGroupBox" name="groupBox_9">
         <property name="geometry">
          <rect>
-          <x>510</x>
+          <x>0</x>
           <y>20</y>
           <width>501</width>
           <height>621</height>
@@ -3974,9 +4049,9 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
         <widget class="QComboBox" name="comboBox_21">
          <property name="geometry">
           <rect>
-           <x>40</x>
+           <x>140</x>
            <y>50</y>
-           <width>441</width>
+           <width>341</width>
            <height>41</height>
           </rect>
          </property>
@@ -3990,135 +4065,6 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
            <string>----------------------</string>
           </property>
          </item>
-        </widget>
-        <widget class="QLabel" name="label_49">
-         <property name="geometry">
-          <rect>
-           <x>338</x>
-           <y>340</y>
-           <width>151</width>
-           <height>51</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <family>Segoe UI</family>
-           <pointsize>12</pointsize>
-           <weight>50</weight>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>النتيجة الطبيعية 1</string>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_50">
-         <property name="geometry">
-          <rect>
-           <x>350</x>
-           <y>140</y>
-           <width>121</width>
-           <height>51</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <family>Segoe UI</family>
-           <pointsize>12</pointsize>
-           <weight>50</weight>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>اسم التحليل</string>
-         </property>
-        </widget>
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
-         <property name="geometry">
-          <rect>
-           <x>12</x>
-           <y>340</y>
-           <width>321</width>
-           <height>51</height>
-          </rect>
-         </property>
-        </widget>
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_5">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>450</y>
-           <width>321</width>
-           <height>51</height>
-          </rect>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_51">
-         <property name="geometry">
-          <rect>
-           <x>360</x>
-           <y>240</y>
-           <width>111</width>
-           <height>51</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <family>Segoe UI</family>
-           <pointsize>12</pointsize>
-           <weight>50</weight>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>السعر</string>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="lineEdit_29">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>140</y>
-           <width>321</width>
-           <height>51</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <family>Segoe UI</family>
-          </font>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_52">
-         <property name="geometry">
-          <rect>
-           <x>338</x>
-           <y>450</y>
-           <width>151</width>
-           <height>51</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <family>Segoe UI</family>
-           <pointsize>12</pointsize>
-           <weight>50</weight>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>النتيجة الطبيعية 2</string>
-         </property>
-        </widget>
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_6">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>240</y>
-           <width>321</width>
-           <height>51</height>
-          </rect>
-         </property>
         </widget>
         <widget class="QPushButton" name="pushButton_27">
          <property name="geometry">
@@ -4159,6 +4105,215 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          </property>
          <property name="text">
           <string>حذف</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_33">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>45</y>
+           <width>111</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>بحث</string>
+         </property>
+        </widget>
+        <widget class="QComboBox" name="comboBox_23">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>208</y>
+           <width>321</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <item>
+          <property name="text">
+           <string>----------------------</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>حقل كتابة</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>اختيارات</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>اختيارات وحقل كتابة</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>اعداد</string>
+          </property>
+         </item>
+        </widget>
+        <widget class="QLabel" name="label_51">
+         <property name="geometry">
+          <rect>
+           <x>348</x>
+           <y>390</y>
+           <width>151</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>12</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>النتيجة الطبيعية 2</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_49">
+         <property name="geometry">
+          <rect>
+           <x>360</x>
+           <y>120</y>
+           <width>121</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>12</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>اسم التحليل</string>
+         </property>
+        </widget>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_6">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>478</y>
+           <width>321</width>
+           <height>51</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_5">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>390</y>
+           <width>321</width>
+           <height>51</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_57">
+         <property name="geometry">
+          <rect>
+           <x>370</x>
+           <y>200</y>
+           <width>111</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>12</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>نوع النتيجة</string>
+         </property>
+        </widget>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
+         <property name="geometry">
+          <rect>
+           <x>22</x>
+           <y>290</y>
+           <width>321</width>
+           <height>51</height>
+          </rect>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_52">
+         <property name="geometry">
+          <rect>
+           <x>348</x>
+           <y>290</y>
+           <width>151</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>12</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>النتيجة الطبيعية 1</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_29">
+         <property name="geometry">
+          <rect>
+           <x>19</x>
+           <y>127</y>
+           <width>321</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+          </font>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_50">
+         <property name="geometry">
+          <rect>
+           <x>370</x>
+           <y>480</y>
+           <width>111</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>12</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>السعر</string>
          </property>
         </widget>
        </widget>
@@ -6849,6 +7004,8 @@ QPushButton:hover {
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
 </ui>
