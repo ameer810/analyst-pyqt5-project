@@ -27,6 +27,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.handel_buttons()
         self.Show_All_The_Sales()
         self.Show_all_analysts_in_combo()
+
     def DB_Connect(self):
         self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel')
         self.cur = self.db.cursor()
@@ -54,6 +55,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_31.clicked.connect(self.Chick_analyst_category)
         self.pushButton_32.clicked.connect(self.get_total_price)
         self.pushButton_33.clicked.connect(self.Show_analyst_in_Edit_Or_Delete)
+        self.pushButton_29.clicked.connect(self.Clients_Page)
 
     def Sales_Page(self):
         global client_id_glob
@@ -222,42 +224,80 @@ class mainapp(QMainWindow, FORM_CLASS):
                 col += 1
             row_pos = self.tableWidget_7.rowCount()
             self.tableWidget_7.insertRow(row_pos)
+
     def Add_Analyst(self):
-        analyst_name=self.lineEdit_28.text()
-        analyst_result_category=self.comboBox_22.currentText()
-        analyst_result1=self.doubleSpinBox_3.value()
-        analyst_result2=self.doubleSpinBox_2.value()
+        analyst_name = self.lineEdit_28.text()
+        analyst_result_category = self.comboBox_22.currentText()
+        analyst_result1 = self.doubleSpinBox_3.value()
+        analyst_result2 = self.doubleSpinBox_2.value()
         analyst_price = self.doubleSpinBox.value()
-        date=datetime.datetime.now()
-        self.cur.execute(''' INSERT INTO addanalyst (name,default_result1,default_result2,price,category,date) VALUES(%s,%s,%s,%s,%s,%s) ''',(analyst_name,analyst_result1,analyst_result2,analyst_result_category,analyst_price,date))
+        date = datetime.datetime.now()
+        self.cur.execute(
+            ''' INSERT INTO addanalyst (name,default_result1,default_result2,price,category,date) VALUES(%s,%s,%s,%s,%s,%s) ''',
+            (analyst_name, analyst_result1, analyst_result2, analyst_result_category, analyst_price, date))
+
     def Show_analyst_in_Edit_Or_Delete(self):
-        analyst_current_name=self.comboBox_21.currentText()
-        self.cur.execute(''' SELECT name,default_result1,default_result2,price,category,date FROM addanalyst WHERE name=%s ''',(analyst_current_name,))
-        data=self.cur.fetchall()
+        analyst_current_name = self.comboBox_21.currentText()
+        self.cur.execute(
+            ''' SELECT name,default_result1,default_result2,price,category,date FROM addanalyst WHERE name=%s ''',
+            (analyst_current_name,))
+        data = self.cur.fetchall()
         print(data)
         analyst_name = self.lineEdit_29.setText(str(data[0][0]))
         analyst_result_category = self.comboBox_23.setCurrentIndex(0)
         analyst_result1 = self.doubleSpinBox_4.setValue(data[0][1])
         analyst_result2 = self.doubleSpinBox_5.setValue(data[0][2])
         analyst_price = self.doubleSpinBox_6.setValue(data[0][3])
+
     def Edit_Or_Delete_Analyst(self):
-        analyst_current_name=self.comboBox_21.currentText()
-        analyst_name=self.lineEdit_29.text()
-        analyst_result_category=self.comboBox_23.currentText()
-        analyst_result1=self.doubleSpinBox_4.value()
-        analyst_result2=self.doubleSpinBox_5.value()
+        analyst_current_name = self.comboBox_21.currentText()
+        analyst_name = self.lineEdit_29.text()
+        analyst_result_category = self.comboBox_23.currentText()
+        analyst_result1 = self.doubleSpinBox_4.value()
+        analyst_result2 = self.doubleSpinBox_5.value()
         analyst_price = self.doubleSpinBox_6.value()
-        date=datetime.datetime.now()
-        self.cur.execute(''' UPDATE  addanalyst SET name=%s,default_result1=%s,default_result2=%s,price=%s,category=%s,date=%s ''',(analyst_name,analyst_result1,analyst_result2,analyst_result_category,analyst_price,date))
+        date = datetime.datetime.now()
+        self.cur.execute(
+            ''' UPDATE  addanalyst SET name=%s,default_result1=%s,default_result2=%s,price=%s,category=%s,date=%s ''',
+            (analyst_name, analyst_result1, analyst_result2, analyst_result_category, analyst_price, date))
+        self.db.commit()
+
     def Show_all_analysts_in_combo(self):
         self.cur.execute(''' SELECT name FROM addanalyst ''')
-        data=self.cur.fetchall()
-        for i in data:
-            self.comboBox_21.addItem(str(i[0]))
+        data = self.cur.fetchall()
+        for item in data:
+            self.comboBox_21.addItem(str(item[0]))
+
+    def Clients_Page(self):
+        id = self.spinBox_2.value()
+        self.cur.execute(''' SELECT client_name,client_age,client_genus,client_doctor FROM addclient WHERE id=%s''',
+                         (str(id),))
+        client_data = self.cur.fetchall()
+        self.cur.execute(''' SELECT total_price,analyst_name FROM addnewitem WHERE client_id=%s''', (str(id),))
+        client_analyst_data = self.cur.fetchall()
+
+        num = 0
+
+        for i in client_analyst_data:
+            total = 0
+            num += 1
+            for k in range(0, num):
+                total += int(client_analyst_data[k][0])
+
+        for row, form in enumerate(client_data):
+
+            for col, item in enumerate(form):
+                self.tableWidget_4.setItem(row, 4, QTableWidgetItem(str(num)))
+                self.tableWidget_4.setItem(row, 5, QTableWidgetItem(str(client_analyst_data[0][1])))
+                self.tableWidget_4.setItem(row, 6, QTableWidgetItem(str(total)))
+                self.tableWidget_4.setItem(row, col, QTableWidgetItem(str(item)))
+                col += 1
+
+            row_pos = self.tableWidget_4.rowCount()
+            self.tableWidget_4.insertRow(row_pos)
 
     def Open_Sales_Page(self):
         self.tabWidget.setCurrentIndex(3)
-
 
     def Open_Login_Page(self):
         self.tabWidget.setCurrentIndex(0)

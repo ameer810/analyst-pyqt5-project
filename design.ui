@@ -2303,7 +2303,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
      </font>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -2553,7 +2553,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
        <enum>Qt::RightToLeft</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_17">
        <attribute name="title">
@@ -2571,70 +2571,13 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
         <property name="title">
          <string/>
         </property>
-        <widget class="QLineEdit" name="lineEdit_9">
-         <property name="geometry">
-          <rect>
-           <x>670</x>
-           <y>39</y>
-           <width>271</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>13</pointsize>
-          </font>
-         </property>
-         <property name="placeholderText">
-          <string/>
-         </property>
-        </widget>
-        <widget class="QComboBox" name="comboBox_5">
-         <property name="geometry">
-          <rect>
-           <x>340</x>
-           <y>39</y>
-           <width>241</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <item>
-          <property name="text">
-           <string>----------------------</string>
-          </property>
-         </item>
-        </widget>
-        <widget class="QPushButton" name="pushButton_12">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>33</y>
-           <width>241</width>
-           <height>51</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <family>Segoe UI</family>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>بحث</string>
-         </property>
-        </widget>
         <widget class="QTableWidget" name="tableWidget_2">
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>100</y>
+           <y>30</y>
            <width>981</width>
-           <height>561</height>
+           <height>621</height>
           </rect>
          </property>
          <property name="font">
@@ -2642,14 +2585,14 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
            <pointsize>9</pointsize>
           </font>
          </property>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
          <column>
           <property name="text">
            <string>اسم المراجع</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>العمر</string>
           </property>
          </column>
          <column>
@@ -2659,7 +2602,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          </column>
          <column>
           <property name="text">
-           <string>عدد المراجعات</string>
+           <string>طبيب المراجع</string>
           </property>
          </column>
          <column>
@@ -2695,24 +2638,6 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          <string>الرقم التعريفي للمراجع</string>
         </property>
        </widget>
-       <widget class="QLineEdit" name="lineEdit_30">
-        <property name="geometry">
-         <rect>
-          <x>310</x>
-          <y>31</y>
-          <width>431</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>13</pointsize>
-         </font>
-        </property>
-        <property name="placeholderText">
-         <string/>
-        </property>
-       </widget>
        <widget class="QPushButton" name="pushButton_29">
         <property name="geometry">
          <rect>
@@ -2737,23 +2662,81 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          <rect>
           <x>0</x>
           <y>90</y>
-          <width>1001</width>
+          <width>1011</width>
           <height>571</height>
          </rect>
         </property>
         <property name="title">
          <string>المعلومات</string>
         </property>
-        <widget class="QTableWidget" name="tableWidget">
+        <widget class="QTableWidget" name="tableWidget_4">
          <property name="geometry">
           <rect>
-           <x>10</x>
-           <y>110</y>
-           <width>981</width>
-           <height>451</height>
+           <x>0</x>
+           <y>30</y>
+           <width>1011</width>
+           <height>561</height>
           </rect>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::RightToLeft</enum>
+         </property>
+         <row>
+          <property name="text">
+           <string/>
+          </property>
+         </row>
+         <column>
+          <property name="text">
+           <string>الاسم</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>العمر</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>الجنس</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>الطبيب</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>عدد التحليلات</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>التحاليل المعمولة</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>المبلغ المدفوع</string>
+          </property>
+         </column>
         </widget>
+       </widget>
+       <widget class="QSpinBox" name="spinBox_2">
+        <property name="geometry">
+         <rect>
+          <x>310</x>
+          <y>33</y>
+          <width>421</width>
+          <height>41</height>
+         </rect>
+        </property>
        </widget>
       </widget>
      </widget>
@@ -3354,7 +3337,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
           <rect>
            <x>10</x>
            <y>570</y>
-           <width>291</width>
+           <width>141</width>
            <height>61</height>
           </rect>
          </property>
@@ -3515,6 +3498,28 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          <property name="icon">
           <iconset resource="icons.qrc">
            <normaloff>:/view.png</normaloff>:/view.png</iconset>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_34">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>160</x>
+           <y>570</y>
+           <width>141</width>
+           <height>61</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>معاينة</string>
          </property>
         </widget>
        </widget>
