@@ -58,6 +58,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_33.clicked.connect(self.Show_analyst_in_Edit_Or_Delete)
         self.pushButton_29.clicked.connect(self.Clients_Page)
         self.pushButton_16.clicked.connect(self.Add_Buys)
+        self.pushButton_20.clicked.connect(self.Show_All_The_Analysts)
 
     def Sales_Page(self):
         global client_id_glob
@@ -134,15 +135,15 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.cur.execute('''SELECT category FROM addanalyst WHERE name = %s''', (analyst_name,))
         analyst_category = self.cur.fetchone()
 
-        if analyst_category == 'spinbox':
+        if analyst_category == 'عدد':
             self.comboBox_17.hide()
             self.lineEdit_21.hide()
             self.spinBox_8.show()
-        if analyst_category == 'combo':
+        if analyst_category == 'خيارات':
             self.lineEdit_21.hide()
             self.spinBox_8.hide()
             self.comboBox_17.show()
-        if analyst_category == 'edit combo':
+        if analyst_category == 'خيارات مع تعديل':
             self.lineEdit_21.hide()
             self.spinBox_8.hide()
             self.comboBox_17.setEditable(True)
@@ -216,12 +217,36 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.tableWidget_6.insertRow(row_pos)
 
     def Show_All_The_Analysts(self):
-        self.cur.execute(''' SELECT name,category,default_result1,default_result2,price FROM addanalyst''')
+        search_type=self.comboBox_19.currentText()
+        search_words=self.lineEdit_26.text()
+        combobox_value=''
+        sql=''
+        if search_type =='اسم التحليل المطابق':
+            combobox_value='name'
+        if search_type =='السعر المطابق':
+            combobox_value='price'
+        if search_type !='اسم التحليل المطابق' and search_type !='السعر المطابق':
+          sql=''' SELECT name,category,default_result1,default_result2,price FROM addanalyst'''
+        else:
+            sql=f' SELECT name,category,default_result1,default_result2,price FROM addanalyst WHERE {combobox_value}=%s'
+        if type(search_words)==int:
+            self.cur.execute(sql,int(search_words,))
+        if type(search_words)==str:
+            self.cur.execute(sql,str(search_words,))
         analyst_data = self.cur.fetchall()
         self.tableWidget_7.setRowCount(0)
         self.tableWidget_7.insertRow(0)
         for row, form in enumerate(analyst_data):
             for col, item in enumerate(form):
+                if col==1:
+                    category=''
+                    if analyst_data[row][1]=='خيارات':
+                        category='خيارات'
+                    if analyst_data[row][1]=='عدد':
+                        category='عدد'
+                    if analyst_data[row][1]=='خيارات مع تعديل':
+                        category='خيارات مع تعديل'
+                    self.tableWidget_7.setItem(row, col, QTableWidgetItem(str(category)))
                 self.tableWidget_7.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
             row_pos = self.tableWidget_7.rowCount()
@@ -342,7 +367,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                 col += 1
             row_pos = self.tableWidget_3.rowCount()
             self.tableWidget_3.insertRow(row_pos)
-
+    def History(self):
+        pass
     # def Show_avaliable_quantity(self):
     #     self.cur.execute(''' SELECT quantity FROM addbuys WHERE ''')
     #     quantity_avaliable = 0
