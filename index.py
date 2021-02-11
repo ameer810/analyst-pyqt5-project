@@ -27,6 +27,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.handel_buttons()
         self.Show_All_The_Sales()
         self.Show_all_analysts_in_combo()
+        self.Show_all_buys()
 
     def DB_Connect(self):
         self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel')
@@ -56,6 +57,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_32.clicked.connect(self.get_total_price)
         self.pushButton_33.clicked.connect(self.Show_analyst_in_Edit_Or_Delete)
         self.pushButton_29.clicked.connect(self.Clients_Page)
+        self.pushButton_16.clicked.connect(self.Add_Buys)
 
     def Sales_Page(self):
         global client_id_glob
@@ -67,7 +69,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         # client_doctor='kdk'
         client_name = self.lineEdit_20.text()
         client_age = self.spinBox_7.value()
-        # client_genus = self.comboBox_14.currentText()
+        client_genus = self.comboBox_14.currentText()
         client_doctor = self.comboBox_15.currentText()
         # analyst_client = self.comboBox_22.currentText()
 
@@ -273,28 +275,81 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.cur.execute(''' SELECT client_name,client_age,client_genus,client_doctor FROM addclient WHERE id=%s''',
                          (str(id),))
         client_data = self.cur.fetchall()
-        self.cur.execute(''' SELECT total_price,analyst_name FROM addnewitem WHERE client_id=%s''', (str(id),))
+        self.cur.execute(
+            ''' SELECT total_price,analyst_name,analyst_result,client_name FROM addnewitem WHERE client_id=%s''',
+            (str(id),))
         client_analyst_data = self.cur.fetchall()
-
+        print(client_analyst_data)
         num = 0
-
+        all_client_analyst = []
         for i in client_analyst_data:
             total = 0
             num += 1
             for k in range(0, num):
                 total += int(client_analyst_data[k][0])
+        for j in range(0, num):
+            all_client_analyst.append(str(client_analyst_data[j][1]))
 
         for row, form in enumerate(client_data):
 
             for col, item in enumerate(form):
                 self.tableWidget_4.setItem(row, 4, QTableWidgetItem(str(num)))
-                self.tableWidget_4.setItem(row, 5, QTableWidgetItem(str(client_analyst_data[0][1])))
+                self.tableWidget_4.setItem(row, 5, QTableWidgetItem(str(all_client_analyst)))
                 self.tableWidget_4.setItem(row, 6, QTableWidgetItem(str(total)))
                 self.tableWidget_4.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
 
             row_pos = self.tableWidget_4.rowCount()
             self.tableWidget_4.insertRow(row_pos)
+
+        for row, form in enumerate(client_analyst_data):
+
+            for col, item in enumerate(form):
+                if col == 0:
+                    self.tableWidget_9.setItem(row, col, QTableWidgetItem(str(client_analyst_data[0][3])))
+                if col == 1:
+                    self.tableWidget_9.setItem(row, col, QTableWidgetItem(str(client_analyst_data[row][1])))
+                if col == 2:
+                    self.tableWidget_9.setItem(row, col, QTableWidgetItem(str(client_analyst_data[row][2])))
+                col += 1
+
+            row_pos = self.tableWidget_9.rowCount()
+            self.tableWidget_9.insertRow(row_pos)
+
+    def Add_Buys(self):
+        item_name = self.lineEdit_13.text()
+        item_type = self.comboBox_6.currentText()
+        quantity = self.spinBox_3.value()
+        quantity_avaliable = quantity
+        signal_item_price = self.lineEdit_12.text()
+        total_item_price = self.lineEdit_11.text()
+        date_create_before = self.dateEdit.date()
+        date_create = str(date_create_before.toPyDate())
+        self.cur.execute(
+            ''' INSERT INTO addbuys (item_name,signal_item_price,total_price,buys_type,quantity,date) VALUES (%s,%s,%s,%s,%s,%s)'''
+            , (item_name, signal_item_price, total_item_price, item_type, quantity, date_create))
+        self.db.commit()
+        self.Show_all_buys()
+
+    def Show_all_buys(self):
+        self.cur.execute(''' SELECT item_name,buys_type,quantity,signal_item_price,total_price,date FROM addbuys ''')
+        data = self.cur.fetchall()
+        self.tableWidget_3.setRowCount(0)
+        self.tableWidget_3.insertRow(0)
+        for row, form in enumerate(data):
+            for col, item in enumerate(form):
+                self.tableWidget_3.setItem(row, col, QTableWidgetItem(str(item)))
+                col += 1
+            row_pos = self.tableWidget_3.rowCount()
+            self.tableWidget_3.insertRow(row_pos)
+
+    # def Show_avaliable_quantity(self):
+    #     self.cur.execute(''' SELECT quantity FROM addbuys WHERE ''')
+    #     quantity_avaliable = 0
+    #     if quantity_avaliable < 1:
+    #         date_quantity_ended = datetime.datetime.now()
+    #         self.cur.execute(''' UPDATE addbuys SET quantity_avaliable=%s,date_ended=%s''',
+    #                          (quantity_avaliable, date_quantity_ended))
 
     def Open_Sales_Page(self):
         self.tabWidget.setCurrentIndex(3)
