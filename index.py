@@ -12,7 +12,7 @@ from MySQLdb import IntegrityError, OperationalError
 from xlsxwriter import *
 
 FORM_CLASS, _ = loadUiType("design.ui")
-
+user_id = 0
 client_id_glob = 0
 chick_if_add_new = False
 
@@ -28,7 +28,6 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.Show_All_The_Sales()
         self.Show_all_analysts_in_combo()
         self.Show_all_buys()
-
     def DB_Connect(self):
         self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel')
         self.cur = self.db.cursor()
@@ -59,6 +58,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_29.clicked.connect(self.Clients_Page)
         self.pushButton_16.clicked.connect(self.Add_Buys)
         self.pushButton_20.clicked.connect(self.Show_All_The_Analysts)
+        self.pushButton_27.clicked.connect(self.Edit_Analyst)
 
     def Sales_Page(self):
         global client_id_glob
@@ -108,6 +108,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.db.commit()
         chick_if_add_new = True
         self.Show_All_one_client_analyst()
+        self.Add_Data_To_history(3, 1)
 
         # client_age = self.spinBox_7.setValue(0)
         # client_genus = self.comboBox_14.setCurrentIndex(0)
@@ -203,6 +204,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         global client_id_glob
         client_id_glob = self.spinBox.value()
         self.Show_All_one_client_analyst()
+        self.Add_Data_To_history(6, 1)
 
     def Show_All_The_Sales(self):
         self.cur.execute(''' SELECT * FROM addclient ORDER BY -date''')
@@ -217,40 +219,41 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.tableWidget_6.insertRow(row_pos)
 
     def Show_All_The_Analysts(self):
-        search_type=self.comboBox_19.currentText()
-        search_words=self.lineEdit_26.text()
-        combobox_value=''
-        sql=''
-        if search_type =='اسم التحليل المطابق':
-            combobox_value='name'
-        if search_type =='السعر المطابق':
-            combobox_value='price'
-        if search_type !='اسم التحليل المطابق' and search_type !='السعر المطابق':
-          sql=''' SELECT name,category,default_result1,default_result2,price FROM addanalyst'''
+        search_type = self.comboBox_19.currentText()
+        search_words = self.lineEdit_26.text()
+        combobox_value = ''
+        sql = ''
+        if search_type == 'اسم التحليل المطابق':
+            combobox_value = 'name'
+        if search_type == 'السعر المطابق':
+            combobox_value = 'price'
+        if search_type != 'اسم التحليل المطابق' and search_type != 'السعر المطابق':
+            sql = ''' SELECT name,category,default_result1,default_result2,price FROM addanalyst'''
         else:
-            sql=f' SELECT name,category,default_result1,default_result2,price FROM addanalyst WHERE {combobox_value}=%s'
-        if type(search_words)==int:
-            self.cur.execute(sql,int(search_words,))
-        if type(search_words)==str:
-            self.cur.execute(sql,str(search_words,))
+            sql = f' SELECT name,category,default_result1,default_result2,price FROM addanalyst WHERE {combobox_value}=%s'
+        if type(search_words) == int:
+            self.cur.execute(sql, int(search_words, ))
+        if type(search_words) == str:
+            self.cur.execute(sql, str(search_words, ))
         analyst_data = self.cur.fetchall()
         self.tableWidget_7.setRowCount(0)
         self.tableWidget_7.insertRow(0)
         for row, form in enumerate(analyst_data):
             for col, item in enumerate(form):
-                if col==1:
-                    category=''
-                    if analyst_data[row][1]=='خيارات':
-                        category='خيارات'
-                    if analyst_data[row][1]=='عدد':
-                        category='عدد'
-                    if analyst_data[row][1]=='خيارات مع تعديل':
-                        category='خيارات مع تعديل'
+                if col == 1:
+                    category = ''
+                    if analyst_data[row][1] == 'خيارات':
+                        category = 'خيارات'
+                    if analyst_data[row][1] == 'عدد':
+                        category = 'عدد'
+                    if analyst_data[row][1] == 'خيارات مع تعديل':
+                        category = 'خيارات مع تعديل'
                     self.tableWidget_7.setItem(row, col, QTableWidgetItem(str(category)))
                 self.tableWidget_7.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
             row_pos = self.tableWidget_7.rowCount()
             self.tableWidget_7.insertRow(row_pos)
+        self.Add_Data_To_history(6, 2)
 
     def Add_Analyst(self):
         analyst_name = self.lineEdit_28.text()
@@ -262,6 +265,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.cur.execute(
             ''' INSERT INTO addanalyst (name,default_result1,default_result2,price,category,date) VALUES(%s,%s,%s,%s,%s,%s) ''',
             (analyst_name, analyst_result1, analyst_result2, analyst_result_category, analyst_price, date))
+        self.Add_Data_To_history(3, 2)
 
     def Show_analyst_in_Edit_Or_Delete(self):
         analyst_current_name = self.comboBox_21.currentText()
@@ -275,8 +279,9 @@ class mainapp(QMainWindow, FORM_CLASS):
         analyst_result1 = self.doubleSpinBox_4.setValue(data[0][1])
         analyst_result2 = self.doubleSpinBox_5.setValue(data[0][2])
         analyst_price = self.doubleSpinBox_6.setValue(data[0][3])
+        self.Add_Data_To_history(6, 2)
 
-    def Edit_Or_Delete_Analyst(self):
+    def Edit_Analyst(self):
         analyst_current_name = self.comboBox_21.currentText()
         analyst_name = self.lineEdit_29.text()
         analyst_result_category = self.comboBox_23.currentText()
@@ -288,6 +293,10 @@ class mainapp(QMainWindow, FORM_CLASS):
             ''' UPDATE  addanalyst SET name=%s,default_result1=%s,default_result2=%s,price=%s,category=%s,date=%s ''',
             (analyst_name, analyst_result1, analyst_result2, analyst_result_category, analyst_price, date))
         self.db.commit()
+        self.Add_Data_To_history(4, 2)
+
+    def Delete_Analyst(self):
+        self.Add_Data_To_history(5, 2)
 
     def Show_all_analysts_in_combo(self):
         self.cur.execute(''' SELECT name FROM addanalyst ''')
@@ -340,6 +349,7 @@ class mainapp(QMainWindow, FORM_CLASS):
 
             row_pos = self.tableWidget_9.rowCount()
             self.tableWidget_9.insertRow(row_pos)
+        self.Add_Data_To_history(6, 5)
 
     def Add_Buys(self):
         item_name = self.lineEdit_13.text()
@@ -355,6 +365,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             , (item_name, signal_item_price, total_item_price, item_type, quantity, date_create))
         self.db.commit()
         self.Show_all_buys()
+        self.Add_Data_To_history(3, 4)
 
     def Show_all_buys(self):
         self.cur.execute(''' SELECT item_name,buys_type,quantity,signal_item_price,total_price,date FROM addbuys ''')
@@ -367,8 +378,16 @@ class mainapp(QMainWindow, FORM_CLASS):
                 col += 1
             row_pos = self.tableWidget_3.rowCount()
             self.tableWidget_3.insertRow(row_pos)
+
+    def Add_Data_To_history(self, action, table):
+        global user_id
+        self.cur.execute(
+            ''' INSERT INTO his VALUES (DEFAULT,%s,%s,%s,%s)''', (user_id, action, table, datetime.datetime.now()))
+        self.db.commit()
+
     def History(self):
         pass
+
     # def Show_avaliable_quantity(self):
     #     self.cur.execute(''' SELECT quantity FROM addbuys WHERE ''')
     #     quantity_avaliable = 0
