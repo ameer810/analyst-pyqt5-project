@@ -9,26 +9,9 @@ from shutil import copyfile
 from docx.shared import Pt
 
 FORM_CLASS, _ = loadUiType("design.ui")
-user_id = 1
+user_id = 4
 client_id_glob = 0
 chick_if_add_new = False
-'''
-action = ''
-                    if analyst_data[row][2] == 1:
-                        action = 'تسجيل الدخول'
-                    if analyst_data[0][2] == 2:
-                        action = 'تسجيل الخروج'
-                    if analyst_data[row][2] == 3:
-                        action = 'اضافة'
-                    if analyst_data[row][2] == 4:
-                        action = 'تعديل'
-                    if analyst_data[row][2] == 5:
-                        action = 'حذف'
-                    if analyst_data[row][2] == 6:
-                        action = 'بحث'
-                    if analyst_data[row][2] == 7:
-                        action = 'طباعة'
-'''
 
 
 class mainapp(QMainWindow, FORM_CLASS):
@@ -46,7 +29,7 @@ class mainapp(QMainWindow, FORM_CLASS):
 
     def DB_Connect(self):
         self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel', charset="utf8",
-                                  use_unicode=True)
+                                  use_unicode=True, port=3308)
         self.cur = self.db.cursor()
 
     def handel_buttons(self):
@@ -83,9 +66,21 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_19.clicked.connect(self.Search_In_All_Sales)
         self.pushButton_21.clicked.connect(self.Search_In_History)
 
+    def Show_All_Clients(self):
+        self.cur.execute(''' SELECT * FROM addclient ''')
+        data = self.cur.fetchone()
+        self.tableWidget_2.setRowCount(0)
+        self.tableWidget_2.insertRow(0)
+        for row, form in enumerate(data):
+            for col, item in enumerate(form):
+                self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(item)))
+                col += 1
+            row_pos = self.tableWidget_2.rowCount()
+            self.tableWidget_2.insertRow(row_pos)
+
     def Search_In_History(self):
-        actions = self.comboBox_24.currentIndex()
-        table = self.comboBox_20.currentIndex()
+        actionsd = self.comboBox_24.currentIndex()
+        tabley = self.comboBox_20.currentIndex()
         # action = 0
         # if actions == 'تسجيل الدخول':
         #     action = 1
@@ -111,21 +106,72 @@ class mainapp(QMainWindow, FORM_CLASS):
         # if table == 'مراجعين':
         #     tables = 4
 
-        if actions != 0 and table == 0:
+        if actionsd != 0 and tabley == 0:
             try:
-                self.cur.execute(f'SELECT action,table FROM his WHERE table={actions}')
+                self.cur.execute(f'SELECT action,tabled,id,dates FROM history WHERE action = {actionsd}')
             except Exception as e:
                 print(e)
-            # sql=' SELECT action,table FROM his WHERE action=%s'
-            # self.cur.execute(sql, ([actions]))
-        if table != 0 and actions == 0:
-            sql=''' SELECT action,table FROM his WHERE table=%s '''
-            self.cur.execute(sql, ([table]))
-        if actions != 0 and table != 0:
-            sql=''' SELECT action,table FROM his WHERE action=%s AND table=%s '''
-            self.cur.execute(sql, ([actions,table]))
+        if tabley != 0 and actionsd == 0:
+            try:
+                self.cur.execute(f'SELECT action,tabled,id,dates FROM history WHERE tabled={tabley}')
+            except Exception as e:
+                print(e)
+        if actionsd != 0 and tabley != 0:
+            try:
+                self.cur.execute(f' SELECT action,tabled,id,dates FROM history WHERE action={actionsd} AND tabled={tabley} ')
+
+            except Exception as e:
+                print(e)
         data = self.cur.fetchall()
-        print(data)
+        self.tableWidget_8.setRowCount(0)
+        self.tableWidget_8.insertRow(0)
+        for row, form in enumerate(data):
+            for col, item in enumerate(form):
+                if col == 0:
+                    sql = '''SELECT uid FROM history WHERE id =%s'''
+                    self.cur.execute(sql, [data[row][2]])
+                    datas = self.cur.fetchone()
+                    sql = '''SELECT user_name FROM adduser WHERE id =%s'''
+                    self.cur.execute(sql, [datas[0]])
+                    user_name = self.cur.fetchone()
+                    self.tableWidget_8.setItem(row, col, QTableWidgetItem(str(user_name[0])))
+                if col == 1:
+                    action = ''
+                    if data[row][0] == 1:
+                        action = 'تسجيل الدخول'
+                    if data[0][0] == 2:
+                        action = 'تسجيل الخروج'
+                    if data[row][0] == 3:
+                        action = 'اضافة'
+                    if data[row][0] == 4:
+                        action = 'تعديل'
+                    if data[row][0] == 5:
+                        action = 'حذف'
+                    if data[row][0] == 6:
+                        action = 'بحث'
+                    if data[row][0] == 7:
+                        action = 'طباعة'
+                    self.tableWidget_8.setItem(row, col, QTableWidgetItem(str(action)))
+                if col == 2:
+                    tables = ''
+                    print(item)
+                    if data[row][1] == 1:
+                        tables = 'مبيع يومي'
+                    if data[row][1] == 2:
+                        tables = 'تحليل'
+                    if data[row][1] == 3:
+                        tables = 'مشتريات'
+                    if data[row][1] == 4:
+                        tables = 'مراجعين'
+                    if data[row][1] == 5:
+                        tables = 'مستخدم'
+                    self.tableWidget_8.setItem(row, col, QTableWidgetItem(str(tables)))
+                if col == 3:
+                    self.tableWidget_8.setItem(row, col, QTableWidgetItem(str(data[row][3])))
+
+                col += 1
+            row_pos = self.tableWidget_8.rowCount()
+            self.tableWidget_8.insertRow(row_pos)
 
     def Search_In_All_Sales(self):
         client_name = self.lineEdit_25.text()
@@ -169,6 +215,18 @@ class mainapp(QMainWindow, FORM_CLASS):
         print(word_type)
         self.Bio_Word(real_name, real_doctor, all_analyst, all_result, year, month, day, word_type)
 
+    def get_total_price(self):
+        total_price = 0
+        for row in range(0, self.tableWidget_5.rowCount() - 1):
+            a = self.tableWidget_5.item(row, 4).text()
+            print(a, 'kk')
+            try:
+                total_price += int(a)
+            except ValueError:
+                a = 0
+        print(total_price)
+        self.lineEdit_24.setText(str(total_price))
+
     def Sales_Page(self):
         global client_id_glob
         global chick_if_add_new
@@ -191,8 +249,6 @@ class mainapp(QMainWindow, FORM_CLASS):
            VALUES (%s,%s,%s,%s,%s)
         ''', (str(client_name), str(client_age), str(client_genus), str(client_doctor), str(datetime.datetime.now())))
         self.db.commit()
-        self.cur.execute(''' SELECT * FROM addclient ''')
-        client_data = self.cur.fetchall()
         self.cur.execute('''SELECT price FROM addanalyst WHERE name = %s''', (analyst_name,))
         analyst_price = self.cur.fetchone()
 
@@ -233,30 +289,85 @@ class mainapp(QMainWindow, FORM_CLASS):
         # self.Show_All_one_client_analyst()
         self.Add_Data_To_history(3, 1)
         self.History()
-        client_name = self.lineEdit_20.setText('')
-        client_age = self.spinBox_7.setValue(0)
-        client_genus = self.comboBox_14.setCurrentIndex(0)
-        client_doctor = self.comboBox_15.setCurrentIndex(0)
-        analyst_name = self.comboBox_16.setCurrentIndex(0)
-        analyst_or_clients_notes = self.textEdit.setPlainText('')
-        analyst_lineEdit_result = self.lineEdit_21.setText('')
-        analyst_combo_result = self.comboBox_17.setCurrentIndex(0)
-        analyst_number_result = self.spinBox_8.setValue(0)
-        client_id = self.spinBox.setValue(0)
-        chick_if_add_new = False
-        # self.Show_All_one_client_analyst()
+        # client_name = self.lineEdit_20.setText('')
+        # client_age = self.spinBox_7.setValue(0)
+        # client_genus = self.comboBox_14.setCurrentIndex(0)
+        # client_doctor = self.comboBox_15.setCurrentIndex(0)
+        # analyst_name = self.comboBox_16.setCurrentIndex(0)
+        # analyst_or_clients_notes = self.textEdit.setPlainText('')
+        # analyst_lineEdit_result = self.lineEdit_21.setText('')
+        # analyst_combo_result = self.comboBox_17.setCurrentIndex(0)
+        # analyst_number_result = self.spinBox_8.setValue(0)
+        # client_id = self.spinBox.setValue(0)
+        self.Show_All_one_client_analyst()
 
-    def get_total_price(self):
-        total_price = 0
-        for row in range(0, self.tableWidget_5.rowCount() - 1):
-            a = self.tableWidget_5.item(row, 4).text()
-            print(a, 'kk')
+
+
+    def Show_All_one_client_analyst(self):
+        global client_id_glob
+        global chick_if_add_new
+        client_name = self.lineEdit_20.text()
+        self.cur.execute('''
+             SELECT client_name,analyst_name,analyst_result,doctor_name FROM addnewitem WHERE client_name = %s
+        ''', (client_name,))
+        analyst_data = self.cur.fetchall()
+        print('start')
+        print('start2')
+        self.cur.execute('''
+                     SELECT client_name,analyst_name,analyst_result,doctor_name,client_id,client_age,genus,notes FROM addnewitem WHERE client_id = %s
+                ''', (self.spinBox.value(),))
+        analyst_data = self.cur.fetchall()
+        print(analyst_data)
+        # need doctor name enabled i will make it with current text
+        if self.spinBox.value() == 0 and chick_if_add_new == False:
+            print('kosy')
+            self.tableWidget_5.setRowCount(0)
+            self.tableWidget_5.insertRow(0)
+            self.lineEdit_20.setText('')
+            self.spinBox_7.setValue(0)
+            self.comboBox_14.setCurrentIndex(0)
+            self.textEdit.setPlainText('')
+            self.lineEdit_20.setEnabled(True)
+            self.spinBox_7.setEnabled(True)
+            self.comboBox_14.setEnabled(True)
+            self.textEdit.setEnabled(True)
+        if self.spinBox.value() != 0:
             try:
-                total_price += int(a)
-            except ValueError:
-                a = 0
-        print(total_price)
-        self.lineEdit_24.setText(str(total_price))
+                    self.lineEdit_20.setText(analyst_data[0][0])
+                    self.lineEdit_20.setEnabled(False)
+                    self.spinBox_7.setValue(int(analyst_data[0][5]))
+                    self.spinBox_7.setEnabled(False)
+                    if analyst_data[0][6] == 'ذكر':
+                        self.comboBox_14.setCurrentIndex(0)
+                        self.comboBox_14.setEnabled(False)
+                    if analyst_data[0][6] == 'انثى':
+                        self.comboBox_14.setCurrentIndex(1)
+                        self.comboBox_14.setEnabled(False)
+                    self.textEdit.setPlainText(str(analyst_data[0][7]))
+                    self.textEdit.setEnabled(False)
+                    if client_id_glob == 0:
+                        print('start3')
+                        self.cur.execute('''
+                                                     SELECT client_name,analyst_name,analyst_result,doctor_name,client_id,client_age,genus,notes FROM addnewitem WHERE client_name = %s
+                                                ''', (self.lineEdit_20.text(),))
+                        analyst_data = self.cur.fetchall()
+
+                    print(analyst_data)
+                    print('start4')
+                    self.tableWidget_5.setRowCount(0)
+                    self.tableWidget_5.insertRow(0)
+
+                    for row, form in enumerate(analyst_data):
+                        for col, item in enumerate(form):
+                            self.tableWidget_5.setItem(row, col, QTableWidgetItem(str(item)))
+                            col += 1
+                        row_pos = self.tableWidget_5.rowCount()
+                        self.tableWidget_5.insertRow(row_pos)
+                    chick_if_add_new=False
+                    self.Show_All_The_Sales()
+
+            except IndexError:
+                QMessageBox.information(self, 'Error', 'الرقم الذي ادخلته غير صحيح يرجى ادخال رقم صحيح او مراجعة صفحة "كل المبيعات" للتأكد من الرقم')
 
     def Chick_analyst_category(self):
         analyst_name = self.comboBox_16.currentText()
@@ -279,67 +390,6 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.lineEdit_21.hide()
             self.spinBox_8.hide()
             self.comboBox_17.setEditable(True)
-
-    def Show_All_one_client_analyst(self):
-        global client_id_glob
-        global chick_if_add_new
-        client_name = self.lineEdit_20.text()
-        self.cur.execute('''
-             SELECT client_name,analyst_name,analyst_result,doctor_name FROM addnewitem WHERE client_name = %s
-        ''', (client_name,))
-        analyst_data = self.cur.fetchall()
-        print('start')
-        if client_id_glob != 0 and chick_if_add_new != True:
-            print('start2')
-            self.cur.execute('''
-                         SELECT client_name,analyst_name,analyst_result,doctor_name,client_id,client_age,genus,notes FROM addnewitem WHERE client_id = %s
-                    ''', (self.spinBox.value(),))
-            analyst_data = self.cur.fetchall()
-            print(analyst_data)
-            # need doctor name enabled i will make it with current text
-
-            self.lineEdit_20.setText(analyst_data[0][0])
-            self.lineEdit_20.setEnabled(False)
-            self.spinBox_7.setValue(int(analyst_data[0][5]))
-            self.spinBox_7.setEnabled(False)
-            if analyst_data[0][6] == 'ذكر':
-                self.comboBox_14.setCurrentIndex(0)
-                self.comboBox_14.setEnabled(False)
-            if analyst_data[0][6] == 'انثى':
-                self.comboBox_14.setCurrentIndex(1)
-                self.comboBox_14.setEnabled(False)
-            self.textEdit.setPlainText(str(analyst_data[0][7]))
-            self.textEdit.setEnabled(False)
-        if client_id_glob == 0:
-            print('start3')
-            self.cur.execute('''
-                                         SELECT client_name,analyst_name,analyst_result,doctor_name,client_id,client_age,genus,notes FROM addnewitem WHERE client_name = %s
-                                    ''', (self.lineEdit_20.text(),))
-            analyst_data = self.cur.fetchall()
-
-        print(analyst_data)
-        print('start4')
-        self.tableWidget_5.setRowCount(0)
-        self.tableWidget_5.insertRow(0)
-
-        for row, form in enumerate(analyst_data):
-            for col, item in enumerate(form):
-                self.tableWidget_5.setItem(row, col, QTableWidgetItem(str(item)))
-                col += 1
-            row_pos = self.tableWidget_5.rowCount()
-            self.tableWidget_5.insertRow(row_pos)
-        if self.spinBox.value() == 0:
-            self.tableWidget_5.setRowCount(0)
-            self.tableWidget_5.insertRow(0)
-            self.lineEdit_20.setText('')
-            self.spinBox_7.setValue(0)
-            self.comboBox_14.setCurrentIndex(0)
-            self.textEdit.setPlainText('')
-            self.lineEdit_20.setEnabled(True)
-            self.spinBox_7.setEnabled(True)
-            self.comboBox_14.setEnabled(True)
-            self.textEdit.setEnabled(True)
-        self.Show_All_The_Sales()
 
     def get_client_id(self):
         global client_id_glob
@@ -551,26 +601,26 @@ class mainapp(QMainWindow, FORM_CLASS):
     def Add_Data_To_history(self, action, table):
         global user_id
         self.cur.execute(
-            ''' INSERT INTO his VALUES (DEFAULT,%s,%s,%s,%s,%s)''',
+            ''' INSERT INTO history VALUES (DEFAULT,%s,%s,%s,%s,%s)''',
             (user_id, action, table, datetime.datetime.now(), 1))
         self.db.commit()
 
     def History(self):
-        self.cur.execute('''SELECT * FROM his ORDER BY -dates''')
+        self.cur.execute('''SELECT * FROM history ORDER BY -dates''')
         analyst_data = self.cur.fetchall()
         self.tableWidget_8.setRowCount(0)
         self.tableWidget_8.insertRow(0)
         for row, form in enumerate(analyst_data):
             for col, item in enumerate(form):
                 if col == 0:
-                    sql = '''SELECT uid FROM his WHERE id =%s'''
+                    sql = '''SELECT uid FROM history WHERE id =%s'''
                     self.cur.execute(sql, [item])
                     data = self.cur.fetchone()
                     sql = '''SELECT user_name FROM adduser WHERE id =%s'''
                     self.cur.execute(sql, [data[0]])
                     user_name = self.cur.fetchone()
                     print(user_name)
-                    self.tableWidget_8.setItem(row, col, QTableWidgetItem(str(user_name)))
+                    self.tableWidget_8.setItem(row, col, QTableWidgetItem(str(user_name[0])))
                 if col == 1:
                     print(item, '')
                     action = ''
@@ -600,6 +650,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                         tables = 'مشتريات'
                     if analyst_data[row][3] == 4:
                         tables = 'مراجعين'
+                    if analyst_data[row][3] == 5:
+                        tables = 'مستخدم'
                     self.tableWidget_8.setItem(row, col, QTableWidgetItem(str(tables)))
                 if col == 3:
                     self.tableWidget_8.setItem(row, col, QTableWidgetItem(str(analyst_data[row][4])))
@@ -626,9 +678,11 @@ class mainapp(QMainWindow, FORM_CLASS):
                 user_id = row[0]
                 print('gg')
         print(data)
+        self.Add_Data_To_history(1,5)
+        self.History()
 
     def Delete_All_History_Data(self):
-        sql = ''' DELETE FROM his WHERE def=%s'''
+        sql = ''' DELETE FROM history WHERE def=%s'''
         self.cur.execute(sql, [(1)])
         QMessageBox.information(self, 'info', 'تم حذف محتويات السجل بنجاح')
 
@@ -680,7 +734,6 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.setStyleSheet(style)
 
     def Bio_Word(self, name, doctor, analysts, results, year, month, day, word_types):
-        # print(name, doctor,analysts,results,year, month, day)
         for word_type in word_types:
             if word_type == 'bio':
                 f = open('word/bio latest17.docx', 'rb')
