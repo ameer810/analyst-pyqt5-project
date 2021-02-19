@@ -2303,7 +2303,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
      </font>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>5</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -4543,7 +4543,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
       </property>
       <item>
        <property name="text">
-        <string>----------------------</string>
+        <string>--------------</string>
        </property>
       </item>
       <item>

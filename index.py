@@ -12,6 +12,23 @@ FORM_CLASS, _ = loadUiType("design.ui")
 user_id = 1
 client_id_glob = 0
 chick_if_add_new = False
+'''
+action = ''
+                    if analyst_data[row][2] == 1:
+                        action = 'تسجيل الدخول'
+                    if analyst_data[0][2] == 2:
+                        action = 'تسجيل الخروج'
+                    if analyst_data[row][2] == 3:
+                        action = 'اضافة'
+                    if analyst_data[row][2] == 4:
+                        action = 'تعديل'
+                    if analyst_data[row][2] == 5:
+                        action = 'حذف'
+                    if analyst_data[row][2] == 6:
+                        action = 'بحث'
+                    if analyst_data[row][2] == 7:
+                        action = 'طباعة'
+'''
 
 
 class mainapp(QMainWindow, FORM_CLASS):
@@ -28,7 +45,8 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.History()
 
     def DB_Connect(self):
-        self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel')
+        self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel', charset="utf8",
+                                  use_unicode=True)
         self.cur = self.db.cursor()
 
     def handel_buttons(self):
@@ -62,6 +80,72 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_28.clicked.connect(self.Delete_Analyst)
         self.pushButton_22.clicked.connect(self.Delete_All_History_Data)
         self.pushButton_18.clicked.connect(self.Print_Sale_Data)
+        self.pushButton_19.clicked.connect(self.Search_In_All_Sales)
+        self.pushButton_21.clicked.connect(self.Search_In_History)
+
+    def Search_In_History(self):
+        actions = self.comboBox_24.currentIndex()
+        table = self.comboBox_20.currentIndex()
+        # action = 0
+        # if actions == 'تسجيل الدخول':
+        #     action = 1
+        # if actions == 'تسجيل الخروج':
+        #     action = 2
+        # if actions == 'اضافة':
+        #     action = 3
+        # if actions == 'تعديل':
+        #     action = 4
+        # if actions == 'حذف':
+        #     action = 5
+        # if actions == 'بحث':
+        #     action = 6
+        # if actions == 'طباعة':
+        #     action = 7
+        # tables = 0
+        # if table == 'مبيع يومي':
+        #     tables = 1
+        # if table == 'تحليل':
+        #     tables = 2
+        # if table == 'مشتريات':
+        #     tables = 3
+        # if table == 'مراجعين':
+        #     tables = 4
+
+        if actions != 0 and table == 0:
+            try:
+                self.cur.execute(f'SELECT action,table FROM his WHERE table={actions}')
+            except Exception as e:
+                print(e)
+            # sql=' SELECT action,table FROM his WHERE action=%s'
+            # self.cur.execute(sql, ([actions]))
+        if table != 0 and actions == 0:
+            sql=''' SELECT action,table FROM his WHERE table=%s '''
+            self.cur.execute(sql, ([table]))
+        if actions != 0 and table != 0:
+            sql=''' SELECT action,table FROM his WHERE action=%s AND table=%s '''
+            self.cur.execute(sql, ([actions,table]))
+        data = self.cur.fetchall()
+        print(data)
+
+    def Search_In_All_Sales(self):
+        client_name = self.lineEdit_25.text()
+        if client_name != '0':
+            self.cur.execute(''' SELECT * FROM addclient WHERE client_name=%s ORDER BY -date''', (client_name,))
+        else:
+            self.cur.execute(''' SELECT * FROM addclient ORDER BY -date''')
+        analyst_data = self.cur.fetchall()
+        self.tableWidget_6.setRowCount(0)
+        self.tableWidget_6.insertRow(0)
+        for row, form in enumerate(analyst_data):
+            for col, item in enumerate(form):
+                if col == 3:
+                    self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(analyst_data[row][4])))
+                else:
+                    self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
+                col += 1
+            row_pos = self.tableWidget_6.rowCount()
+            self.tableWidget_6.insertRow(row_pos)
+        self.Add_Data_To_history(6, 1)
 
     def Print_Sale_Data(self):
         all_analyst = []
@@ -89,15 +173,12 @@ class mainapp(QMainWindow, FORM_CLASS):
         global client_id_glob
         global chick_if_add_new
         analyst_name = self.comboBox_16.currentText()
-        # client_name='تتتب'
-        # client_age=16
-        client_genus = 'kdk'
-        # client_doctor='kdk'
+
         client_name = self.lineEdit_20.text()
         client_age = self.spinBox_7.value()
-        # client_genus = self.comboBox_14.currentText()
+        client_genus = self.comboBox_14.currentText()
         client_doctor = self.comboBox_15.currentText()
-        # analyst_client = self.comboBox_22.currentText()
+        client_genus = self.comboBox_14.currentText()
 
         analyst_or_clients_notes = self.textEdit.toPlainText()
         analyst_lineEdit_result = self.lineEdit_21.text()
@@ -108,7 +189,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.cur.execute('''
            INSERT INTO addclient (client_name,client_age,client_genus,client_doctor,date)
            VALUES (%s,%s,%s,%s,%s)
-        ''', (client_name, client_age, client_genus, client_doctor, datetime.datetime.now()))
+        ''', (str(client_name), str(client_age), str(client_genus), str(client_doctor), str(datetime.datetime.now())))
         self.db.commit()
         self.cur.execute(''' SELECT * FROM addclient ''')
         client_data = self.cur.fetchall()
@@ -148,20 +229,20 @@ class mainapp(QMainWindow, FORM_CLASS):
             row_pos = self.tableWidget_5.rowCount()
             self.tableWidget_5.insertRow(row_pos)
         chick_if_add_new = True
+        self.Show_All_The_Sales()
         # self.Show_All_one_client_analyst()
         self.Add_Data_To_history(3, 1)
         self.History()
-
-        # client_age = self.spinBox_7.setValue(0)
-        # client_genus = self.comboBox_14.setCurrentIndex(0)
-        # client_doctor = self.comboBox_15.setCurrentIndex(0)
-        # # analyst_client = self.comboBox_22.setCurrentIndex(0)
-        # analyst_name = self.comboBox_16.setCurrentIndex(0)
-        # analyst_or_clients_notes = self.textEdit.setToPlainText()
-        # analyst_lineEdit_result = self.lineEdit_21.setText('')
-        # analyst_combo_result = self.comboBox_17.setCurrentIndex(0)
-        # analyst_number_result = self.spinBox_8.setValue(0)
-        # client_id = self.spinBox.setValue(0)
+        client_name = self.lineEdit_20.setText('')
+        client_age = self.spinBox_7.setValue(0)
+        client_genus = self.comboBox_14.setCurrentIndex(0)
+        client_doctor = self.comboBox_15.setCurrentIndex(0)
+        analyst_name = self.comboBox_16.setCurrentIndex(0)
+        analyst_or_clients_notes = self.textEdit.setPlainText('')
+        analyst_lineEdit_result = self.lineEdit_21.setText('')
+        analyst_combo_result = self.comboBox_17.setCurrentIndex(0)
+        analyst_number_result = self.spinBox_8.setValue(0)
+        client_id = self.spinBox.setValue(0)
         chick_if_add_new = False
         # self.Show_All_one_client_analyst()
 
@@ -274,7 +355,10 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.tableWidget_6.insertRow(0)
         for row, form in enumerate(analyst_data):
             for col, item in enumerate(form):
-                self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
+                if col == 3:
+                    self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(analyst_data[row][4])))
+                else:
+                    self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
             row_pos = self.tableWidget_6.rowCount()
             self.tableWidget_6.insertRow(row_pos)
@@ -331,7 +415,8 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.cur.execute(
             ''' INSERT INTO addanalyst (name,default_result1,default_result2,price,category,sub_category,date) VALUES(%s,%s,%s,%s,%s,%s,%s) ''',
             (
-            analyst_name, analyst_result1, analyst_result2, analyst_result_category, analyst_price, sub_category, date))
+                analyst_name, analyst_result1, analyst_result2, analyst_result_category, analyst_price, sub_category,
+                date))
         self.Add_Data_To_history(3, 2)
         self.History()
 
@@ -362,7 +447,8 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.cur.execute(
             ''' UPDATE  addanalyst SET name=%s,default_result1=%s,default_result2=%s,price=%s,category=%s,sub_category=%s,date=%s ''',
             (
-            analyst_name, analyst_result1, analyst_result2, analyst_result_category, sub_category, analyst_price, date))
+                analyst_name, analyst_result1, analyst_result2, analyst_result_category, sub_category, analyst_price,
+                date))
         self.db.commit()
         self.Add_Data_To_history(4, 2)
         self.History()
@@ -604,17 +690,17 @@ class mainapp(QMainWindow, FORM_CLASS):
                     for k in i.rows:
                         for j in k.cells:
                             for n in j.paragraphs:
-
                                 if n.text == 'أسـم المريض :       المحترم':
                                     n.text = f'أسـم المريض :{name}       المحترم'
-                                    for run in n.runs:
-                                        run.font.size = Pt(11)
-                                        run.font.name = 'Monotype Koufi'
+                                    n.style.font.name = 'Monotype Koufi'
+                                    n.style.font.bold = True
+                                    n.style.font.size = Pt(11)
                                 if n.text == 'حضرة الدكتور   :       المحترم':
                                     n.text = f'حضرة الدكتور   : {doctor}      المحترم'
-                                    for run in n.runs:
-                                        run.font.size = Pt(11)
-                                        run.font.name = 'Monotype Koufi'
+                                    n.style.font.name = 'Monotype Koufi'
+                                    n.style.font.bold = True
+                                    n.style.font.size = Pt(11)
+
                                 if n.text == 'Random  blood sugar :':
                                     print('okkkkkkkkkkkk')
                                     for row in range(0, len(analysts)):
@@ -625,10 +711,9 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'Random  blood sugar':
                                             k = analyst_and_result['result']
                                             n.text = f'Random  blood sugar : {k}'
-                                            for run in n.runs:
-                                                run.bold = True
-                                                run.font.size = Pt(11)
-                                                run.font.name = 'Tahoma'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(11)
                                 if n.text == 'Blood Urea               :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -639,10 +724,9 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             k = analyst_and_result['result']
 
                                             n.text = f'Blood Urea               : {k}'
-                                            for run in n.runs:
-                                                run.bold = True
-                                                run.font.size = Pt(11)
-                                                run.font.name = 'Tahoma'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(11)
                                 if n.text == 'S. Creatinin               :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -652,10 +736,9 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'S. Creatinin':
                                             k = analyst_and_result['result']
                                             n.text = f'S. Creatinin               : {k}'
-                                            for run in n.runs:
-                                                run.bold = True
-                                                run.font.size = Pt(11)
-                                                run.font.name = 'Tahoma'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(11)
                                 if n.text == 'S. Uric acid                  :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -665,10 +748,9 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'S. Uric acid':
                                             k = analyst_and_result['result']
                                             n.text = f'S. Uric acid                  : {k}'
-                                            for run in n.runs:
-                                                run.bold = True
-                                                run.font.size = Pt(11)
-                                                run.font.name = 'Tahoma'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(11)
                                 if n.text == 'S. Cholesterol            :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -678,10 +760,9 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'S. Cholesterol':
                                             k = analyst_and_result['result']
                                             n.text = f'S. Cholesterol            : {k}'
-                                            for run in n.runs:
-                                                run.bold = True
-                                                run.font.size = Pt(11)
-                                                run.font.name = 'Tahoma'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(11)
                                 if n.text == 'S. Triglycerid             :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -691,10 +772,9 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'S. Triglycerid':
                                             k = analyst_and_result['result']
                                             n.text = f'S. Triglycerid             : {k}'
-                                            for run in n.runs:
-                                                run.bold = True
-                                                run.font.size = Pt(11)
-                                                run.font.name = 'Tahoma'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(11)
                                 if n.text == 'Total serum Bilirubin:':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -704,10 +784,9 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'Total serum Bilirubin':
                                             k = analyst_and_result['result']
                                             n.text = f'Total serum Bilirubin: {k}'
-                                            for run in n.runs:
-                                                run.bold = True
-                                                run.font.size = Pt(11)
-                                                run.font.name = 'Tahoma'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(11)
                                 if n.text == 'S.Calcium :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -717,10 +796,9 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'S.Calcium':
                                             k = analyst_and_result['result']
                                             n.text = f'S.Calcium : {k}'
-                                            for run in n.runs:
-                                                run.bold = True
-                                                run.font.size = Pt(11)
-                                                run.font.name = 'Tahoma'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(11)
                                 if n.text == 'Vitamin D              :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -730,17 +808,15 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'Vitamin D':
                                             k = analyst_and_result['result']
                                             n.text = f'Vitamin D              : {k}'
-                                            for run in n.runs:
-                                                run.bold = True
-                                                run.font.size = Pt(11)
-                                                run.font.name = 'Tahoma'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(11)
 
                                 if n.text == 'Date:    /     / 20':
                                     n.text = f'Date:   {day} /  {month} / {year}'
-                                    for run in n.runs:
-                                        run.bold = True
-                                        run.font.size = Pt(12)
-                                        run.font.name = 'Tahoma'
+                                    n.style.font.name = 'Tahoma'
+                                    n.style.font.bold = True
+                                    n.style.font.size = Pt(11)
                 document.save('word/bio latest17.docx')
                 f.close()
             if word_type == '':
