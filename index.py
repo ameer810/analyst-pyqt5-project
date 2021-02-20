@@ -118,7 +118,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                 print(e)
         if actionsd != 0 and tabley != 0:
             try:
-                self.cur.execute(f' SELECT action,tabled,id,dates FROM history WHERE action={actionsd} AND tabled={tabley} ')
+                self.cur.execute(
+                    f' SELECT action,tabled,id,dates FROM history WHERE action={actionsd} AND tabled={tabley} ')
 
             except Exception as e:
                 print(e)
@@ -301,8 +302,6 @@ class mainapp(QMainWindow, FORM_CLASS):
         # client_id = self.spinBox.setValue(0)
         self.Show_All_one_client_analyst()
 
-
-
     def Show_All_one_client_analyst(self):
         global client_id_glob
         global chick_if_add_new
@@ -333,41 +332,42 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.textEdit.setEnabled(True)
         if self.spinBox.value() != 0:
             try:
-                    self.lineEdit_20.setText(analyst_data[0][0])
-                    self.lineEdit_20.setEnabled(False)
-                    self.spinBox_7.setValue(int(analyst_data[0][5]))
-                    self.spinBox_7.setEnabled(False)
-                    if analyst_data[0][6] == 'ذكر':
-                        self.comboBox_14.setCurrentIndex(0)
-                        self.comboBox_14.setEnabled(False)
-                    if analyst_data[0][6] == 'انثى':
-                        self.comboBox_14.setCurrentIndex(1)
-                        self.comboBox_14.setEnabled(False)
-                    self.textEdit.setPlainText(str(analyst_data[0][7]))
-                    self.textEdit.setEnabled(False)
-                    if client_id_glob == 0:
-                        print('start3')
-                        self.cur.execute('''
+                self.lineEdit_20.setText(analyst_data[0][0])
+                self.lineEdit_20.setEnabled(False)
+                self.spinBox_7.setValue(int(analyst_data[0][5]))
+                self.spinBox_7.setEnabled(False)
+                if analyst_data[0][6] == 'ذكر':
+                    self.comboBox_14.setCurrentIndex(0)
+                    self.comboBox_14.setEnabled(False)
+                if analyst_data[0][6] == 'انثى':
+                    self.comboBox_14.setCurrentIndex(1)
+                    self.comboBox_14.setEnabled(False)
+                self.textEdit.setPlainText(str(analyst_data[0][7]))
+                self.textEdit.setEnabled(False)
+                if client_id_glob == 0:
+                    print('start3')
+                    self.cur.execute('''
                                                      SELECT client_name,analyst_name,analyst_result,doctor_name,client_id,client_age,genus,notes FROM addnewitem WHERE client_name = %s
                                                 ''', (self.lineEdit_20.text(),))
-                        analyst_data = self.cur.fetchall()
+                    analyst_data = self.cur.fetchall()
 
-                    print(analyst_data)
-                    print('start4')
-                    self.tableWidget_5.setRowCount(0)
-                    self.tableWidget_5.insertRow(0)
+                print(analyst_data)
+                print('start4')
+                self.tableWidget_5.setRowCount(0)
+                self.tableWidget_5.insertRow(0)
 
-                    for row, form in enumerate(analyst_data):
-                        for col, item in enumerate(form):
-                            self.tableWidget_5.setItem(row, col, QTableWidgetItem(str(item)))
-                            col += 1
-                        row_pos = self.tableWidget_5.rowCount()
-                        self.tableWidget_5.insertRow(row_pos)
-                    chick_if_add_new=False
-                    self.Show_All_The_Sales()
+                for row, form in enumerate(analyst_data):
+                    for col, item in enumerate(form):
+                        self.tableWidget_5.setItem(row, col, QTableWidgetItem(str(item)))
+                        col += 1
+                    row_pos = self.tableWidget_5.rowCount()
+                    self.tableWidget_5.insertRow(row_pos)
+                chick_if_add_new = False
+                self.Show_All_The_Sales()
 
             except IndexError:
-                QMessageBox.information(self, 'Error', 'الرقم الذي ادخلته غير صحيح يرجى ادخال رقم صحيح او مراجعة صفحة "كل المبيعات" للتأكد من الرقم')
+                QMessageBox.information(self, 'Error',
+                                        'الرقم الذي ادخلته غير صحيح يرجى ادخال رقم صحيح او مراجعة صفحة "كل المبيعات" للتأكد من الرقم')
 
     def Chick_analyst_category(self):
         analyst_name = self.comboBox_16.currentText()
@@ -678,7 +678,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                 user_id = row[0]
                 print('gg')
         print(data)
-        self.Add_Data_To_history(1,5)
+        self.Add_Data_To_history(1, 5)
         self.History()
 
     def Delete_All_History_Data(self):
@@ -892,116 +892,435 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     n.style.font.bold = True
                                     n.style.font.size = Pt(11)
                                 if n.text == 'Color:':
-                                   for row in range(0, len(analysts)):
-                                       analyst_and_result = {
-                                           'analyst': analysts[row],
-                                           'result': results[row]
-                                       }
-                                       if analyst_and_result['analyst'] == 'Color':
-                                           k = analyst_and_result['result']
-                                           n.text = f'Color: {k}'
-                                           n.style.font.name = 'Tahoma'
-                                           n.style.font.bold = True
-                                           n.style.font.size = Pt(14)
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Color':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Color: {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
                                 if n.text == 'Consistency:':
-                                   for row in range(0, len(analysts)):
-                                       analyst_and_result = {
-                                           'analyst': analysts[row],
-                                           'result': results[row]
-                                       }
-                                       if analyst_and_result['analyst'] == 'Consistency':
-                                           k = analyst_and_result['result']
-                                           n.text = f'Consistency: {k}'
-                                           n.style.font.name = 'Tahoma'
-                                           n.style.font.bold = True
-                                           n.style.font.size = Pt(14)
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Consistency':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Consistency: {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
                                 if n.text == 'R.B.Cs:':
-                                   for row in range(0, len(analysts)):
-                                       analyst_and_result = {
-                                           'analyst': analysts[row],
-                                           'result': results[row]
-                                       }
-                                       if analyst_and_result['analyst'] == 'R.B.Cs':
-                                           k = analyst_and_result['result']
-                                           n.text = f'R.B.Cs:: {k}'
-                                           n.style.font.name = 'Tahoma'
-                                           n.style.font.bold = True
-                                           n.style.font.size = Pt(14)
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'R.B.Cs':
+                                            k = analyst_and_result['result']
+                                            n.text = f'R.B.Cs:: {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
                                 if n.text == 'Pus cells:':
-                                   for row in range(0, len(analysts)):
-                                       analyst_and_result = {
-                                           'analyst': analysts[row],
-                                           'result': results[row]
-                                       }
-                                       if analyst_and_result['analyst'] == 'Pus cells':
-                                           k = analyst_and_result['result']
-                                           n.text = f'Pus cells: {k}'
-                                           n.style.font.name = 'Tahoma'
-                                           n.style.font.bold = True
-                                           n.style.font.size = Pt(14)
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Pus cells':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Pus cells: {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
                                 if n.text == 'E. Histolytica:':
-                                   for row in range(0, len(analysts)):
-                                       analyst_and_result = {
-                                           'analyst': analysts[row],
-                                           'result': results[row]
-                                       }
-                                       if analyst_and_result['analyst'] == 'E. Histolytica':
-                                           k = analyst_and_result['result']
-                                           n.text = f'E. Histolytica: {k}'
-                                           n.style.font.name = 'Tahoma'
-                                           n.style.font.bold = True
-                                           n.style.font.size = Pt(14)
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'E. Histolytica':
+                                            k = analyst_and_result['result']
+                                            n.text = f'E. Histolytica: {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
                                 if n.text == 'G. Lembilia:':
-                                   for row in range(0, len(analysts)):
-                                       analyst_and_result = {
-                                           'analyst': analysts[row],
-                                           'result': results[row]
-                                       }
-                                       if analyst_and_result['analyst'] == 'G. Lembilia':
-                                           k = analyst_and_result['result']
-                                           n.text = f'G. Lembilia: {k}'
-                                           n.style.font.name = 'Tahoma'
-                                           n.style.font.bold = True
-                                           n.style.font.size = Pt(14)
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'G. Lembilia':
+                                            k = analyst_and_result['result']
+                                            n.text = f'G. Lembilia: {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
                                 if n.text == 'Ova:':
-                                   for row in range(0, len(analysts)):
-                                       analyst_and_result = {
-                                           'analyst': analysts[row],
-                                           'result': results[row]
-                                       }
-                                       if analyst_and_result['analyst'] == 'Ova':
-                                           k = analyst_and_result['result']
-                                           n.text = f'Ova: {k}'
-                                           n.style.font.name = 'Tahoma'
-                                           n.style.font.bold = True
-                                           n.style.font.size = Pt(14)
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Ova':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Ova: {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
                                 if n.text == 'Other:':
-                                   for row in range(0, len(analysts)):
-                                       analyst_and_result = {
-                                           'analyst': analysts[row],
-                                           'result': results[row]
-                                       }
-                                       if analyst_and_result['analyst'] == 'Other':
-                                           k = analyst_and_result['result']
-                                           n.text = f'Other: {k}'
-                                           n.style.font.name = 'Tahoma'
-                                           n.style.font.bold = True
-                                           n.style.font.size = Pt(14)
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Other':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Other: {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
                                 if n.text == 'Date:    /     / 20':
-                                   for row in range(0, len(analysts)):
-                                       analyst_and_result = {
-                                           'analyst': analysts[row],
-                                           'result': results[row]
-                                       }
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
 
                                 if n.text == 'Date:    /     / 20':
-                                           n.text = f'Date:   {day} /  {month} / {year}'
-                                           n.style.font.name = 'Tahoma'
-                                           n.style.font.bold = True
-                                           n.style.font.size = Pt(12)
-                                print('1' + n.text + '2')
+                                    n.text = f'Date:   {day} /  {month} / {year}'
+                                    n.style.font.name = 'Tahoma'
+                                    n.style.font.bold = True
+                                    n.style.font.size = Pt(12)
                 document.save('word/GSE latest.docx')
                 f.close()
+            if word_type == 'GUE':
+
+                f = open('word/GUE latest.docx', 'rb')
+                f.read()
+
+                document = Document(f)
+                for i in document.tables:
+                    for k in i.rows:
+                        for j in k.cells:
+                            for n in j.paragraphs:
+                                if n.text == 'أسـم المريض :       المحترم':
+                                    n.text = f'أسـم المريض :{5}       المحترم'
+                                    n.style.font.name = 'Monotype Koufi'
+                                    n.style.font.bold = True
+                                    n.style.font.size = Pt(11)
+                                if n.text == 'حضرة الدكتور   :       المحترم':
+                                    n.text = f'حضرة الدكتور   : {5}      المحترم'
+                                    n.style.font.name = 'Monotype Koufi'
+                                    n.style.font.bold = True
+                                    n.style.font.size = Pt(11)
+                                if n.text == 'Appearance :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Appearance':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Appearance : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Reaction      :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Reaction':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Reaction      : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Albumin       :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Albumin':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Albumin       : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Sugar          :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Sugar':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Sugar          : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'RBCs         :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'RBCs':
+                                            k = analyst_and_result['result']
+                                            n.text = f'RBCs         : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Pus cells    :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Pus cells':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Pus cells    : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Epith .cells :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Epith .cells':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Epith .cells : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Crystals     :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Crystals':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Crystals     : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Casts        :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Casts':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Casts        : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Other        :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Other':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Other        : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Date:    /     / 20':
+                                    n.text = f'Date:   {day} /  {month} / {year}'
+                                    n.style.font.name = 'Tahoma'
+                                    n.style.font.bold = True
+                                    n.style.font.size = Pt(14)
+                document.save('word/GUE latest.docx')
+                f.close()
+            if word_type=='hematology':
+                f = open('word/hematology latest.docx', 'rb')
+                f.read()
+
+                document = Document(f)
+                for i in document.tables:
+                    for k in i.rows:
+                        for j in k.cells:
+                            for n in j.paragraphs:
+                                if n.text == 'أسـم المريض :       المحترم':
+                                    n.text = f'أسـم المريض :{5}       المحترم'
+                                    n.style.font.name = 'Monotype Koufi'
+                                    n.style.font.bold = True
+                                    n.style.font.size = Pt(11)
+                                if n.text == 'حضرة الدكتور   :       المحترم':
+                                    n.text = f'حضرة الدكتور   : {5}      المحترم'
+                                    n.style.font.name = 'Monotype Koufi'
+                                    n.style.font.bold = True
+                                    n.style.font.size = Pt(11)
+                                if n.text == 'Hb             :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Hb':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Hb             : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'PCV           :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'PCV':
+                                            k = analyst_and_result['result']
+                                            n.text = f'PCV           : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'WBCs         :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'WBCs':
+                                            k = analyst_and_result['result']
+                                            n.text = f'WBCs         : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'E.S.R          :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'E.S.R':
+                                            k = analyst_and_result['result']
+                                            n.text = f'E.S.R          : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Blood Group:':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Blood Group':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Blood Group: {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Rh:':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Rh':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Rh: {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Pregnancy test  in urine   :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Pregnancy test  in urine':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Pregnancy test  in urine   : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Pregnancy test  in serum  :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Pregnancy test  in serum':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Pregnancy test  in serum  : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'R.B.Sugar                           :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'R.B.Sugar':
+                                            k = analyst_and_result['result']
+                                            n.text = f'R.B.Sugar                           : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Bl. Urea                              :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Bl. Urea':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Bl. Urea                              : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Salmonella typhi  IgG :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Salmonella typhi  IgG':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Salmonella typhi  IgG : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Salmonella typhi  IgM :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Salmonella typhi  IgM':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Salmonella typhi  IgM : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Rose-Bengal test   :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Rose-Bengal test':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Rose-Bengal test   : {k}'
+                                            n.style.font.name = 'Tahoma'
+                                            n.style.font.bold = True
+                                            n.style.font.size = Pt(14)
+                                if n.text == 'Date:    /     / 20':
+                                    n.text = f'Date:   {day} /  {month} / {year}'
+                                    n.style.font.name = 'Tahoma'
+                                    n.style.font.bold = True
+                                    n.style.font.size = Pt(14)
+                document.save('word/hematology latest.docx')
+                f.close()
+
 
 
 def main():
