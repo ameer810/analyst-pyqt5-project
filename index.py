@@ -1320,6 +1320,179 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     n.style.font.size = Pt(14)
                 document.save('word/hematology latest.docx')
                 f.close()
+            if word_type=='هرمونات مشترك':
+                f = open('word/مختبر بغـداد.docx', 'rb')
+                f.read()
+
+                document = Document(f)
+
+                for i in document.tables:
+                    for k in i.rows:
+                        for j in k.cells:
+
+                            for n in j.paragraphs:
+                                if n.text == '     أســم الـمــريــض    :':
+                                    n.text = f'     أســم الـمــريــض    :{name}'
+                                    n.style.font.name = 'Monotype Koufi'
+                                    n.style.font.bold = True
+                                    n.style.font.size = Pt(14)
+                                if n.text == 'حـضـرة الـدكتـور    الـفاضـــل :                                                                                            الـمـحـتـرم':
+                                    n.text = f'حـضـرة الـدكتـور    الـفاضـــل :{doctor}                                                                                            الـمـحـتـرم'
+                                    n.style.font.name = 'Monotype Koufi'
+                                    n.style.font.bold = True
+                                    n.style.font.size = Pt(14)
+                                if n.text == '0r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Toxoplasma IgG':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {5}'
+                                        n.style.font.name = 'Tahoma'
+                                        n.style.font.bold = True
+                                        n.style.font.size = Pt(12)
+                                if n.text == '1r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Toxoplasma IgM':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {5}'
+                                        n.style.font.name = 'Tahoma'
+                                        n.style.font.bold = True
+                                        n.style.font.size = Pt(12)
+                                if n.text == '2r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Cytomegalo Virus IgG':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {5}'
+                                        n.style.font.name = 'Tahoma'
+                                        n.style.font.bold = True
+                                        n.style.font.size = Pt(12)
+                                if n.text == '3r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Cytomegalo Virus IgM':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {5}'
+                                        n.style.font.name = 'Tahoma'
+                                        n.style.font.bold = True
+                                        n.style.font.size = Pt(12)
+                                if n.text == '4r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Rubella IgG':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {5}'
+                                        n.style.font.name = 'Tahoma'
+                                        n.style.font.bold = True
+                                        n.style.font.size = Pt(12)
+                                if n.text == '5r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Rubella IgM':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {5}'
+                                        n.style.font.name = 'Tahoma'
+                                        n.style.font.bold = True
+                                        n.style.font.size = Pt(12)
+                                if n.text == '6r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Anti - Phspholipin IgG':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {5}'
+                                        n.style.font.name = 'Tahoma'
+                                        n.style.font.bold = True
+                                        n.style.font.size = Pt(12)
+                                if n.text == '7r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Anti - Phspholipin  IgM':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {5}'
+                                        n.style.font.name = 'Tahoma'
+                                        n.style.font.bold = True
+                                        n.style.font.size = Pt(12)
+                                if n.text == '8r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Anti - Cardiolipin  IgG':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {5}'
+                                        n.style.font.name = 'Tahoma'
+                                        n.style.font.bold = True
+                                        n.style.font.size = Pt(12)
+                                if n.text == '9r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Anti - Cardiolipin  IgM':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {5}'
+                                        n.style.font.name = 'Tahoma'
+                                        n.style.font.bold = True
+                                        n.style.font.size = Pt(12)
+                                if n.text == '10r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Herps   IgG':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {5}'
+                                        n.style.font.name = 'Tahoma'
+                                        n.style.font.bold = True
+                                        n.style.font.size = Pt(12)
+                                if n.text == '11r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Herpes  IgM':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {5}'
+                                        n.style.font.name = 'Tahoma'
+                                        n.style.font.bold = True
+                                        n.style.font.size = Pt(12)
+                                if n.text == 'Date:    /     / 20':
+                                    n.text = f'Date:   {day} /  {month} / {year}'
+                                    n.style.font.name = 'Tahoma'
+                                    n.style.font.bold = True
+                                    n.style.font.size = Pt(14)
+                                print('1' + n.text + '2')
+                document.save('word/مختبر بغـداد.docx')
+                f.close()
 
 
 
