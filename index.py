@@ -1,12 +1,14 @@
 import datetime
 import sys
-
 import MySQLdb
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUiType
 from docx import *
 from shutil import copyfile
 from docx.shared import Pt
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 FORM_CLASS, _ = loadUiType("design.ui")
 user_id = 4
@@ -21,23 +23,21 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.setupUi(self)
         self.tabWidget.tabBar().setVisible(False)
         self.DB_Connect()
+
         self.handel_buttons()
+        self.Show_All_The_Analysts()
         self.Show_All_The_Sales()
         self.Show_all_analysts_in_combo()
         self.Show_all_buys()
         self.History()
+        self.Show_All_Clients()
 
     def DB_Connect(self):
         self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel', charset="utf8",
-                                  use_unicode=True, port=3309)
+                                  use_unicode=True, port=3306)
         self.cur = self.db.cursor()
 
     def handel_buttons(self):
-
-        self.lineEdit_22.hide()
-        self.lineEdit_23.hide()
-        self.label_42.hide()
-        self.label_43.hide()
         self.pushButton_15.clicked.connect(self.Light_Blue_Theme)
         self.pushButton_9.clicked.connect(self.Dark_Orange_Theme)
         self.pushButton_13.clicked.connect(self.Dark_Blue_Theme)
@@ -66,6 +66,43 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_19.clicked.connect(self.Search_In_All_Sales)
         self.pushButton_21.clicked.connect(self.Search_In_History)
         self.pushButton_35.clicked.connect(self.clear_data_in_sales)
+        self.pushButton_10.clicked.connect(self.Reset_password)
+
+    def Reset_password(self):
+        user_name = self.lineEdit_7.text()
+        self.cur.execute(''' SELECT * FROM adduser ''')
+        data = self.cur.fetchall()
+        ruser_name = ''
+        a = 0
+        for row in data:
+            if row[1] == user_name:
+                ruser_name = row[1]
+            else:
+                a = 5
+        if a == 5:
+            QMessageBox.information(self, 'info', 'اسم المستخدم الذي ادخلته غير صحيح')
+        self.cur.execute(''' SELECT user_email,userpassword FROM adduser WHERE user_name=%s ''', (ruser_name))
+        email_data = self.cur.fetchone()
+        # email = "ameersaad810@gmail.com" # the email where you sent the email
+        # password = "aahmpredtiddvxlo"
+        # send_to_email = email_data[0] # for whom
+        # subject = "n"
+        # message = f'Hello.\n your password is {email_data[1]} '
+        # msg = MIMEMultipart()
+        # msg["From"] = email
+        # msg["To"] = send_to_email
+        # msg["Subject"] = subject
+        #
+        # msg.attach(MIMEText(message, 'plain'))
+        #
+        # server = smtplib.SMTP("smtp.gmail.com", 587)
+        # server.starttls()
+        # server.login(email, password)
+        # text = msg.as_string()
+        # server.sendmail(email, send_to_email, text)
+        # server.quit()
+        # print('ok')
+
     def clear_data_in_sales(self):
         self.tableWidget_5.setRowCount(0)
         self.tableWidget_5.insertRow(0)
@@ -77,15 +114,10 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.comboBox_16.setCurrentIndex(0)
         self.comboBox_17.setCurrentIndex(0)
         self.textEdit.setPlainText('')
-    def add_analysts_to_combo(self):
-        self.cur.execute(''' SELECT name FROM addanalyst ''')
-        data = self.cur.fetchone()
-        for item in data:
-            self.comboBox_16.addItem(str(data[0]))
 
     def Show_All_Clients(self):
-        self.cur.execute(''' SELECT * FROM addclient ''')
-        data = self.cur.fetchone()
+        self.cur.execute(''' SELECT client_name,client_age,client_doctor,id FROM addclient ''')
+        data = self.cur.fetchall()
         self.tableWidget_2.setRowCount(0)
         self.tableWidget_2.insertRow(0)
         for row, form in enumerate(data):
@@ -410,20 +442,33 @@ class mainapp(QMainWindow, FORM_CLASS):
     def Show_All_The_Analysts(self):
         search_type = self.comboBox_19.currentText()
         search_words = self.lineEdit_26.text()
-        combobox_value = ''
-        sql = ''
-        if search_type == 'اسم التحليل المطابق':
-            combobox_value = 'name'
-        if search_type == 'السعر المطابق':
-            combobox_value = 'price'
-        if search_type != 'اسم التحليل المطابق' and search_type != 'السعر المطابق':
-            sql = ''' SELECT name,category,default_result1,default_result2,price FROM addanalyst'''
-        else:
-            sql = f' SELECT name,category,default_result1,default_result2,price FROM addanalyst WHERE {combobox_value}=%s'
-        if type(search_words) == int:
-            self.cur.execute(sql, int(search_words, ))
-        if type(search_words) == str:
-            self.cur.execute(sql, str(search_words, ))
+
+        if self.comboBox_19.currentIndex() == 1:
+            self.cur.execute(
+                ''' SELECT name,category,default_result1,default_result2,price,sub_category FROM addanalyst WHERE name=%s ''',
+                (search_words,))
+        if self.comboBox_19.currentIndex() == 2:
+            self.cur.execute(
+                ''' SELECT name,category,default_result1,default_result2,price,sub_category FROM addanalyst WHERE price=%s ''',
+                (search_words,))
+        if self.comboBox_19.currentIndex() == 0:
+            self.cur.execute(
+                ''' SELECT name,category,default_result1,default_result2,price,sub_category FROM addanalyst''')
+
+        # combobox_value = ''
+        # sql = ''
+        # if search_type == 'اسم التحليل المطابق':
+        #     combobox_value = 'name'
+        # if search_type == 'السعر المطابق':
+        #     combobox_value = 'price'
+        # if search_type != 'اسم التحليل المطابق' and search_type != 'السعر المطابق':
+        #     sql = ''' SELECT name,category,default_result1,default_result2,price,sub_category FROM addanalyst'''
+        # else:
+        #     sql = f' SELECT name,category,default_result1,default_result2,price,sub_category FROM addanalyst WHERE {combobox_value}=%s'
+        # if type(search_words) == int:
+        #     self.cur.execute(sql, search_words)
+        # if type(search_words) == str:
+        #     self.cur.execute(sql, search_words)
         analyst_data = self.cur.fetchall()
         self.tableWidget_7.setRowCount(0)
         self.tableWidget_7.insertRow(0)
@@ -441,6 +486,9 @@ class mainapp(QMainWindow, FORM_CLASS):
                         category = 'حقل كتابة'
 
                     self.tableWidget_7.setItem(row, col, QTableWidgetItem(str(category)))
+                if col == 5:
+                    self.tableWidget_7.setItem(row, col, QTableWidgetItem(str(analyst_data[row][5])))
+
                 self.tableWidget_7.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
             row_pos = self.tableWidget_7.rowCount()
@@ -461,6 +509,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             (
                 analyst_name, analyst_result1, analyst_result2, analyst_result_category, analyst_price, sub_category,
                 date))
+        self.db.commit()
         self.Add_Data_To_history(3, 2)
         self.History()
 
@@ -489,13 +538,23 @@ class mainapp(QMainWindow, FORM_CLASS):
         sub_category = self.comboBox_26.currentText()
         date = datetime.datetime.now()
         self.cur.execute(
-            ''' UPDATE  addanalyst SET name=%s,default_result1=%s,default_result2=%s,price=%s,category=%s,sub_category=%s,date=%s ''',
+            ''' UPDATE  addanalyst SET name=%s,default_result1=%s,default_result2=%s,price=%s,category=%s,sub_category=%s,date=%s WHERE name=%s ''',
             (
-                analyst_name, analyst_result1, analyst_result2, analyst_result_category, sub_category, analyst_price,
-                date))
+                analyst_name, analyst_result1, analyst_result2, analyst_price, analyst_result_category, sub_category,
+                date, analyst_name))
         self.db.commit()
         self.Add_Data_To_history(4, 2)
         self.History()
+        self.Show_all_analysts_in_combo()
+        QMessageBox.information(self, 'info', 'تم تعديل التحليل بنجاح')
+        analyst_current_name = self.comboBox_21.setCurrentIndex(0)
+        analyst_name = self.lineEdit_29.setText('')
+        analyst_result_category = self.comboBox_23.setCurrentIndex(0)
+        analyst_result1 = self.doubleSpinBox_4.setValue(0)
+        analyst_result2 = self.doubleSpinBox_5.setValue(0)
+        analyst_price = self.doubleSpinBox_6.setValue(0)
+        sub_category = self.comboBox_26.setCurrentIndex(0)
+        self.Show_All_The_Analysts()
 
     def Delete_Analyst(self):
 
@@ -505,15 +564,21 @@ class mainapp(QMainWindow, FORM_CLASS):
             analyst_current_name = self.comboBox_21.currentText()
             sql = ''' DELETE FROM addanalyst WHERE name=%s '''
             self.cur.execute(sql, [(analyst_current_name)])
+            self.db.commit()
             self.Show_all_analysts_in_combo()
         self.Add_Data_To_history(5, 2)
         self.History()
+        self.Show_all_analysts_in_combo()
+        QMessageBox.information(self, 'info', 'تم حذف التحليل بنجاح')
+        self.Show_All_The_Analysts()
 
     def Show_all_analysts_in_combo(self):
         self.cur.execute(''' SELECT name FROM addanalyst ''')
         data = self.cur.fetchall()
         for item in data:
+            self.comboBox_21.clear()
             self.comboBox_21.addItem(str(item[0]))
+            self.comboBox_16.clear()
             self.comboBox_16.addItem(str(item[0]))
 
     def Clients_Page(self):
@@ -522,25 +587,26 @@ class mainapp(QMainWindow, FORM_CLASS):
                          (str(id),))
         client_data = self.cur.fetchall()
         self.cur.execute(
-            ''' SELECT total_price,analyst_name,analyst_result,client_name FROM addnewitem WHERE client_id=%s''',
+            ''' SELECT price,analyst_name,analyst_result,client_name FROM addnewitem WHERE client_id=%s''',
             (str(id),))
         client_analyst_data = self.cur.fetchall()
         print(client_analyst_data)
         num = 0
         all_client_analyst = []
+        total = 0
         for i in client_analyst_data:
-            total = 0
             num += 1
-            for k in range(0, num):
-                total += int(client_analyst_data[k][0])
+        for k in range(0, num):
+            total += int(client_analyst_data[k][0])
         for j in range(0, num):
             all_client_analyst.append(str(client_analyst_data[j][1]))
-
+        self.tableWidget_4.setRowCount(0)
+        self.tableWidget_4.insertRow(0)
         for row, form in enumerate(client_data):
 
             for col, item in enumerate(form):
                 self.tableWidget_4.setItem(row, 4, QTableWidgetItem(str(num)))
-                self.tableWidget_4.setItem(row, 5, QTableWidgetItem(str(all_client_analyst)))
+                self.tableWidget_4.setItem(row, 5, QTableWidgetItem(str(','.join(all_client_analyst))))
                 self.tableWidget_4.setItem(row, 6, QTableWidgetItem(str(total)))
                 self.tableWidget_4.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
@@ -668,18 +734,29 @@ class mainapp(QMainWindow, FORM_CLASS):
         user_password = self.lineEdit_2.text()
         self.cur.execute(''' SELECT * FROM adduser ''')
         data = self.cur.fetchall()
+        a = 0
         for row in data:
             if row[1] == user_name and row[2] == user_password:
                 user_id = row[0]
                 print('gg')
-        print(data)
-        self.Add_Data_To_history(1, 5)
-        self.History()
+                print(data)
+                self.Add_Data_To_history(1, 5)
+                self.History()
+            else:
+                a = 5
+        if a == 5:
+            warning = QMessageBox.warning(self, '', "كلمة المرور او اسم المستخدم خاطئة هل تريد استعادة كلمة المرور؟",
+                                          QMessageBox.Yes | QMessageBox.No)
+            if warning == QMessageBox.Yes:
+                self.Open_ResetPassword_Page()
 
     def Delete_All_History_Data(self):
-        sql = ''' DELETE FROM his WHERE def=%s'''
-        self.cur.execute(sql, [(1)])
+        sql = ''' DELETE FROM his'''
+        self.cur.execute(sql)
+        self.db.commit()
         QMessageBox.information(self, 'info', 'تم حذف محتويات السجل بنجاح')
+        self.tableWidget_8.setRowCount(0)
+        self.tableWidget_8.insertRow(0)
 
     def Open_Sales_Page(self):
         self.tabWidget.setCurrentIndex(3)
@@ -698,7 +775,6 @@ class mainapp(QMainWindow, FORM_CLASS):
 
     def Open_Analyse_Page(self):
         self.tabWidget.setCurrentIndex(4)
-        self.Show_All_The_Analysts()
 
     def Open_ResetPassword_Page(self):
         self.tabWidget.setCurrentIndex(1)
@@ -1181,7 +1257,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     n.style.font.size = Pt(14)
                 document.save('word/GUE latest.docx')
                 f.close()
-            if word_type=='hematology':
+            if word_type == 'hematology':
                 f = open('word/hematology latest.docx', 'rb')
                 f.read()
 
@@ -1363,7 +1439,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     n.style.font.size = Pt(14)
                 document.save('word/hematology latest.docx')
                 f.close()
-            if word_type=='هرمونات مشترك':
+            if word_type == 'هرمونات مشترك':
                 f = open('word/هرمونات مشترك latest.docx', 'rb')
                 f.read()
 
@@ -1566,7 +1642,6 @@ class mainapp(QMainWindow, FORM_CLASS):
                                 print('1' + n.text + '2')
                 document.save('word/هرمونات مشترك latest.docx')
                 f.close()
-
 
 
 def main():

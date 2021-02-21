@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1258</width>
-    <height>753</height>
+    <height>744</height>
    </rect>
   </property>
   <property name="font">
@@ -2255,7 +2255,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
       </font>
      </property>
      <property name="text">
-      <string>العملاء</string>
+      <string>المراجعين</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_6">
@@ -2553,7 +2553,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
        <enum>Qt::RightToLeft</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_17">
        <attribute name="title">
@@ -3151,7 +3151,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          </property>
          <item>
           <property name="text">
-           <string>--------------------------------------------------</string>
+           <string>--------------------------</string>
           </property>
          </item>
          <item>
@@ -3235,96 +3235,6 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
           </font>
          </property>
         </widget>
-        <widget class="QLabel" name="label_42">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>420</x>
-           <y>221</y>
-           <width>101</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <family>Segoe UI</family>
-           <pointsize>11</pointsize>
-           <weight>50</weight>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>الطبيعي</string>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="lineEdit_22">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>350</x>
-           <y>219</y>
-           <width>171</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <family>Segoe UI</family>
-          </font>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_43">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>240</x>
-           <y>222</y>
-           <width>101</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <family>Segoe UI</family>
-           <pointsize>11</pointsize>
-           <weight>50</weight>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>فوق الطبيعي</string>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="lineEdit_23">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>180</x>
-           <y>219</y>
-           <width>171</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <family>Segoe UI</family>
-          </font>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
         <widget class="QTableWidget" name="tableWidget_5">
          <property name="enabled">
           <bool>true</bool>
@@ -3379,7 +3289,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          </property>
          <property name="geometry">
           <rect>
-           <x>159</x>
+           <x>150</x>
            <y>210</y>
            <width>371</width>
            <height>51</height>
@@ -3741,7 +3651,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
         <x>0</x>
         <y>10</y>
         <width>1011</width>
-        <height>671</height>
+        <height>711</height>
        </rect>
       </property>
       <property name="font">
@@ -3754,7 +3664,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
        <enum>Qt::RightToLeft</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_8">
        <attribute name="title">
@@ -3900,6 +3810,11 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
           <string>السعر</string>
          </property>
         </column>
+        <column>
+         <property name="text">
+          <string>نوع التحليل</string>
+         </property>
+        </column>
        </widget>
       </widget>
       <widget class="QWidget" name="tab_9">
@@ -3912,7 +3827,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
           <x>520</x>
           <y>20</y>
           <width>491</width>
-          <height>621</height>
+          <height>641</height>
          </rect>
         </property>
         <property name="font">
@@ -4181,7 +4096,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
           <x>0</x>
           <y>20</y>
           <width>501</width>
-          <height>621</height>
+          <height>641</height>
          </rect>
         </property>
         <property name="font">
@@ -4757,7 +4672,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab_14">
        <attribute name="title">
