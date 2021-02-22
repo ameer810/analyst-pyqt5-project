@@ -67,6 +67,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_21.clicked.connect(self.Search_In_History)
         self.pushButton_35.clicked.connect(self.clear_data_in_sales)
         self.pushButton_10.clicked.connect(self.Reset_password)
+        self.pushButton_26.clicked.connect(self.Add_Analyst)
 
     def Reset_password(self):
         user_name = self.lineEdit_7.text()
@@ -400,22 +401,30 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.cur.execute('''SELECT category FROM addanalyst WHERE name = %s''', (analyst_name,))
         analyst_category = self.cur.fetchone()
 
-        if analyst_category == 'عدد':
+        if analyst_category[0] == 'عدد':
             self.comboBox_17.hide()
             self.lineEdit_21.hide()
             self.spinBox_8.show()
-        if analyst_category == 'خيارات':
+        if analyst_category[0] == 'خيارات':
             self.lineEdit_21.hide()
             self.spinBox_8.hide()
+
             self.comboBox_17.show()
-        if analyst_category == 'حقل كتابة':
-            self.lineEdit_21.hide()
+            self.comboBox_17.setEditable(False)
+        if analyst_category[0] == 'حقل كتابة':
+            self.lineEdit_21.show()
             self.spinBox_8.hide()
             self.comboBox_17.hide()
-        if analyst_category == 'خيارات مع تعديل':
+        if analyst_category[0] == 'خيارات مع تعديل':
             self.lineEdit_21.hide()
             self.spinBox_8.hide()
+            self.comboBox_17.clear()
+            self.comboBox_17.show()
             self.comboBox_17.setEditable(True)
+
+        if analyst_name=='':
+            pass
+            #add items to combox
 
     def get_client_id(self):
         global client_id_glob
@@ -507,11 +516,18 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.cur.execute(
             ''' INSERT INTO addanalyst (name,default_result1,default_result2,price,category,sub_category,date) VALUES(%s,%s,%s,%s,%s,%s,%s) ''',
             (
-                analyst_name, analyst_result1, analyst_result2, analyst_result_category, analyst_price, sub_category,
+                analyst_name, analyst_result1, analyst_result2,analyst_price ,analyst_result_category , sub_category,
                 date))
         self.db.commit()
+        QMessageBox.information(self, 'info', 'تم اضافة التحليل بنجاح')
         self.Add_Data_To_history(3, 2)
         self.History()
+        analyst_name = self.lineEdit_28.setText('')
+        analyst_result_category = self.comboBox_22.setCurrentIndex(0)
+        analyst_result1 = self.doubleSpinBox_3.setValue(0)
+        analyst_result2 = self.doubleSpinBox_2.setValue(0)
+        analyst_price = self.doubleSpinBox.setValue(0)
+        sub_category = self.comboBox_23.setCurrentIndex(0)
 
     def Show_analyst_in_Edit_Or_Delete(self):
         analyst_current_name = self.comboBox_21.currentText()
@@ -575,10 +591,14 @@ class mainapp(QMainWindow, FORM_CLASS):
     def Show_all_analysts_in_combo(self):
         self.cur.execute(''' SELECT name FROM addanalyst ''')
         data = self.cur.fetchall()
+        self.comboBox_21.clear()
+        self.comboBox_16.clear()
+        self.comboBox_21.addItem('----------------')
+        self.comboBox_16.addItem('----------------')
         for item in data:
-            self.comboBox_21.clear()
+
             self.comboBox_21.addItem(str(item[0]))
-            self.comboBox_16.clear()
+
             self.comboBox_16.addItem(str(item[0]))
 
     def Clients_Page(self):
@@ -732,23 +752,42 @@ class mainapp(QMainWindow, FORM_CLASS):
         global user_id
         user_name = self.lineEdit.text()
         user_password = self.lineEdit_2.text()
-        self.cur.execute(''' SELECT * FROM adduser ''')
-        data = self.cur.fetchall()
-        a = 0
-        for row in data:
-            if row[1] == user_name and row[2] == user_password:
-                user_id = row[0]
+        self.cur.execute(''' SELECT id,user_password,user_name FROM adduser WHERE user_name=%s ''',(user_name,))
+        # self.cur.execute(''' SELECT * FROM adduser ''')
+        data = self.cur.fetchone()
+        if data !=None:
+            print('lkjh')
+            if data[2]==user_name and data[1]==user_password:
+                print('jjkjkjkjkj')
+                user_id = data[0]
                 print('gg')
                 print(data)
                 self.Add_Data_To_history(1, 5)
                 self.History()
             else:
-                a = 5
-        if a == 5:
-            warning = QMessageBox.warning(self, '', "كلمة المرور او اسم المستخدم غير صحيحة هل تريد استعادة كلمة المرور؟",
+                warning = QMessageBox.warning(self, '', "كلمة المرور او اسم المستخدم غير صحيحة هل تريد استعادة كلمة المرور؟",
+                                              QMessageBox.Yes | QMessageBox.No)
+                if warning == QMessageBox.Yes:
+                    self.Open_ResetPassword_Page()
+        else:
+            warning = QMessageBox.warning(self, '',
+                                          "كلمة المرور او اسم المستخدم غير صحيحة هل تريد استعادة كلمة المرور؟",
                                           QMessageBox.Yes | QMessageBox.No)
             if warning == QMessageBox.Yes:
                 self.Open_ResetPassword_Page()
+        # a = 0
+        # for row in data:
+        #     if row[1] == user_name and row[2] == user_password:
+        #         user_id = row[0]
+        #         print('gg')
+        #         print(data)
+        #         self.Add_Data_To_history(1, 5)
+        #         self.History()
+        #     else:
+        #         warning = QMessageBox.warning(self, '', "كلمة المرور او اسم المستخدم غير صحيحة هل تريد استعادة كلمة المرور؟",
+        #                                       QMessageBox.Yes | QMessageBox.No)
+        #         if warning == QMessageBox.Yes:
+        #             self.Open_ResetPassword_Page()
 
     def Delete_All_History_Data(self):
         sql = ''' DELETE FROM his'''
@@ -806,167 +845,167 @@ class mainapp(QMainWindow, FORM_CLASS):
 
     def Bio_Word(self, name, doctor, analysts, results, year, month, day, word_types):
         for word_type in word_types:
-            # if word_type == 'bio':
-            #     f = open('word/bio latest17.docx', 'rb')
-            #     f.read()
-            #     document = Document(f)
-            #     for i in document.tables:
-            #         for k in i.rows:
-            #             for j in k.cells:
-            #                 for n in j.paragraphs:
-            #                     if n.text == 'أسـم المريض :       المحترم':
-            #                         n.text = f'أسـم المريض :{name}       المحترم'
-            #                         run = n.runs
-            #                         font = run[0].font
-            #                         font.name = 'Monotype Koufi'
-            #                         font.bold = True
-            #                         font.size = Pt(11)
-            #                     if n.text == 'حضرة الدكتور   :       المحترم':
-            #                         n.text = f'حضرة الدكتور   : {doctor}      المحترم'
-            #                         run = n.runs
-            #                         font = run[0].font
-            #                         font.name = 'Monotype Koufi'
-            #                         font.bold = True
-            #                         font.size = Pt(11)
-            #
-            #                     if n.text == 'Random  blood sugar :':
-            #                         print('okkkkkkkkkkkk')
-            #                         for row in range(0, len(analysts)):
-            #                             analyst_and_result = {
-            #                                 'analyst': analysts[row],
-            #                                 'result': results[row]
-            #                             }
-            #                             if analyst_and_result['analyst'] == 'Random  blood sugar':
-            #                                 k = analyst_and_result['result']
-            #                                 n.text = f'Random  blood sugar : {k}'
-            #                                 run = n.runs
-            #                                 font = run[0].font
-            #                                 font.bold = True
-            #                                 font.size = Pt(11)
-            #                                 font.name = 'Tahoma'
-            #                     if n.text == 'Blood Urea               :':
-            #                         for row in range(0, len(analysts)):
-            #                             analyst_and_result = {
-            #                                 'analyst': analysts[row],
-            #                                 'result': results[row]
-            #                             }
-            #                             if analyst_and_result['analyst'] == 'Blood Urea':
-            #                                 k = analyst_and_result['result']
-            #
-            #                                 n.text = f'Blood Urea               : {k}'
-            #                                 run = n.runs
-            #                                 font = run[0].font
-            #                                 font.bold = True
-            #                                 font.size = Pt(11)
-            #                                 font.name = 'Tahoma'
-            #                     if n.text == 'S. Creatinin               :':
-            #                         for row in range(0, len(analysts)):
-            #                             analyst_and_result = {
-            #                                 'analyst': analysts[row],
-            #                                 'result': results[row]
-            #                             }
-            #                             if analyst_and_result['analyst'] == 'S. Creatinin':
-            #                                 k = analyst_and_result['result']
-            #                                 n.text = f'S. Creatinin               : {k}'
-            #                                 run = n.runs
-            #                                 font = run[0].font
-            #                                 font.bold = True
-            #                                 font.size = Pt(11)
-            #                                 font.name = 'Tahoma'
-            #                     if n.text == 'S. Uric acid                  :':
-            #                         for row in range(0, len(analysts)):
-            #                             analyst_and_result = {
-            #                                 'analyst': analysts[row],
-            #                                 'result': results[row]
-            #                             }
-            #                             if analyst_and_result['analyst'] == 'S. Uric acid':
-            #                                 k = analyst_and_result['result']
-            #                                 n.text = f'S. Uric acid                  : {k}'
-            #                                 run = n.runs
-            #                                 font = run[0].font
-            #                                 font.bold = True
-            #                                 font.size = Pt(11)
-            #                                 font.name = 'Tahoma'
-            #                     if n.text == 'S. Cholesterol            :':
-            #                         for row in range(0, len(analysts)):
-            #                             analyst_and_result = {
-            #                                 'analyst': analysts[row],
-            #                                 'result': results[row]
-            #                             }
-            #                             if analyst_and_result['analyst'] == 'S. Cholesterol':
-            #                                 k = analyst_and_result['result']
-            #                                 n.text = f'S. Cholesterol            : {k}'
-            #                                 run = n.runs
-            #                                 font = run[0].font
-            #                                 font.bold = True
-            #                                 font.size = Pt(11)
-            #                                 font.name = 'Tahoma'
-            #                     if n.text == 'S. Triglycerid             :':
-            #                         for row in range(0, len(analysts)):
-            #                             analyst_and_result = {
-            #                                 'analyst': analysts[row],
-            #                                 'result': results[row]
-            #                             }
-            #                             if analyst_and_result['analyst'] == 'S. Triglycerid':
-            #                                 k = analyst_and_result['result']
-            #                                 n.text = f'S. Triglycerid             : {k}'
-            #                                 run = n.runs
-            #                                 font = run[0].font
-            #                                 font.bold = True
-            #                                 font.size = Pt(11)
-            #                                 font.name = 'Tahoma'
-            #                     if n.text == 'Total serum Bilirubin:':
-            #                         for row in range(0, len(analysts)):
-            #                             analyst_and_result = {
-            #                                 'analyst': analysts[row],
-            #                                 'result': results[row]
-            #                             }
-            #                             if analyst_and_result['analyst'] == 'Total serum Bilirubin':
-            #                                 k = analyst_and_result['result']
-            #                                 n.text = f'Total serum Bilirubin: {k}'
-            #                                 run = n.runs
-            #                                 font = run[0].font
-            #                                 font.bold = True
-            #                                 font.size = Pt(11)
-            #                                 font.name = 'Tahoma'
-            #                     if n.text == 'S.Calcium :':
-            #                         for row in range(0, len(analysts)):
-            #                             analyst_and_result = {
-            #                                 'analyst': analysts[row],
-            #                                 'result': results[row]
-            #                             }
-            #                             if analyst_and_result['analyst'] == 'S.Calcium':
-            #                                 k = analyst_and_result['result']
-            #                                 n.text = f'S.Calcium : {k}'
-            #                                 run = n.runs
-            #                                 font = run[0].font
-            #                                 font.bold = True
-            #                                 font.size = Pt(11)
-            #                                 font.name = 'Tahoma'
-            #                     if n.text == 'Vitamin D              :':
-            #                         for row in range(0, len(analysts)):
-            #                             analyst_and_result = {
-            #                                 'analyst': analysts[row],
-            #                                 'result': results[row]
-            #                             }
-            #                             if analyst_and_result['analyst'] == 'Vitamin D':
-            #                                 k = analyst_and_result['result']
-            #                                 n.text = f'Vitamin D              : {k}'
-            #                                 run = n.runs
-            #                                 font = run[0].font
-            #                                 font.bold = True
-            #                                 font.size = Pt(11)
-            #                                 font.name = 'Tahoma'
-            #
-            #                     if n.text == 'Date:    /     / 20':
-            #                         n.text = f'Date:   {day} /  {month} / {year}'
-            #                         run = n.runs
-            #                         font = run[0].font
-            #                         font.bold = True
-            #                         font.size = Pt(11)
-            #                         font.name = 'Tahoma'
-            #     document.save('word/bio latest17.docx')
-            #     f.close()
+            if word_type == 'bio':
+                f = open('word/bio latest17.docx', 'rb')
+                f.read()
+                document = Document(f)
+                for i in document.tables:
+                    for k in i.rows:
+                        for j in k.cells:
+                            for n in j.paragraphs:
+                                if n.text == 'أسـم المريض :       المحترم':
+                                    n.text = f'أسـم المريض :{name}       المحترم'
+                                    run = n.runs
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.bold = True
+                                    font.size = Pt(11)
+                                if n.text == 'حضرة الدكتور   :       المحترم':
+                                    n.text = f'حضرة الدكتور   : {doctor}      المحترم'
+                                    run = n.runs
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.bold = True
+                                    font.size = Pt(11)
+
+                                if n.text == 'Random  blood sugar :':
+                                    print('okkkkkkkkkkkk')
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Random  blood sugar':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Random  blood sugar : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.bold = True
+                                            font.size = Pt(11)
+                                            font.name = 'Tahoma'
+                                if n.text == 'Blood Urea               :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Blood Urea':
+                                            k = analyst_and_result['result']
+
+                                            n.text = f'Blood Urea               : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.bold = True
+                                            font.size = Pt(11)
+                                            font.name = 'Tahoma'
+                                if n.text == 'S. Creatinin               :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'S. Creatinin':
+                                            k = analyst_and_result['result']
+                                            n.text = f'S. Creatinin               : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.bold = True
+                                            font.size = Pt(11)
+                                            font.name = 'Tahoma'
+                                if n.text == 'S. Uric acid                  :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'S. Uric acid':
+                                            k = analyst_and_result['result']
+                                            n.text = f'S. Uric acid                  : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.bold = True
+                                            font.size = Pt(11)
+                                            font.name = 'Tahoma'
+                                if n.text == 'S. Cholesterol            :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'S. Cholesterol':
+                                            k = analyst_and_result['result']
+                                            n.text = f'S. Cholesterol            : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.bold = True
+                                            font.size = Pt(11)
+                                            font.name = 'Tahoma'
+                                if n.text == 'S. Triglycerid             :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'S. Triglycerid':
+                                            k = analyst_and_result['result']
+                                            n.text = f'S. Triglycerid             : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.bold = True
+                                            font.size = Pt(11)
+                                            font.name = 'Tahoma'
+                                if n.text == 'Total serum Bilirubin:':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Total serum Bilirubin':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Total serum Bilirubin: {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.bold = True
+                                            font.size = Pt(11)
+                                            font.name = 'Tahoma'
+                                if n.text == 'S.Calcium :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'S.Calcium':
+                                            k = analyst_and_result['result']
+                                            n.text = f'S.Calcium : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.bold = True
+                                            font.size = Pt(11)
+                                            font.name = 'Tahoma'
+                                if n.text == 'Vitamin D              :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Vitamin D':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Vitamin D              : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.bold = True
+                                            font.size = Pt(11)
+                                            font.name = 'Tahoma'
+
+                                if n.text == 'Date:    /     / 20':
+                                    n.text = f'Date:   {day} /  {month} / {year}'
+                                    run = n.runs
+                                    font = run[0].font
+                                    font.bold = True
+                                    font.size = Pt(11)
+                                    font.name = 'Tahoma'
+                document.save('word/bio latest17.docx')
+                f.close()
             if word_type == 'GSE':
                 f = open('word/GSE latest.docx', 'rb')
                 f.read()
@@ -1004,7 +1043,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(11)
                                             font.name = 'Tahoma'
                                 if n.text == 'Consistency:':
                                     for row in range(0, len(analysts)):
@@ -1018,7 +1057,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(11)
                                             font.name = 'Tahoma'
                                 if n.text == 'R.B.Cs:':
                                     for row in range(0, len(analysts)):
@@ -1032,7 +1071,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(11)
                                             font.name = 'Tahoma'
                                 if n.text == 'Pus cells:':
                                     for row in range(0, len(analysts)):
@@ -1046,7 +1085,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(11)
                                             font.name = 'Tahoma'
                                 if n.text == 'E. Histolytica:':
                                     for row in range(0, len(analysts)):
@@ -1060,7 +1099,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(11)
                                             font.name = 'Tahoma'
                                 if n.text == 'G. Lembilia:':
                                     for row in range(0, len(analysts)):
@@ -1074,7 +1113,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(11)
                                             font.name = 'Tahoma'
                                 if n.text == 'Ova:':
                                     for row in range(0, len(analysts)):
@@ -1088,7 +1127,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(11)
                                             font.name = 'Tahoma'
                                 if n.text == 'Other:':
                                     for row in range(0, len(analysts)):
@@ -1102,7 +1141,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(11)
                                             font.name = 'Tahoma'
                                 if n.text == 'Date:    /     / 20':
                                     for row in range(0, len(analysts)):
@@ -1132,9 +1171,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                             for n in j.paragraphs:
                                 if n.text == 'أسـم المريض :       المحترم':
                                     n.text = f'أسـم المريض :{5}       المحترم'
-                                    n.style.font.name = 'Monotype Koufi'
-                                    n.style.font.bold = True
-                                    n.style.font.size = Pt(11)
+                                    run = n.runs
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.size = Pt(11)
                                 if n.text == 'حضرة الدكتور   :       المحترم':
                                     n.text = f'حضرة الدكتور   : {5}      المحترم'
                                     n.style.font.name = 'Monotype Koufi'
@@ -1149,8 +1189,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'Appearance':
                                             k = analyst_and_result['result']
                                             n.text = f'Appearance : {k}'
-                                            n.style.font.name = 'Tahoma'
-                                            n.style.font.size = Pt(14)
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.size = Pt(14)
                                 if n.text == 'Reaction      :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1160,8 +1202,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'Reaction':
                                             k = analyst_and_result['result']
                                             n.text = f'Reaction      : {k}'
-                                            n.style.font.name = 'Tahoma'
-                                            n.style.font.size = Pt(14)
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.size = Pt(14)
                                 if n.text == 'Albumin       :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1171,8 +1215,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'Albumin':
                                             k = analyst_and_result['result']
                                             n.text = f'Albumin       : {k}'
-                                            n.style.font.name = 'Tahoma'
-                                            n.style.font.size = Pt(14)
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.size = Pt(14)
                                 if n.text == 'Sugar          :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1182,8 +1228,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'Sugar':
                                             k = analyst_and_result['result']
                                             n.text = f'Sugar          : {k}'
-                                            n.style.font.name = 'Tahoma'
-                                            n.style.font.size = Pt(14)
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.size = Pt(14)
                                 if n.text == 'RBCs         :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1193,8 +1241,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'RBCs':
                                             k = analyst_and_result['result']
                                             n.text = f'RBCs         : {k}'
-                                            n.style.font.name = 'Tahoma'
-                                            n.style.font.size = Pt(14)
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.size = Pt(14)
                                 if n.text == 'Pus cells    :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1204,8 +1254,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'Pus cells':
                                             k = analyst_and_result['result']
                                             n.text = f'Pus cells    : {k}'
-                                            n.style.font.name = 'Tahoma'
-                                            n.style.font.size = Pt(14)
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.size = Pt(14)
                                 if n.text == 'Epith .cells :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1215,8 +1267,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'Epith .cells':
                                             k = analyst_and_result['result']
                                             n.text = f'Epith .cells : {k}'
-                                            n.style.font.name = 'Tahoma'
-                                            n.style.font.size = Pt(14)
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.size = Pt(14)
                                 if n.text == 'Crystals     :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1226,8 +1280,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'Crystals':
                                             k = analyst_and_result['result']
                                             n.text = f'Crystals     : {k}'
-                                            n.style.font.name = 'Tahoma'
-                                            n.style.font.size = Pt(14)
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.size = Pt(14)
                                 if n.text == 'Casts        :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1237,8 +1293,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'Casts':
                                             k = analyst_and_result['result']
                                             n.text = f'Casts        : {k}'
-                                            n.style.font.name = 'Tahoma'
-                                            n.style.font.size = Pt(14)
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.size = Pt(14)
                                 if n.text == 'Other        :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1248,13 +1306,17 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'Other':
                                             k = analyst_and_result['result']
                                             n.text = f'Other        : {k}'
-                                            n.style.font.name = 'Tahoma'
-                                            n.style.font.size = Pt(14)
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.size = Pt(14)
                                 if n.text == 'Date:    /     / 20':
                                     n.text = f'Date:   {day} /  {month} / {year}'
-                                    n.style.font.name = 'Tahoma'
-                                    n.style.font.bold = True
-                                    n.style.font.size = Pt(14)
+                                    run = n.runs
+                                    font = run[0].font
+                                    font.name = 'Tahoma'
+                                    font.bold = True
+                                    font.size = Pt(12)
                 document.save('word/GUE latest.docx')
                 f.close()
             if word_type == 'hematology':
@@ -1625,6 +1687,109 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             'result': results[row]
                                         }
                                         if analyst_and_result['analyst'] == 'Herpes  IgM':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {k}'
+                                        run = n.runs
+                                        font = run[0].font
+                                        font.bold = True
+                                        font.size = Pt(12)
+                                        font.name = 'Tahoma'
+                                if n.text == 'r0r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'T3':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {k}'
+                                        run = n.runs
+                                        font = run[0].font
+                                        font.bold = True
+                                        font.size = Pt(12)
+                                        font.name = 'Tahoma'
+
+                                if n.text == 'r1r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'T4':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {k}'
+                                        run = n.runs
+                                        font = run[0].font
+                                        font.bold = True
+                                        font.size = Pt(12)
+                                        font.name = 'Tahoma'
+
+                                if n.text == 'r2r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'TSH':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {k}'
+                                        run = n.runs
+                                        font = run[0].font
+                                        font.bold = True
+                                        font.size = Pt(12)
+                                        font.name = 'Tahoma'
+
+                                if n.text == 'r3r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'LH':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {k}'
+                                        run = n.runs
+                                        font = run[0].font
+                                        font.bold = True
+                                        font.size = Pt(12)
+                                        font.name = 'Tahoma'
+
+                                if n.text == 'r4r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'FSH':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {k}'
+                                        run = n.runs
+                                        font = run[0].font
+                                        font.bold = True
+                                        font.size = Pt(12)
+                                        font.name = 'Tahoma'
+
+                                if n.text == 'r5r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Prolactin':
+                                            k = analyst_and_result['result']
+                                        n.text = f'  {k}'
+                                        run = n.runs
+                                        font = run[0].font
+                                        font.bold = True
+                                        font.size = Pt(12)
+                                        font.name = 'Tahoma'
+                                if n.text == 'r6r':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Testosterone':
                                             k = analyst_and_result['result']
                                         n.text = f'  {k}'
                                         run = n.runs
