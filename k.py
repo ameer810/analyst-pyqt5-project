@@ -39,3 +39,12 @@
 # pyautogui.hotkey('g')
 # time.sleep(2)
 # pyautogui.hotkey('enter')
+from win32com import client
+import time
+
+word = client.Dispatch("Word.Application")
+
+word.Documents.Open(r'F:\برنامج التحليلات\word\bio latest17.docx')
+word.ActiveDocument.PrintOut()
+time.sleep(2)
+word.ActiveDocument.Close()

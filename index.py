@@ -745,7 +745,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             else:
                 a = 5
         if a == 5:
-            warning = QMessageBox.warning(self, '', "كلمة المرور او اسم المستخدم خاطئة هل تريد استعادة كلمة المرور؟",
+            warning = QMessageBox.warning(self, '', "كلمة المرور او اسم المستخدم غير صحيحة هل تريد استعادة كلمة المرور؟",
                                           QMessageBox.Yes | QMessageBox.No)
             if warning == QMessageBox.Yes:
                 self.Open_ResetPassword_Page()
