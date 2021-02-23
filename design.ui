@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1258</width>
-    <height>744</height>
+    <width>1261</width>
+    <height>745</height>
    </rect>
   </property>
   <property name="font">
@@ -2863,6 +2863,22 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
           <bold>false</bold>
          </font>
         </property>
+        <property name="styleSheet">
+         <string notr="true">QComboBox:disabled,
+QAbstractSpinBox:disabled,
+QSpinBox:disabled,
+QDoubleSpinBox:disabled,
+QLineEdit:disabled,
+QTextEdit:disabled,
+QTimeEdit:disabled,
+QDateEdit:disabled,
+QDateTimeEdit:disabled {
+    color: #616161;
+    background-color: #e0e0e0; /* same as enabled color */
+    border-color: #e0e0e0; /* same as enabled color */
+}
+</string>
+        </property>
         <property name="title">
          <string>معلومات المراجع</string>
         </property>
@@ -2899,6 +2915,9 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
            <family>Segoe UI</family>
            <pointsize>10</pointsize>
           </font>
+         </property>
+         <property name="readOnly">
+          <bool>false</bool>
          </property>
          <property name="placeholderText">
           <string>                    اسم المراجع</string>
@@ -3244,10 +3263,10 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          </property>
          <property name="geometry">
           <rect>
-           <x>20</x>
+           <x>10</x>
            <y>280</y>
-           <width>661</width>
-           <height>271</height>
+           <width>681</width>
+           <height>291</height>
           </rect>
          </property>
          <property name="font">
@@ -9451,7 +9470,7 @@ QDialog QGroupBox QFrame {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1258</width>
+     <width>1261</width>
      <height>26</height>
     </rect>
    </property>
