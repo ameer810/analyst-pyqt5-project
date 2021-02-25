@@ -19,7 +19,7 @@ FORM_CLASS, _ = loadUiType("design.ui")
 user_id = 4
 client_id_glob = 0
 chick_if_add_new = False
-
+if_print=False
 
 class mainapp(QMainWindow, FORM_CLASS):
     def __init__(self, parent=None):
@@ -74,6 +74,37 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_35.clicked.connect(self.clear_data_in_sales)
         self.pushButton_10.clicked.connect(self.Reset_password)
         self.pushButton_26.clicked.connect(self.Add_Analyst)
+        self.pushButton_34.clicked.connect(self.Preview)
+
+    def Preview(self):
+        global if_print
+        self.Print_Sale_Data('T')
+        warning = QMessageBox.warning(self, '', "هل قمت بطباعة جميع الملفات التي تمت معاينتها؟\n لا تضغط نعم الا لو قمت بطباعتها",
+                                      QMessageBox.Yes | QMessageBox.No)
+        if warning == QMessageBox.Yes:
+            warning2 = QMessageBox.warning(self, '',
+                                          "قم باغلاق جميع نوافذ تطبيق microsoft word. هل قمت باغلاقها؟",
+                                          QMessageBox.Yes | QMessageBox.No)
+            if warning2 == QMessageBox.Yes:
+                print('now delete')
+                if_print=True
+
+                print('its start')
+                if os.path.exists(r'F:\برنامج التحليلات\bio latest17.docx'):
+                        os.remove(r'F:\برنامج التحليلات\bio latest17.docx')
+
+                if os.path.exists(r'F:\برنامج التحليلات\GSE latest.docx'):
+                        os.remove(r'F:\برنامج التحليلات\GSE latest.docx')
+
+                if os.path.exists(r'F:\برنامج التحليلات\GUE latest.docx'):
+                        os.remove(r'F:\برنامج التحليلات\GUE latest.docx')
+
+                if os.path.exists(r'F:\برنامج التحليلات\hematology latest.docx'):
+                        os.remove(r'F:\برنامج التحليلات\hematology latest.docx')
+
+                if os.path.exists(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx'):
+                        os.remove(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
+
 
     def Reset_password(self):
         user_name = self.lineEdit_7.text()
@@ -235,7 +266,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.tableWidget_6.insertRow(row_pos)
         self.Add_Data_To_history(6, 1)
 
-    def Print_Sale_Data(self):
+    def Print_Sale_Data(self, prev):
         all_analyst = []
         all_result = []
         date = datetime.datetime.now()
@@ -255,7 +286,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             result = self.tableWidget_5.item(row, 2).text()
             all_result.append(str(result))
             real_doctor = self.tableWidget_5.item(row, 3).text()
-        self.Bio_Word(real_name, real_doctor, all_analyst, all_result, year, month, day, word_type)
+        self.Bio_Word(real_name, real_doctor, all_analyst, all_result, year, month, day, word_type, prev)
 
     def get_total_price(self):
         total_price = 0
@@ -452,19 +483,34 @@ class mainapp(QMainWindow, FORM_CLASS):
         # self.History()
 
     def Show_All_The_Sales(self):
-        self.cur.execute(''' SELECT * FROM addclient ORDER BY -date''')
+        self.cur.execute(''' SELECT client_name FROM addclient ORDER BY -date ''')
         analyst_data = self.cur.fetchall()
+        all_names=[]
+        id =0
+        for item in analyst_data:
+            if item[0] not in all_names:
+                all_names.append(item[0])
         self.tableWidget_6.setRowCount(0)
         self.tableWidget_6.insertRow(0)
-        for row, form in enumerate(analyst_data):
-            for col, item in enumerate(form):
-                if col == 3:
-                    self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(analyst_data[row][4])))
-                else:
-                    self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
-                col += 1
-            row_pos = self.tableWidget_6.rowCount()
-            self.tableWidget_6.insertRow(row_pos)
+        latest_data=[]
+        for s in all_names:
+            self.cur.execute(''' SELECT id FROM addclient WHERE client_name=%s ORDER BY id ''',(s,))
+            analyst_data2 = self.cur.fetchall()
+            id=analyst_data2[0][0]
+            print(analyst_data2[0],'h\n')
+
+            self.cur.execute(''' SELECT * FROM addclient WHERE id=%s ORDER BY -date ''',(id,))
+            latest_data=self.cur.fetchall()
+            print(latest_data,'its ')
+            for row, form in enumerate(latest_data):
+                for col, item in enumerate(form):
+                    if col == 3:
+                        self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(latest_data[row][4])))
+                    else:
+                        self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
+                    col += 1
+                row_pos = self.tableWidget_6.rowCount()
+                self.tableWidget_6.insertRow(row_pos)
 
     def Show_All_The_Analysts(self):
         search_type = self.comboBox_19.currentText()
@@ -554,26 +600,26 @@ class mainapp(QMainWindow, FORM_CLASS):
             ''' SELECT name,default_result1,default_result2,price,category,sub_category,date FROM addanalyst WHERE name=%s ''',
             (analyst_current_name,))
         data = self.cur.fetchall()
-        num=0
+        num = 0
         if data[0][4] == 'عدد':
-            num =4
+            num = 4
         if data[0][4] == 'خيارات':
-            num =2
+            num = 2
         if data[0][4] == 'حقل كتابة':
-            num =1
+            num = 1
         if data[0][4] == 'خيارات مع تعديل':
-            num =3
-        tp=0
+            num = 3
+        tp = 0
         if data[0][5] == 'bio':
-            tp =1
+            tp = 1
         if data[0][5] == 'GSE':
-            tp =2
+            tp = 2
         if data[0][5] == 'GUE':
-            tp =3
+            tp = 3
         if data[0][5] == 'hematology':
-            tp =4
+            tp = 4
         if data[0][5] == 'هرمونات مشترك':
-            tp =5
+            tp = 5
         sub_category = self.comboBox_26.setCurrentIndex(tp)
         analyst_name = self.lineEdit_29.setText(str(data[0][0]))
         analyst_result_category = self.comboBox_25.setCurrentIndex(num)
@@ -810,7 +856,6 @@ class mainapp(QMainWindow, FORM_CLASS):
             if warning == QMessageBox.Yes:
                 self.Open_ResetPassword_Page()
 
-
     def Delete_All_History_Data(self):
         sql = ''' DELETE FROM his'''
         self.cur.execute(sql)
@@ -865,7 +910,8 @@ class mainapp(QMainWindow, FORM_CLASS):
         style = style.read()
         self.setStyleSheet(style)
 
-    def Bio_Word(self, name, doctor, analysts, results, year, month, day, word_types):
+    def Bio_Word(self, name, doctor, analysts, results, year, month, day, word_types, prev):
+        global if_print
         for word_type in word_types:
             if word_type == 'bio':
                 f = open('word/bio latest17.docx', 'rb')
@@ -1027,13 +1073,24 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.name = 'Tahoma'
                 document.save('bio latest17.docx')
                 f.close()
-                word = client.Dispatch("Word.Application")
+                if prev == 'T':
+                    word = client.Dispatch("Word.Application")
+                    word.Documents.Open(r'F:\برنامج التحليلات\bio latest17.docx')
 
-                word.Documents.Open(r'F:\برنامج التحليلات\bio latest17.docx')
-                word.ActiveDocument.PrintOut()
-                time.sleep(2)
-                if os.path.exists(r'F:\برنامج التحليلات\bio latest17.docx'):
-                    os.remove(r'F:\برنامج التحليلات\bio latest17.docx')
+                else:
+
+                    word = client.Dispatch("Word.Application")
+
+                    word.Documents.Open(r'F:\برنامج التحليلات\bio latest17.docx')
+                    word.ActiveDocument.PrintOut()
+                    time.sleep(2)
+                    if os.path.exists(r'F:\برنامج التحليلات\bio latest17.docx'):
+                        os.remove(r'F:\برنامج التحليلات\bio latest17.docx')
+                print(if_print)
+                if if_print:
+                    print('its start')
+                    if os.path.exists(r'F:\برنامج التحليلات\bio latest17.docx'):
+                        os.remove(r'F:\برنامج التحليلات\bio latest17.docx')
                 # word.ActiveDocument.Close()
             if word_type == 'GSE':
                 f = open('word/GSE latest.docx', 'rb')
@@ -1188,13 +1245,22 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.name = 'Tahoma'
                 document.save('GSE latest.docx')
                 f.close()
-                word = client.Dispatch("Word.Application")
+                if prev == 'T':
 
-                word.Documents.Open(r'F:\برنامج التحليلات\GSE latest.docx')
-                word.ActiveDocument.PrintOut()
-                time.sleep(2)
-                if os.path.exists(r'F:\برنامج التحليلات\GSE latest.docx'):
-                    os.remove(r'F:\برنامج التحليلات\GSE latest.docx')
+                    word = client.Dispatch("Word.Application")
+
+                    word.Documents.Open(r'F:\برنامج التحليلات\GSE latest.docx')
+                else:
+                    word = client.Dispatch("Word.Application")
+
+                    word.Documents.Open(r'F:\برنامج التحليلات\GSE latest.docx')
+                    word.ActiveDocument.PrintOut()
+                    time.sleep(2)
+                    if os.path.exists(r'F:\برنامج التحليلات\GSE latest.docx'):
+                        os.remove(r'F:\برنامج التحليلات\GSE latest.docx')
+                if if_print:
+                    if os.path.exists(r'F:\برنامج التحليلات\GSE latest.docx'):
+                        os.remove(r'F:\برنامج التحليلات\GSE latest.docx')
                 # word.ActiveDocument.Close()
             if word_type == 'GUE':
 
@@ -1357,14 +1423,24 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.size = Pt(12)
                 document.save('GUE latest.docx')
                 f.close()
-                word = client.Dispatch("Word.Application")
+                if prev == 'T':
 
-                word.Documents.Open(r'F:\برنامج التحليلات\GUE latest.docx')
-                word.ActiveDocument.PrintOut()
-                time.sleep(2)
-                if os.path.exists(r'F:\برنامج التحليلات\GUE latest.docx'):
-                    os.remove(r'F:\برنامج التحليلات\GUE latest.docx')
+                    word = client.Dispatch("Word.Application")
+
+                    word.Documents.Open(r'F:\برنامج التحليلات\GUE latest.docx')
+                else:
+                    word = client.Dispatch("Word.Application")
+
+                    word.Documents.Open(r'F:\برنامج التحليلات\GUE latest.docx')
+                    word.ActiveDocument.PrintOut()
+                    time.sleep(2)
+                    if os.path.exists(r'F:\برنامج التحليلات\GUE latest.docx'):
+                        os.remove(r'F:\برنامج التحليلات\GUE latest.docx')
+                if if_print:
+                    if os.path.exists(r'F:\برنامج التحليلات\GUE latest.docx'):
+                        os.remove(r'F:\برنامج التحليلات\GUE latest.docx')
                 # word.ActiveDocument.Close()
+
             if word_type == 'hematology':
                 f = open('word/hematology latest.docx', 'rb')
                 f.read()
@@ -1579,13 +1655,22 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.size = Pt(14)
                 document.save('hematology latest.docx')
                 f.close()
-                word = client.Dispatch("Word.Application")
+                if prev == 'T':
 
-                word.Documents.Open(r'F:\برنامج التحليلات\hematology latest.docx')
-                word.ActiveDocument.PrintOut()
-                time.sleep(2)
-                if os.path.exists(r'F:\برنامج التحليلات\hematology latest.docx'):
-                    os.remove(r'F:\برنامج التحليلات\hematology latest.docx')
+                    word = client.Dispatch("Word.Application")
+
+                    word.Documents.Open(r'F:\برنامج التحليلات\hematology latest.docx')
+                else:
+                    word = client.Dispatch("Word.Application")
+
+                    word.Documents.Open(r'F:\برنامج التحليلات\hematology latest.docx')
+                    word.ActiveDocument.PrintOut()
+                    time.sleep(2)
+                    if os.path.exists(r'F:\برنامج التحليلات\hematology latest.docx'):
+                        os.remove(r'F:\برنامج التحليلات\hematology latest.docx')
+                if if_print:
+                    if os.path.exists(r'F:\برنامج التحليلات\hematology latest.docx'):
+                        os.remove(r'F:\برنامج التحليلات\hematology latest.docx')
                 # word.ActiveDocument.Close()
             if word_type == 'هرمونات مشترك':
                 f = open('word/هرمونات مشترك latest.docx', 'rb')
@@ -1892,13 +1977,21 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.name = 'Tahoma'
                 document.save('هرمونات مشترك latest.docx')
                 f.close()
-                word = client.Dispatch("Word.Application")
+                if prev == 'T':
 
-                word.Documents.Open(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
-                word.ActiveDocument.PrintOut()
-                time.sleep(2)
-                if os.path.exists(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx'):
-                    os.remove(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
+                    word = client.Dispatch("Word.Application")
+
+                    word.Documents.Open(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
+                else:
+                    word = client.Dispatch("Word.Application")
+                    word.Documents.Open(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
+                    word.ActiveDocument.PrintOut()
+                    time.sleep(2)
+                    if os.path.exists(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx'):
+                        os.remove(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
+                if if_print:
+                    if os.path.exists(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx'):
+                        os.remove(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
 
 
 def main():

@@ -714,3 +714,21 @@ word.ActiveDocument.Close()
 # #                     n.text=''
 # # document.save('word/هرمونات مشترك latest.docx')
 # # f.close()
+'''
+                if if_print:
+                    print('its start')
+                    if os.path.exists(r'F:\برنامج التحليلات\bio latest17.docx'):
+                        os.remove(r'F:\برنامج التحليلات\bio latest17.docx')
+                if if_print:
+                    if os.path.exists(r'F:\برنامج التحليلات\GSE latest.docx'):
+                      os.remove(r'F:\برنامج التحليلات\GSE latest.docx')
+                if if_print:
+                    if os.path.exists(r'F:\برنامج التحليلات\GUE latest.docx'):
+                        os.remove(r'F:\برنامج التحليلات\GUE latest.docx')
+                if if_print:
+                    if os.path.exists(r'F:\برنامج التحليلات\hematology latest.docx'):
+                        os.remove(r'F:\برنامج التحليلات\hematology latest.docx')
+                if if_print:
+                    if os.path.exists(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx'):
+                        os.remove(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
+'''
