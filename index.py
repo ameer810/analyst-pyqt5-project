@@ -19,7 +19,8 @@ FORM_CLASS, _ = loadUiType("design.ui")
 user_id = 4
 client_id_glob = 0
 chick_if_add_new = False
-if_print=False
+if_print = False
+
 
 class mainapp(QMainWindow, FORM_CLASS):
     def __init__(self, parent=None):
@@ -30,13 +31,12 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.DB_Connect()
 
         self.handel_buttons()
-        self.Show_All_The_Analysts()
         self.Show_All_The_Sales()
         self.Show_all_analysts_in_combo()
-        self.Show_all_buys()
-        self.History()
+        # self.Show_all_buys()
+        # self.History()
         self.Show_All_Clients()
-        self.groupBox.setEnabled(False)
+        # self.groupBox.setEnabled(False)
 
     def DB_Connect(self):
         self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel', charset="utf8",
@@ -50,96 +50,117 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_14.clicked.connect(self.Dark_Theme)
         self.pushButton_11.clicked.connect(self.Dark_Gray_Theme)
         self.pushButton.clicked.connect(self.Open_Sales_Page)
-        self.pushButton_6.clicked.connect(self.Open_Login_Page)
+        # self.pushButton_6.clicked.connect(self.Open_Login_Page)
         self.pushButton_4.clicked.connect(self.Open_Settings_Page)
-        self.pushButton_3.clicked.connect(self.Open_History_Page)
+        # self.pushButton_3.clicked.connect(self.Open_History_Page)
         self.pushButton_5.clicked.connect(self.Open_clients_Page)
-        self.pushButton_2.clicked.connect(self.Open_Analyse_Page)
-        self.pushButton_8.clicked.connect(self.Open_ResetPassword_Page)
+        # self.pushButton_2.clicked.connect(self.Open_Analyse_Page)
+        # self.pushButton_8.clicked.connect(self.Open_ResetPassword_Page)
         self.pushButton_17.clicked.connect(self.Sales_Page)
         self.pushButton_30.clicked.connect(self.get_client_id)
         self.pushButton_31.clicked.connect(self.Chick_analyst_category)
         self.pushButton_32.clicked.connect(self.get_total_price)
-        self.pushButton_33.clicked.connect(self.Show_analyst_in_Edit_Or_Delete)
+        # self.pushButton_33.clicked.connect(self.Show_analyst_in_Edit_Or_Delete)
         self.pushButton_29.clicked.connect(self.Clients_Page)
-        self.pushButton_16.clicked.connect(self.Add_Buys)
-        self.pushButton_20.clicked.connect(self.Show_All_The_Analysts)
-        self.pushButton_27.clicked.connect(self.Edit_Analyst)
-        self.pushButton_7.clicked.connect(self.Log_In_Chieck)
-        self.pushButton_28.clicked.connect(self.Delete_Analyst)
-        self.pushButton_22.clicked.connect(self.Delete_All_History_Data)
+        # self.pushButton_16.clicked.connect(self.Add_Buys)
+        # self.pushButton_20.clicked.connect(self.Show_All_The_Analysts)
+        # self.pushButton_27.clicked.connect(self.Edit_Analyst)
+        # self.pushButton_7.clicked.connect(self.Log_In_Chieck)
+        # self.pushButton_28.clicked.connect(self.Delete_Analyst)
+        # self.pushButton_22.clicked.connect(self.Delete_All_History_Data)
         self.pushButton_18.clicked.connect(self.Print_Sale_Data)
         self.pushButton_19.clicked.connect(self.Search_In_All_Sales)
-        self.pushButton_21.clicked.connect(self.Search_In_History)
+        # self.pushButton_21.clicked.connect(self.Search_In_History)
         self.pushButton_35.clicked.connect(self.clear_data_in_sales)
-        self.pushButton_10.clicked.connect(self.Reset_password)
-        self.pushButton_26.clicked.connect(self.Add_Analyst)
+        # self.pushButton_10.clicked.connect(self.Reset_password)
+        # self.pushButton_26.clicked.connect(self.Add_Analyst)
         self.pushButton_34.clicked.connect(self.Preview)
+        self.pushButton_23.clicked.connect(self.Print_empty_papers)
+
+    def Print_empty_papers(self):
+        paper_type = self.comboBox_27.currentIndex()
+        copyes_num = self.spinBox_4.Value()
+        word = client.Dispatch("Word.Application")
+
+        category = ''
+        if paper_type == 0:
+            category = 'bio'
+        if paper_type == 1:
+            category = 'GSE'
+        if paper_type == 2:
+            category = 'GUE'
+        if paper_type == 3:
+            category = 'hematology'
+        if paper_type == 4:
+            category = 'هرمونات مشترك'
+        word.Documents.Open(r'F:\برنامج التحليلات\bio latest17.docx')
+        word.ActiveDocument.PrintOut(Copies=1)
+        time.sleep(2)
 
     def Preview(self):
         global if_print
         self.Print_Sale_Data('T')
-        warning = QMessageBox.warning(self, '', "هل قمت بطباعة جميع الملفات التي تمت معاينتها؟\n لا تضغط نعم الا لو قمت بطباعتها",
+        warning = QMessageBox.warning(self, '',
+                                      "هل قمت بطباعة جميع الملفات التي تمت معاينتها؟\n لا تضغط نعم الا لو قمت بطباعتها",
                                       QMessageBox.Yes | QMessageBox.No)
         if warning == QMessageBox.Yes:
             warning2 = QMessageBox.warning(self, '',
-                                          "قم باغلاق جميع نوافذ تطبيق microsoft word. هل قمت باغلاقها؟",
-                                          QMessageBox.Yes | QMessageBox.No)
+                                           "قم باغلاق جميع نوافذ تطبيق microsoft word. هل قمت باغلاقها؟",
+                                           QMessageBox.Yes | QMessageBox.No)
             if warning2 == QMessageBox.Yes:
                 print('now delete')
-                if_print=True
+                if_print = True
 
                 print('its start')
                 if os.path.exists(r'F:\برنامج التحليلات\bio latest17.docx'):
-                        os.remove(r'F:\برنامج التحليلات\bio latest17.docx')
+                    os.remove(r'F:\برنامج التحليلات\bio latest17.docx')
 
                 if os.path.exists(r'F:\برنامج التحليلات\GSE latest.docx'):
-                        os.remove(r'F:\برنامج التحليلات\GSE latest.docx')
+                    os.remove(r'F:\برنامج التحليلات\GSE latest.docx')
 
                 if os.path.exists(r'F:\برنامج التحليلات\GUE latest.docx'):
-                        os.remove(r'F:\برنامج التحليلات\GUE latest.docx')
+                    os.remove(r'F:\برنامج التحليلات\GUE latest.docx')
 
                 if os.path.exists(r'F:\برنامج التحليلات\hematology latest.docx'):
-                        os.remove(r'F:\برنامج التحليلات\hematology latest.docx')
+                    os.remove(r'F:\برنامج التحليلات\hematology latest.docx')
 
                 if os.path.exists(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx'):
-                        os.remove(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
+                    os.remove(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
 
-
-    def Reset_password(self):
-        user_name = self.lineEdit_7.text()
-        self.cur.execute(''' SELECT * FROM adduser ''')
-        data = self.cur.fetchall()
-        ruser_name = ''
-        a = 0
-        for row in data:
-            if row[1] == user_name:
-                ruser_name = row[1]
-            else:
-                a = 5
-        if a == 5:
-            QMessageBox.information(self, 'info', 'اسم المستخدم الذي ادخلته غير صحيح')
-        self.cur.execute(''' SELECT user_email,userpassword FROM adduser WHERE user_name=%s ''', (ruser_name,))
-        email_data = self.cur.fetchone()
-        # email = "ameersaad810@gmail.com" # the email where you sent the email
-        # password = "aahmpredtiddvxlo"
-        # send_to_email = email_data[0] # for whom
-        # subject = "n"
-        # message = f'Hello.\n your password is {email_data[1]} '
-        # msg = MIMEMultipart()
-        # msg["From"] = email
-        # msg["To"] = send_to_email
-        # msg["Subject"] = subject
-        #
-        # msg.attach(MIMEText(message, 'plain'))
-        #
-        # server = smtplib.SMTP("smtp.gmail.com", 587)
-        # server.starttls()
-        # server.login(email, password)
-        # text = msg.as_string()
-        # server.sendmail(email, send_to_email, text)
-        # server.quit()
-        # print('ok')
+    # def Reset_password(self):
+    #     user_name = self.lineEdit_7.text()
+    #     self.cur.execute(''' SELECT * FROM adduser ''')
+    #     data = self.cur.fetchall()
+    #     ruser_name = ''
+    #     a = 0
+    #     for row in data:
+    #         if row[1] == user_name:
+    #             ruser_name = row[1]
+    #         else:
+    #             a = 5
+    #     if a == 5:
+    #         QMessageBox.information(self, 'info', 'اسم المستخدم الذي ادخلته غير صحيح')
+    #     self.cur.execute(''' SELECT user_email,userpassword FROM adduser WHERE user_name=%s ''', (ruser_name,))
+    #     email_data = self.cur.fetchone()
+    # email = "ameersaad810@gmail.com" # the email where you sent the email
+    # password = "aahmpredtiddvxlo"
+    # send_to_email = email_data[0] # for whom
+    # subject = "n"
+    # message = f'Hello.\n your password is {email_data[1]} '
+    # msg = MIMEMultipart()
+    # msg["From"] = email
+    # msg["To"] = send_to_email
+    # msg["Subject"] = subject
+    #
+    # msg.attach(MIMEText(message, 'plain'))
+    #
+    # server = smtplib.SMTP("smtp.gmail.com", 587)
+    # server.starttls()
+    # server.login(email, password)
+    # text = msg.as_string()
+    # server.sendmail(email, send_to_email, text)
+    # server.quit()
+    # print('ok')
 
     def clear_data_in_sales(self):
         self.tableWidget_5.setRowCount(0)
@@ -158,11 +179,32 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.textEdit.setEnabled(True)
 
     def Show_All_Clients(self):
-        self.cur.execute(''' SELECT client_name,client_age,client_doctor,id FROM addclient ''')
-        data = self.cur.fetchall()
+        self.cur.execute(''' SELECT client_name FROM addclient ORDER BY -date ''')
+        analyst_data = self.cur.fetchall()
+        all_names = {}
+        all_data = []
+        id = 0
+
+        for item in analyst_data:
+            if item[0] not in all_names:
+                all_names[item[0]] = 0
+
+        for s in all_names.keys():
+            self.cur.execute(''' SELECT id FROM addclient WHERE client_name=%s ORDER BY id ''', (s,))
+            analyst_data2 = self.cur.fetchall()
+            all_names[s] = analyst_data2[0][0]
+            id = analyst_data2[0][0]
+            self.cur.execute(''' SELECT * FROM addclient WHERE id=%s ORDER BY -date ''', (id,))
+            latest_data = self.cur.fetchall()
+            data = [{'name': s, 'value': latest_data}]
+            all_data.append(data)
+        l_data = ()
+        for ih in all_data:
+            hs_data = ih[0]['value']
+            l_data += tuple(hs_data)
         self.tableWidget_2.setRowCount(0)
         self.tableWidget_2.insertRow(0)
-        for row, form in enumerate(data):
+        for row, form in enumerate(l_data):
             for col, item in enumerate(form):
                 self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
@@ -264,9 +306,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                 col += 1
             row_pos = self.tableWidget_6.rowCount()
             self.tableWidget_6.insertRow(row_pos)
-        self.Add_Data_To_history(6, 1)
+        # self.Add_Data_To_history(6, 1)
 
     def Print_Sale_Data(self, prev):
+        genuses = self.comboBox_14.currentIndex()
         all_analyst = []
         all_result = []
         date = datetime.datetime.now()
@@ -286,7 +329,8 @@ class mainapp(QMainWindow, FORM_CLASS):
             result = self.tableWidget_5.item(row, 2).text()
             all_result.append(str(result))
             real_doctor = self.tableWidget_5.item(row, 3).text()
-        self.Bio_Word(real_name, real_doctor, all_analyst, all_result, year, month, day, word_type, prev)
+        self.Bio_Word(real_name, real_doctor, all_analyst, all_result, year, month, day, word_type, prev, genuses)
+        QMessageBox.information(self, 'info', 'تتم الطباعة حالياً')
 
     def get_total_price(self):
         total_price = 0
@@ -357,7 +401,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             for col, item in enumerate(form):
                 # if col==4:
                 #     print(total_price,'here')
-                self.tableWidget_5.setItem(row, col, QTableWidgetItem(str(total_price)))
+                # self.tableWidget_5.setItem(row, col, QTableWidgetItem(str(total_price)))
                 # else:
                 self.tableWidget_5.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
@@ -367,8 +411,8 @@ class mainapp(QMainWindow, FORM_CLASS):
         chick_if_add_new = True
         self.Show_All_The_Sales()
         # self.Show_All_one_client_analyst()
-        self.Add_Data_To_history(3, 1)
-        self.History()
+        # self.Add_Data_To_history(3, 1)
+        # self.History()
         # client_name = self.lineEdit_20.setText('')
         # client_age = self.spinBox_7.setValue(0)
         # client_genus = self.comboBox_14.setCurrentIndex(0)
@@ -390,7 +434,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         ''', (client_name,))
         analyst_data = self.cur.fetchall()
         self.cur.execute('''
-                     SELECT client_name,analyst_name,analyst_result,doctor_name,client_id,client_age,genus,notes FROM addnewitem WHERE client_id = %s
+                     SELECT client_name,analyst_name,analyst_result,doctor_name,total_price,client_id,client_age,genus,notes FROM addnewitem WHERE client_id = %s
                 ''', (self.spinBox.value(),))
         analyst_data = self.cur.fetchall()
         # need doctor name enabled i will make it with current text
@@ -410,6 +454,9 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.textEdit.setEnabled(True)
         if self.spinBox.value() != 0:
             try:
+                self.comboBox_15.setCurrentText(str(analyst_data[0][3]))
+                self.comboBox_15.setEnabled(False)
+                self.comboBox_14.setEnabled(False)
                 self.lineEdit_20.setText(analyst_data[0][0])
                 self.lineEdit_20.setEnabled(False)
                 self.spinBox_7.setValue(int(analyst_data[0][5]))
@@ -485,194 +532,205 @@ class mainapp(QMainWindow, FORM_CLASS):
     def Show_All_The_Sales(self):
         self.cur.execute(''' SELECT client_name FROM addclient ORDER BY -date ''')
         analyst_data = self.cur.fetchall()
-        all_names=[]
-        id =0
+        all_names = {}
+        all_data = []
+        id = 0
+
         for item in analyst_data:
             if item[0] not in all_names:
-                all_names.append(item[0])
+                all_names[item[0]] = 0
+
+        for s in all_names.keys():
+            self.cur.execute(''' SELECT id FROM addclient WHERE client_name=%s ORDER BY id ''', (s,))
+            analyst_data2 = self.cur.fetchall()
+            all_names[s] = analyst_data2[0][0]
+            id = analyst_data2[0][0]
+            self.cur.execute(''' SELECT * FROM addclient WHERE id=%s ORDER BY -date ''', (id,))
+            latest_data = self.cur.fetchall()
+            data = [{'name': s, 'value': latest_data}]
+            all_data.append(data)
         self.tableWidget_6.setRowCount(0)
         self.tableWidget_6.insertRow(0)
-        latest_data=[]
-        for s in all_names:
-            self.cur.execute(''' SELECT id FROM addclient WHERE client_name=%s ORDER BY id ''',(s,))
-            analyst_data2 = self.cur.fetchall()
-            id=analyst_data2[0][0]
-            print(analyst_data2[0],'h\n')
-
-            self.cur.execute(''' SELECT * FROM addclient WHERE id=%s ORDER BY -date ''',(id,))
-            latest_data=self.cur.fetchall()
-            print(latest_data,'its ')
-            for row, form in enumerate(latest_data):
-                for col, item in enumerate(form):
-                    if col == 3:
-                        self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(latest_data[row][4])))
-                    else:
-                        self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
-                    col += 1
-                row_pos = self.tableWidget_6.rowCount()
-                self.tableWidget_6.insertRow(row_pos)
-
-    def Show_All_The_Analysts(self):
-        search_type = self.comboBox_19.currentText()
-        search_words = self.lineEdit_26.text()
-
-        if self.comboBox_19.currentIndex() == 1:
-            self.cur.execute(
-                ''' SELECT name,category,default_result1,default_result2,price,sub_category FROM addanalyst WHERE name=%s ''',
-                (search_words,))
-        if self.comboBox_19.currentIndex() == 2:
-            self.cur.execute(
-                ''' SELECT name,category,default_result1,default_result2,price,sub_category FROM addanalyst WHERE price=%s ''',
-                (search_words,))
-        if self.comboBox_19.currentIndex() == 0:
-            self.cur.execute(
-                ''' SELECT name,category,default_result1,default_result2,price,sub_category FROM addanalyst''')
-
-        # combobox_value = ''
-        # sql = ''
-        # if search_type == 'اسم التحليل المطابق':
-        #     combobox_value = 'name'
-        # if search_type == 'السعر المطابق':
-        #     combobox_value = 'price'
-        # if search_type != 'اسم التحليل المطابق' and search_type != 'السعر المطابق':
-        #     sql = ''' SELECT name,category,default_result1,default_result2,price,sub_category FROM addanalyst'''
-        # else:
-        #     sql = f' SELECT name,category,default_result1,default_result2,price,sub_category FROM addanalyst WHERE {combobox_value}=%s'
-        # if type(search_words) == int:
-        #     self.cur.execute(sql, search_words)
-        # if type(search_words) == str:
-        #     self.cur.execute(sql, search_words)
-        analyst_data = self.cur.fetchall()
-        self.tableWidget_7.setRowCount(0)
-        self.tableWidget_7.insertRow(0)
-        for row, form in enumerate(analyst_data):
+        l_data = ()
+        for ih in all_data:
+            hs_data = ih[0]['value']
+            l_data += tuple(hs_data)
+        print(l_data, 'k')
+        for row, form in enumerate(l_data):
             for col, item in enumerate(form):
-                if col == 1:
-                    category = ''
-                    if analyst_data[row][1] == 'خيارات':
-                        category = 'خيارات'
-                    if analyst_data[row][1] == 'عدد':
-                        category = 'عدد'
-                    if analyst_data[row][1] == 'خيارات مع تعديل':
-                        category = 'خيارات مع تعديل'
-                    if analyst_data[row][1] == 'حقل كتابة':
-                        category = 'حقل كتابة'
-
-                    self.tableWidget_7.setItem(row, col, QTableWidgetItem(str(category)))
-                if col == 5:
-                    self.tableWidget_7.setItem(row, col, QTableWidgetItem(str(analyst_data[row][5])))
-
-                self.tableWidget_7.setItem(row, col, QTableWidgetItem(str(item)))
+                # print(index)
+                # if col ==0:
+                #     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
+                # if col == 1:
+                #     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
+                # if col == 2:
+                #     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
+                # if col == 3:
+                self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
-            row_pos = self.tableWidget_7.rowCount()
-            self.tableWidget_7.insertRow(row_pos)
-        self.Add_Data_To_history(6, 2)
-        self.History()
+            row_pos = self.tableWidget_6.rowCount()
+            self.tableWidget_6.insertRow(row_pos)
+        # print(all_data)
 
-    def Add_Analyst(self):
-        analyst_name = self.lineEdit_28.text()
-        analyst_result_category = self.comboBox_22.currentText()
-        analyst_result1 = self.doubleSpinBox_3.value()
-        analyst_result2 = self.doubleSpinBox_2.value()
-        analyst_price = self.doubleSpinBox.value()
-        sub_category = self.comboBox_23.currentText()
-        date = datetime.datetime.now()
-        self.cur.execute(
-            ''' INSERT INTO addanalyst (name,default_result1,default_result2,price,category,sub_category,date) VALUES(%s,%s,%s,%s,%s,%s,%s) ''',
-            (
-                analyst_name, analyst_result1, analyst_result2, analyst_price, analyst_result_category, sub_category,
-                date))
-        self.db.commit()
-        QMessageBox.information(self, 'info', 'تم اضافة التحليل بنجاح')
-        analyst_name = self.lineEdit_28.setText('')
-        analyst_result_category = self.comboBox_22.setCurrentIndex(0)
-        analyst_result1 = self.doubleSpinBox_3.setValue(0)
-        analyst_result2 = self.doubleSpinBox_2.setValue(0)
-        analyst_price = self.doubleSpinBox.setValue(0)
-        sub_category = self.comboBox_23.setCurrentIndex(0)
-        self.Show_all_analysts_in_combo()
-        self.Add_Data_To_history(3, 2)
-        self.History()
+    # def Show_All_The_Analysts(self):
+    #     search_type = self.comboBox_19.currentText()
+    #     search_words = self.lineEdit_26.text()
+    #
+    #     if self.comboBox_19.currentIndex() == 1:
+    #         self.cur.execute(
+    #             ''' SELECT name,category,default_result1,default_result2,price,sub_category FROM addanalyst WHERE name=%s ''',
+    #             (search_words,))
+    #     if self.comboBox_19.currentIndex() == 2:
+    #         self.cur.execute(
+    #             ''' SELECT name,category,default_result1,default_result2,price,sub_category FROM addanalyst WHERE price=%s ''',
+    #             (search_words,))
+    #     if self.comboBox_19.currentIndex() == 0:
+    #         self.cur.execute(
+    #             ''' SELECT name,category,default_result1,default_result2,price,sub_category FROM addanalyst''')
+    #
+    #     # combobox_value = ''
+    #     # sql = ''
+    #     # if search_type == 'اسم التحليل المطابق':
+    #     #     combobox_value = 'name'
+    #     # if search_type == 'السعر المطابق':
+    #     #     combobox_value = 'price'
+    #     # if search_type != 'اسم التحليل المطابق' and search_type != 'السعر المطابق':
+    #     #     sql = ''' SELECT name,category,default_result1,default_result2,price,sub_category FROM addanalyst'''
+    #     # else:
+    #     #     sql = f' SELECT name,category,default_result1,default_result2,price,sub_category FROM addanalyst WHERE {combobox_value}=%s'
+    #     # if type(search_words) == int:
+    #     #     self.cur.execute(sql, search_words)
+    #     # if type(search_words) == str:
+    #     #     self.cur.execute(sql, search_words)
+    #     analyst_data = self.cur.fetchall()
+    #     self.tableWidget_7.setRowCount(0)
+    #     self.tableWidget_7.insertRow(0)
+    #     for row, form in enumerate(analyst_data):
+    #         for col, item in enumerate(form):
+    #             if col == 1:
+    #                 category = ''
+    #                 if analyst_data[row][1] == 'خيارات':
+    #                     category = 'خيارات'
+    #                 if analyst_data[row][1] == 'عدد':
+    #                     category = 'عدد'
+    #                 if analyst_data[row][1] == 'خيارات مع تعديل':
+    #                     category = 'خيارات مع تعديل'
+    #                 if analyst_data[row][1] == 'حقل كتابة':
+    #                     category = 'حقل كتابة'
+    #
+    #                 self.tableWidget_7.setItem(row, col, QTableWidgetItem(str(category)))
+    #             if col == 5:
+    #                 self.tableWidget_7.setItem(row, col, QTableWidgetItem(str(analyst_data[row][5])))
+    #
+    #             self.tableWidget_7.setItem(row, col, QTableWidgetItem(str(item)))
+    #             col += 1
+    #         row_pos = self.tableWidget_7.rowCount()
+    #         self.tableWidget_7.insertRow(row_pos)
+    #     self.Add_Data_To_history(6, 2)
+    #     self.History()
 
-    def Show_analyst_in_Edit_Or_Delete(self):
-        analyst_current_name = self.comboBox_21.currentText()
-        self.cur.execute(
-            ''' SELECT name,default_result1,default_result2,price,category,sub_category,date FROM addanalyst WHERE name=%s ''',
-            (analyst_current_name,))
-        data = self.cur.fetchall()
-        num = 0
-        if data[0][4] == 'عدد':
-            num = 4
-        if data[0][4] == 'خيارات':
-            num = 2
-        if data[0][4] == 'حقل كتابة':
-            num = 1
-        if data[0][4] == 'خيارات مع تعديل':
-            num = 3
-        tp = 0
-        if data[0][5] == 'bio':
-            tp = 1
-        if data[0][5] == 'GSE':
-            tp = 2
-        if data[0][5] == 'GUE':
-            tp = 3
-        if data[0][5] == 'hematology':
-            tp = 4
-        if data[0][5] == 'هرمونات مشترك':
-            tp = 5
-        sub_category = self.comboBox_26.setCurrentIndex(tp)
-        analyst_name = self.lineEdit_29.setText(str(data[0][0]))
-        analyst_result_category = self.comboBox_25.setCurrentIndex(num)
-        analyst_result1 = self.doubleSpinBox_4.setValue(data[0][1])
-        analyst_result2 = self.doubleSpinBox_5.setValue(data[0][2])
-        analyst_price = self.doubleSpinBox_6.setValue(data[0][3])
-        self.Add_Data_To_history(6, 2)
-        self.History()
-
-    def Edit_Analyst(self):
-        analyst_current_name = self.comboBox_21.currentText()
-        analyst_name = self.lineEdit_29.text()
-        analyst_result_category = self.comboBox_23.currentText()
-        analyst_result1 = self.doubleSpinBox_4.value()
-        analyst_result2 = self.doubleSpinBox_5.value()
-        analyst_price = self.doubleSpinBox_6.value()
-        sub_category = self.comboBox_26.currentText()
-        date = datetime.datetime.now()
-        self.cur.execute(
-            ''' UPDATE  addanalyst SET name=%s,default_result1=%s,default_result2=%s,price=%s,category=%s,sub_category=%s,date=%s WHERE name=%s ''',
-            (
-                analyst_name, analyst_result1, analyst_result2, analyst_price, analyst_result_category, sub_category,
-                date, analyst_name))
-        self.db.commit()
-        QMessageBox.information(self, 'info', 'تم تعديل التحليل بنجاح')
-        analyst_current_name = self.comboBox_21.setCurrentIndex(0)
-        analyst_name = self.lineEdit_29.setText('')
-        analyst_result_category = self.comboBox_23.setCurrentIndex(0)
-        analyst_result1 = self.doubleSpinBox_4.setValue(0)
-        analyst_result2 = self.doubleSpinBox_5.setValue(0)
-        analyst_price = self.doubleSpinBox_6.setValue(0)
-        sub_category = self.comboBox_26.setCurrentIndex(0)
-        self.Show_All_The_Analysts()
-        self.Add_Data_To_history(4, 2)
-        self.History()
-        self.Show_all_analysts_in_combo()
-
-    def Delete_Analyst(self):
-
-        warning = QMessageBox.warning(self, 'احذر', "هل انت متأكد من انك تريد مسح التحليل",
-                                      QMessageBox.Yes | QMessageBox.No)
-        if warning == QMessageBox.Yes:
-            analyst_current_name = self.comboBox_21.currentText()
-            sql = ''' DELETE FROM addanalyst WHERE name=%s '''
-            self.cur.execute(sql, [(analyst_current_name)])
-            self.db.commit()
-            QMessageBox.information(self, 'info', 'تم حذف التحليل بنجاح')
-
-            self.Show_all_analysts_in_combo()
-        self.Add_Data_To_history(5, 2)
-        self.History()
-        self.Show_all_analysts_in_combo()
-        self.Show_All_The_Analysts()
+    # def Add_Analyst(self):
+    #     analyst_name = self.lineEdit_28.text()
+    #     analyst_result_category = self.comboBox_22.currentText()
+    #     analyst_result1 = self.doubleSpinBox_3.value()
+    #     analyst_result2 = self.doubleSpinBox_2.value()
+    #     analyst_price = self.doubleSpinBox.value()
+    #     sub_category = self.comboBox_23.currentText()
+    #     date = datetime.datetime.now()
+    #     self.cur.execute(
+    #         ''' INSERT INTO addanalyst (name,default_result1,default_result2,price,category,sub_category,date) VALUES(%s,%s,%s,%s,%s,%s,%s) ''',
+    #         (
+    #             analyst_name, analyst_result1, analyst_result2, analyst_price, analyst_result_category, sub_category,
+    #             date))
+    #     self.db.commit()
+    #     QMessageBox.information(self, 'info', 'تم اضافة التحليل بنجاح')
+    #     analyst_name = self.lineEdit_28.setText('')
+    #     analyst_result_category = self.comboBox_22.setCurrentIndex(0)
+    #     analyst_result1 = self.doubleSpinBox_3.setValue(0)
+    #     analyst_result2 = self.doubleSpinBox_2.setValue(0)
+    #     analyst_price = self.doubleSpinBox.setValue(0)
+    #     sub_category = self.comboBox_23.setCurrentIndex(0)
+    #     self.Show_all_analysts_in_combo()
+    #     self.Add_Data_To_history(3, 2)
+    #     self.History()
+    #
+    # def Show_analyst_in_Edit_Or_Delete(self):
+    #     analyst_current_name = self.comboBox_21.currentText()
+    #     self.cur.execute(
+    #         ''' SELECT name,default_result1,default_result2,price,category,sub_category,date FROM addanalyst WHERE name=%s ''',
+    #         (analyst_current_name,))
+    #     data = self.cur.fetchall()
+    #     num = 0
+    #     if data[0][4] == 'عدد':
+    #         num = 4
+    #     if data[0][4] == 'خيارات':
+    #         num = 2
+    #     if data[0][4] == 'حقل كتابة':
+    #         num = 1
+    #     if data[0][4] == 'خيارات مع تعديل':
+    #         num = 3
+    #     tp = 0
+    #     if data[0][5] == 'bio':
+    #         tp = 1
+    #     if data[0][5] == 'GSE':
+    #         tp = 2
+    #     if data[0][5] == 'GUE':
+    #         tp = 3
+    #     if data[0][5] == 'hematology':
+    #         tp = 4
+    #     if data[0][5] == 'هرمونات مشترك':
+    #         tp = 5
+    #     sub_category = self.comboBox_26.setCurrentIndex(tp)
+    #     analyst_name = self.lineEdit_29.setText(str(data[0][0]))
+    #     analyst_result_category = self.comboBox_25.setCurrentIndex(num)
+    #     analyst_result1 = self.doubleSpinBox_4.setValue(data[0][1])
+    #     analyst_result2 = self.doubleSpinBox_5.setValue(data[0][2])
+    #     analyst_price = self.doubleSpinBox_6.setValue(data[0][3])
+    #     self.Add_Data_To_history(6, 2)
+    #     self.History()
+    #
+    # def Edit_Analyst(self):
+    #     analyst_current_name = self.comboBox_21.currentText()
+    #     analyst_name = self.lineEdit_29.text()
+    #     analyst_result_category = self.comboBox_23.currentText()
+    #     analyst_result1 = self.doubleSpinBox_4.value()
+    #     analyst_result2 = self.doubleSpinBox_5.value()
+    #     analyst_price = self.doubleSpinBox_6.value()
+    #     sub_category = self.comboBox_26.currentText()
+    #     date = datetime.datetime.now()
+    #     self.cur.execute(
+    #         ''' UPDATE  addanalyst SET name=%s,default_result1=%s,default_result2=%s,price=%s,category=%s,sub_category=%s,date=%s WHERE name=%s ''',
+    #         (
+    #             analyst_name, analyst_result1, analyst_result2, analyst_price, analyst_result_category, sub_category,
+    #             date, analyst_name))
+    #     self.db.commit()
+    #     QMessageBox.information(self, 'info', 'تم تعديل التحليل بنجاح')
+    #     analyst_current_name = self.comboBox_21.setCurrentIndex(0)
+    #     analyst_name = self.lineEdit_29.setText('')
+    #     analyst_result_category = self.comboBox_23.setCurrentIndex(0)
+    #     analyst_result1 = self.doubleSpinBox_4.setValue(0)
+    #     analyst_result2 = self.doubleSpinBox_5.setValue(0)
+    #     analyst_price = self.doubleSpinBox_6.setValue(0)
+    #     sub_category = self.comboBox_26.setCurrentIndex(0)
+    #     self.Add_Data_To_history(4, 2)
+    #     self.History()
+    #     self.Show_all_analysts_in_combo()
+    #
+    # def Delete_Analyst(self):
+    #
+    #     warning = QMessageBox.warning(self, 'احذر', "هل انت متأكد من انك تريد مسح التحليل",
+    #                                   QMessageBox.Yes | QMessageBox.No)
+    #     if warning == QMessageBox.Yes:
+    #         analyst_current_name = self.comboBox_21.currentText()
+    #         sql = ''' DELETE FROM addanalyst WHERE name=%s '''
+    #         self.cur.execute(sql, [(analyst_current_name)])
+    #         self.db.commit()
+    #         QMessageBox.information(self, 'info', 'تم حذف التحليل بنجاح')
+    #
+    #         self.Show_all_analysts_in_combo()
+    #     self.Add_Data_To_history(5, 2)
+    #     self.History()
+    #     self.Show_all_analysts_in_combo()
 
     def Show_all_analysts_in_combo(self):
         self.cur.execute(''' SELECT name FROM addanalyst ''')
@@ -731,96 +789,96 @@ class mainapp(QMainWindow, FORM_CLASS):
 
             row_pos = self.tableWidget_9.rowCount()
             self.tableWidget_9.insertRow(row_pos)
-        self.Add_Data_To_history(6, 5)
-        self.History()
+        # self.Add_Data_To_history(6, 5)
+        # self.History()
 
-    def Add_Buys(self):
-        item_name = self.lineEdit_13.text()
-        item_type = self.comboBox_6.currentText()
-        quantity = self.spinBox_3.value()
-        quantity_avaliable = quantity
-        signal_item_price = self.lineEdit_12.text()
-        total_item_price = self.lineEdit_11.text()
-        date_create_before = self.dateEdit.date()
-        date_create = str(date_create_before.toPyDate())
-        self.cur.execute(
-            ''' INSERT INTO addbuys (item_name,signal_item_price,total_price,buys_type,quantity,date) VALUES (%s,%s,%s,%s,%s,%s)'''
-            , (item_name, signal_item_price, total_item_price, item_type, quantity, date_create))
-        self.db.commit()
-        self.Show_all_buys()
-        self.Add_Data_To_history(3, 4)
-        self.History()
+    # def Add_Buys(self):
+    #     item_name = self.lineEdit_13.text()
+    #     item_type = self.comboBox_6.currentText()
+    #     quantity = self.spinBox_3.value()
+    #     quantity_avaliable = quantity
+    #     signal_item_price = self.lineEdit_12.text()
+    #     total_item_price = self.lineEdit_11.text()
+    #     date_create_before = self.dateEdit.date()
+    #     date_create = str(date_create_before.toPyDate())
+    #     self.cur.execute(
+    #         ''' INSERT INTO addbuys (item_name,signal_item_price,total_price,buys_type,quantity,date) VALUES (%s,%s,%s,%s,%s,%s)'''
+    #         , (item_name, signal_item_price, total_item_price, item_type, quantity, date_create))
+    #     self.db.commit()
+    #     self.Show_all_buys()
+    # self.Add_Data_To_history(3, 4)
+    # self.History()
 
-    def Show_all_buys(self):
-        self.cur.execute(''' SELECT item_name,buys_type,quantity,signal_item_price,total_price,date FROM addbuys ''')
-        data = self.cur.fetchall()
-        self.tableWidget_3.setRowCount(0)
-        self.tableWidget_3.insertRow(0)
-        for row, form in enumerate(data):
-            for col, item in enumerate(form):
-                self.tableWidget_3.setItem(row, col, QTableWidgetItem(str(item)))
-                col += 1
-            row_pos = self.tableWidget_3.rowCount()
-            self.tableWidget_3.insertRow(row_pos)
+    # def Show_all_buys(self):
+    #     self.cur.execute(''' SELECT item_name,buys_type,quantity,signal_item_price,total_price,date FROM addbuys ''')
+    #     data = self.cur.fetchall()
+    #     self.tableWidget_3.setRowCount(0)
+    #     self.tableWidget_3.insertRow(0)
+    #     for row, form in enumerate(data):
+    #         for col, item in enumerate(form):
+    #             self.tableWidget_3.setItem(row, col, QTableWidgetItem(str(item)))
+    #             col += 1
+    #         row_pos = self.tableWidget_3.rowCount()
+    #         self.tableWidget_3.insertRow(row_pos)
 
-    def Add_Data_To_history(self, action, table):
-        global user_id
-        self.cur.execute(
-            ''' INSERT INTO his VALUES (DEFAULT,%s,%s,%s,%s,%s)''',
-            (user_id, action, table, datetime.datetime.now(), 1))
-        self.db.commit()
+    # def Add_Data_To_history(self, action, table):
+    #     global user_id
+    #     self.cur.execute(
+    #         ''' INSERT INTO his VALUES (DEFAULT,%s,%s,%s,%s,%s)''',
+    #         (user_id, action, table, datetime.datetime.now(), 1))
+    #     self.db.commit()
 
-    def History(self):
-        self.cur.execute('''SELECT * FROM his ORDER BY -dates''')
-        analyst_data = self.cur.fetchall()
-        self.tableWidget_8.setRowCount(0)
-        self.tableWidget_8.insertRow(0)
-        for row, form in enumerate(analyst_data):
-            for col, item in enumerate(form):
-                if col == 0:
-                    sql = '''SELECT uid FROM his WHERE id =%s'''
-                    self.cur.execute(sql, [item])
-                    data = self.cur.fetchone()
-                    sql = '''SELECT user_name FROM adduser WHERE id =%s'''
-                    self.cur.execute(sql, [data[0]])
-                    user_name = self.cur.fetchone()
-                    self.tableWidget_8.setItem(row, col, QTableWidgetItem(str(user_name[0])))
-                if col == 1:
-                    action = ''
-                    if analyst_data[row][2] == 1:
-                        action = 'تسجيل الدخول'
-                    if analyst_data[0][2] == 2:
-                        action = 'تسجيل الخروج'
-                    if analyst_data[row][2] == 3:
-                        action = 'اضافة'
-                    if analyst_data[row][2] == 4:
-                        action = 'تعديل'
-                    if analyst_data[row][2] == 5:
-                        action = 'حذف'
-                    if analyst_data[row][2] == 6:
-                        action = 'بحث'
-                    if analyst_data[row][2] == 7:
-                        action = 'طباعة'
-                    self.tableWidget_8.setItem(row, col, QTableWidgetItem(str(action)))
-                if col == 2:
-                    tables = ''
-                    if analyst_data[row][3] == 1:
-                        tables = 'مبيع يومي'
-                    if analyst_data[row][3] == 2:
-                        tables = 'تحليل'
-                    if analyst_data[row][3] == 3:
-                        tables = 'مشتريات'
-                    if analyst_data[row][3] == 4:
-                        tables = 'مراجعين'
-                    if analyst_data[row][3] == 5:
-                        tables = 'مستخدم'
-                    self.tableWidget_8.setItem(row, col, QTableWidgetItem(str(tables)))
-                if col == 3:
-                    self.tableWidget_8.setItem(row, col, QTableWidgetItem(str(analyst_data[row][4])))
-
-                col += 1
-            row_pos = self.tableWidget_8.rowCount()
-            self.tableWidget_8.insertRow(row_pos)
+    # def History(self):
+    #     self.cur.execute('''SELECT * FROM his ORDER BY -dates''')
+    #     analyst_data = self.cur.fetchall()
+    #     self.tableWidget_8.setRowCount(0)
+    #     self.tableWidget_8.insertRow(0)
+    #     for row, form in enumerate(analyst_data):
+    #         for col, item in enumerate(form):
+    #             if col == 0:
+    #                 sql = '''SELECT uid FROM his WHERE id =%s'''
+    #                 self.cur.execute(sql, [item])
+    #                 data = self.cur.fetchone()
+    #                 sql = '''SELECT user_name FROM adduser WHERE id =%s'''
+    #                 self.cur.execute(sql, [data[0]])
+    #                 user_name = self.cur.fetchone()
+    #                 self.tableWidget_8.setItem(row, col, QTableWidgetItem(str(user_name[0])))
+    #             if col == 1:
+    #                 action = ''
+    #                 if analyst_data[row][2] == 1:
+    #                     action = 'تسجيل الدخول'
+    #                 if analyst_data[0][2] == 2:
+    #                     action = 'تسجيل الخروج'
+    #                 if analyst_data[row][2] == 3:
+    #                     action = 'اضافة'
+    #                 if analyst_data[row][2] == 4:
+    #                     action = 'تعديل'
+    #                 if analyst_data[row][2] == 5:
+    #                     action = 'حذف'
+    #                 if analyst_data[row][2] == 6:
+    #                     action = 'بحث'
+    #                 if analyst_data[row][2] == 7:
+    #                     action = 'طباعة'
+    #                 self.tableWidget_8.setItem(row, col, QTableWidgetItem(str(action)))
+    #             if col == 2:
+    #                 tables = ''
+    #                 if analyst_data[row][3] == 1:
+    #                     tables = 'مبيع يومي'
+    #                 if analyst_data[row][3] == 2:
+    #                     tables = 'تحليل'
+    #                 if analyst_data[row][3] == 3:
+    #                     tables = 'مشتريات'
+    #                 if analyst_data[row][3] == 4:
+    #                     tables = 'مراجعين'
+    #                 if analyst_data[row][3] == 5:
+    #                     tables = 'مستخدم'
+    #                 self.tableWidget_8.setItem(row, col, QTableWidgetItem(str(tables)))
+    #             if col == 3:
+    #                 self.tableWidget_8.setItem(row, col, QTableWidgetItem(str(analyst_data[row][4])))
+    #
+    #             col += 1
+    #         row_pos = self.tableWidget_8.rowCount()
+    #         self.tableWidget_8.insertRow(row_pos)
 
     # def Show_avaliable_quantity(self):
     #     self.cur.execute(''' SELECT quantity FROM addbuys WHERE ''')
@@ -829,61 +887,61 @@ class mainapp(QMainWindow, FORM_CLASS):
     #         date_quantity_ended = datetime.datetime.now()
     #         self.cur.execute(''' UPDATE addbuys SET quantity_avaliable=%s,date_ended=%s''',
     #                          (quantity_avaliable, date_quantity_ended))
-    def Log_In_Chieck(self):
-        global user_id
-        user_name = self.lineEdit.text()
-        user_password = self.lineEdit_2.text()
-        self.cur.execute(''' SELECT id,user_password,user_name FROM adduser WHERE user_name=%s ''', (user_name,))
-        # self.cur.execute(''' SELECT * FROM adduser ''')
-        data = self.cur.fetchone()
-        if data != None:
-            if data[2] == user_name and data[1] == user_password:
-                user_id = data[0]
-                self.groupBox.setEnabled(True)
-                self.tabWidget.setCurrentIndex(3)
-                self.Add_Data_To_history(1, 5)
-                self.History()
-            else:
-                warning = QMessageBox.warning(self, '',
-                                              "كلمة المرور او اسم المستخدم غير صحيحة هل تريد استعادة كلمة المرور؟",
-                                              QMessageBox.Yes | QMessageBox.No)
-                if warning == QMessageBox.Yes:
-                    self.Open_ResetPassword_Page()
-        else:
-            warning = QMessageBox.warning(self, '',
-                                          "كلمة المرور او اسم المستخدم غير صحيحة هل تريد استعادة كلمة المرور؟",
-                                          QMessageBox.Yes | QMessageBox.No)
-            if warning == QMessageBox.Yes:
-                self.Open_ResetPassword_Page()
+    # def Log_In_Chieck(self):
+    #     global user_id
+    #     user_name = self.lineEdit.text()
+    #     user_password = self.lineEdit_2.text()
+    #     self.cur.execute(''' SELECT id,user_password,user_name FROM adduser WHERE user_name=%s ''', (user_name,))
+    #     # self.cur.execute(''' SELECT * FROM adduser ''')
+    #     data = self.cur.fetchone()
+    #     if data != None:
+    #         if data[2] == user_name and data[1] == user_password:
+    #             user_id = data[0]
+    #             self.groupBox.setEnabled(True)
+    #             self.tabWidget.setCurrentIndex(3)
+    #             # self.Add_Data_To_history(1, 5)
+    #             # self.History()
+    #         else:
+    #             warning = QMessageBox.warning(self, '',
+    #                                           "كلمة المرور او اسم المستخدم غير صحيحة هل تريد استعادة كلمة المرور؟",
+    #                                           QMessageBox.Yes | QMessageBox.No)
+    #             if warning == QMessageBox.Yes:
+    #                 self.Open_ResetPassword_Page()
+    #     else:
+    #         warning = QMessageBox.warning(self, '',
+    #                                       "كلمة المرور او اسم المستخدم غير صحيحة هل تريد استعادة كلمة المرور؟",
+    #                                       QMessageBox.Yes | QMessageBox.No)
+    #         if warning == QMessageBox.Yes:
+    #             self.Open_ResetPassword_Page()
 
-    def Delete_All_History_Data(self):
-        sql = ''' DELETE FROM his'''
-        self.cur.execute(sql)
-        self.db.commit()
-        QMessageBox.information(self, 'info', 'تم حذف محتويات السجل بنجاح')
-        self.tableWidget_8.setRowCount(0)
-        self.tableWidget_8.insertRow(0)
+    # def Delete_All_History_Data(self):
+    #     sql = ''' DELETE FROM his'''
+    #     self.cur.execute(sql)
+    #     self.db.commit()
+    #     QMessageBox.information(self, 'info', 'تم حذف محتويات السجل بنجاح')
+    #     self.tableWidget_8.setRowCount(0)
+    #     self.tableWidget_8.insertRow(0)
 
     def Open_Sales_Page(self):
         self.tabWidget.setCurrentIndex(3)
 
-    def Open_Login_Page(self):
-        self.tabWidget.setCurrentIndex(0)
+    # def Open_Login_Page(self):
+    #     self.tabWidget.setCurrentIndex(0)
 
     def Open_Settings_Page(self):
         self.tabWidget.setCurrentIndex(6)
 
-    def Open_History_Page(self):
-        self.tabWidget.setCurrentIndex(5)
+    # def Open_History_Page(self):
+    #     self.tabWidget.setCurrentIndex(5)
 
     def Open_clients_Page(self):
         self.tabWidget.setCurrentIndex(2)
 
-    def Open_Analyse_Page(self):
-        self.tabWidget.setCurrentIndex(4)
+    # def Open_Analyse_Page(self):
+    #     self.tabWidget.setCurrentIndex(4)
 
-    def Open_ResetPassword_Page(self):
-        self.tabWidget.setCurrentIndex(1)
+    # def Open_ResetPassword_Page(self):
+    #     self.tabWidget.setCurrentIndex(1)
 
     def Light_Blue_Theme(self):
         style = open('themes/light_blue.css', 'r')
@@ -910,7 +968,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         style = style.read()
         self.setStyleSheet(style)
 
-    def Bio_Word(self, name, doctor, analysts, results, year, month, day, word_types, prev):
+    def Bio_Word(self, name, doctor, analysts, results, year, month, day, word_types, prev, genus):
         global if_print
         for word_type in word_types:
             if word_type == 'bio':
@@ -921,21 +979,46 @@ class mainapp(QMainWindow, FORM_CLASS):
                     for k in i.rows:
                         for j in k.cells:
                             for n in j.paragraphs:
-                                if n.text == 'أسـم المريض :       المحترم':
-                                    n.text = f'أسـم المريض :{name}       المحترم'
+                                if n.text == 'أسـم المريض :':
+                                    if genus == 0:
+                                        n.text = f'أسـم المريض :{name}'
+                                    else:
+                                        n.text = f'أسـم المريضة :{name}'
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.bold = True
                                     font.size = Pt(11)
-                                if n.text == 'حضرة الدكتور   :       المحترم':
-                                    n.text = f'حضرة الدكتور   : {doctor}      المحترم'
+                                if n.text == 'حضرة الدكتورة   :':
+                                    if doctor == 'عدوية شمس سعيد':
+                                        n.text = f'حضرة الدكتورة   : {doctor}'
+                                    else:
+                                        n.text = f'حضرة الدكتور   : {doctor}'
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.bold = True
                                     font.size = Pt(11)
-
+                                if n.text == 'المحترم':
+                                    if genus == 0:
+                                        n.text = 'المحترم'
+                                    else:
+                                        n.text = 'المحترمة'
+                                    run = n.runs
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.bold = True
+                                    font.size = Pt(11)
+                                if n.text == 'المحترمة2':
+                                    if doctor == 'عدوية شمس سعيد':
+                                        n.text = f'المحترمة'
+                                    else:
+                                        n.text = f'المحترم'
+                                    run = n.runs
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.bold = True
+                                    font.size = Pt(11)
                                 if n.text == 'Random  blood sugar :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1073,25 +1156,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.name = 'Tahoma'
                 document.save('bio latest17.docx')
                 f.close()
-                if prev == 'T':
-                    word = client.Dispatch("Word.Application")
-                    word.Documents.Open(r'F:\برنامج التحليلات\bio latest17.docx')
 
-                else:
-
-                    word = client.Dispatch("Word.Application")
-
-                    word.Documents.Open(r'F:\برنامج التحليلات\bio latest17.docx')
-                    word.ActiveDocument.PrintOut()
-                    time.sleep(2)
-                    if os.path.exists(r'F:\برنامج التحليلات\bio latest17.docx'):
-                        os.remove(r'F:\برنامج التحليلات\bio latest17.docx')
-                print(if_print)
-                if if_print:
-                    print('its start')
-                    if os.path.exists(r'F:\برنامج التحليلات\bio latest17.docx'):
-                        os.remove(r'F:\برنامج التحليلات\bio latest17.docx')
-                # word.ActiveDocument.Close()
             if word_type == 'GSE':
                 f = open('word/GSE latest.docx', 'rb')
                 f.read()
@@ -1101,18 +1166,45 @@ class mainapp(QMainWindow, FORM_CLASS):
                     for k in i.rows:
                         for j in k.cells:
                             for n in j.paragraphs:
-                                if n.text == 'أسـم المريض :       المحترم':
-                                    n.text = f'أسـم المريض :{name}       المحترم'
+                                if n.text == 'أسـم المريض :':
+                                    if genus == 0:
+                                        n.text = f'أسـم المريض :{name}'
+                                    else:
+                                        n.text = f'أسـم المريضة :{name}'
                                     run = n.runs
 
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.bold = True
                                     font.size = Pt(11)
-                                if n.text == 'حضرة الدكتور   :       المحترم':
-                                    n.text = f'حضرة الدكتور   : {doctor}      المحترم'
+                                if n.text == 'حضرة الدكتورة   :':
+                                    if doctor == 'عدوية شمس سعيد':
+                                        n.text = f'حضرة الدكتورة   : {doctor}'
+                                    else:
+                                        n.text = f'حضرة الدكتور   : {doctor}'
                                     run = n.runs
 
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.bold = True
+                                    font.size = Pt(11)
+                                if n.text == 'المحترم':
+                                    if genus == 0:
+                                        n.text = 'المحترم'
+                                    else:
+                                        n.text = 'المحترمة'
+                                    run = n.runs
+
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.bold = True
+                                    font.size = Pt(11)
+                                if n.text == 'المحترمة2':
+                                    if doctor == 'عدوية شمس سعيد':
+                                        n.text = f'المحترمة'
+                                    else:
+                                        n.text = f'المحترم'
+                                    run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.bold = True
@@ -1245,23 +1337,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.name = 'Tahoma'
                 document.save('GSE latest.docx')
                 f.close()
-                if prev == 'T':
 
-                    word = client.Dispatch("Word.Application")
-
-                    word.Documents.Open(r'F:\برنامج التحليلات\GSE latest.docx')
-                else:
-                    word = client.Dispatch("Word.Application")
-
-                    word.Documents.Open(r'F:\برنامج التحليلات\GSE latest.docx')
-                    word.ActiveDocument.PrintOut()
-                    time.sleep(2)
-                    if os.path.exists(r'F:\برنامج التحليلات\GSE latest.docx'):
-                        os.remove(r'F:\برنامج التحليلات\GSE latest.docx')
-                if if_print:
-                    if os.path.exists(r'F:\برنامج التحليلات\GSE latest.docx'):
-                        os.remove(r'F:\برنامج التحليلات\GSE latest.docx')
-                # word.ActiveDocument.Close()
             if word_type == 'GUE':
 
                 f = open('word/GUE latest.docx', 'rb')
@@ -1272,17 +1348,44 @@ class mainapp(QMainWindow, FORM_CLASS):
                     for k in i.rows:
                         for j in k.cells:
                             for n in j.paragraphs:
-                                if n.text == 'أسـم المريض :       المحترم':
-                                    n.text = f'أسـم المريض :{name}       المحترم'
+                                if n.text == 'أسـم المريض :':
+                                    if genus == 0:
+                                        n.text = f'أسـم المريض :{name}'
+                                    else:
+                                        n.text = f'أسـم المريضة :{name}'
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.size = Pt(11)
-                                if n.text == 'حضرة الدكتور   :       المحترم':
-                                    n.text = f'حضرة الدكتور   : {doctor}      المحترم'
+                                if n.text == 'حضرة الدكتورة   :':
+                                    if doctor == 'عدوية شمس سعيد':
+                                        n.text = f'حضرة الدكتورة   : {doctor}'
+                                    else:
+                                        n.text = f'حضرة الدكتور   : {doctor}'
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
+                                    font.size = Pt(11)
+                                if n.text == 'المحترم':
+                                    if genus == 0:
+                                        n.text = 'المحترم'
+                                    else:
+                                        n.text = 'المحترمة'
+                                    run = n.runs
+
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.bold = True
+                                    font.size = Pt(11)
+                                if n.text == 'المحترمة2':
+                                    if doctor == 'عدوية شمس سعيد':
+                                        n.text = f'المحترمة'
+                                    else:
+                                        n.text = f'المحترم'
+                                    run = n.runs
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.bold = True
                                     font.size = Pt(11)
                                 if n.text == 'Appearance :':
                                     for row in range(0, len(analysts)):
@@ -1423,23 +1526,6 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.size = Pt(12)
                 document.save('GUE latest.docx')
                 f.close()
-                if prev == 'T':
-
-                    word = client.Dispatch("Word.Application")
-
-                    word.Documents.Open(r'F:\برنامج التحليلات\GUE latest.docx')
-                else:
-                    word = client.Dispatch("Word.Application")
-
-                    word.Documents.Open(r'F:\برنامج التحليلات\GUE latest.docx')
-                    word.ActiveDocument.PrintOut()
-                    time.sleep(2)
-                    if os.path.exists(r'F:\برنامج التحليلات\GUE latest.docx'):
-                        os.remove(r'F:\برنامج التحليلات\GUE latest.docx')
-                if if_print:
-                    if os.path.exists(r'F:\برنامج التحليلات\GUE latest.docx'):
-                        os.remove(r'F:\برنامج التحليلات\GUE latest.docx')
-                # word.ActiveDocument.Close()
 
             if word_type == 'hematology':
                 f = open('word/hematology latest.docx', 'rb')
@@ -1450,15 +1536,42 @@ class mainapp(QMainWindow, FORM_CLASS):
                     for k in i.rows:
                         for j in k.cells:
                             for n in j.paragraphs:
-                                if n.text == 'أسـم المريض :       المحترم':
-                                    n.text = f'أسـم المريض :{name}       المحترم'
+                                if n.text == 'أسـم المريض :':
+                                    if genus == 0:
+                                        n.text = f'أسـم المريض :{name}'
+                                    else:
+                                        n.text = f'أسـم المريضة :{name}'
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.bold = True
                                     font.size = Pt(11)
-                                if n.text == 'حضرة الدكتور   :       المحترم':
-                                    n.text = f'حضرة الدكتور   : {doctor}      المحترم'
+                                if n.text == 'حضرة الدكتورة   :':
+                                    if doctor == 'عدوية شمس سعيد':
+                                        n.text = f'حضرة الدكتورة   : {doctor}'
+                                    else:
+                                        n.text = f'حضرة الدكتور   : {doctor}'
+                                    run = n.runs
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.bold = True
+                                    font.size = Pt(11)
+                                if n.text == 'المحترم':
+                                    if genus == 0:
+                                        n.text = 'المحترم'
+                                    else:
+                                        n.text = 'المحترمة'
+                                    run = n.runs
+
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.bold = True
+                                    font.size = Pt(11)
+                                if n.text == 'المحترمة2':
+                                    if doctor == 'عدوية شمس سعيد':
+                                        n.text = f'المحترمة'
+                                    else:
+                                        n.text = f'المحترم'
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
@@ -1653,25 +1766,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.name = 'Tahoma'
                                     font.bold = True
                                     font.size = Pt(14)
+
                 document.save('hematology latest.docx')
                 f.close()
-                if prev == 'T':
 
-                    word = client.Dispatch("Word.Application")
-
-                    word.Documents.Open(r'F:\برنامج التحليلات\hematology latest.docx')
-                else:
-                    word = client.Dispatch("Word.Application")
-
-                    word.Documents.Open(r'F:\برنامج التحليلات\hematology latest.docx')
-                    word.ActiveDocument.PrintOut()
-                    time.sleep(2)
-                    if os.path.exists(r'F:\برنامج التحليلات\hematology latest.docx'):
-                        os.remove(r'F:\برنامج التحليلات\hematology latest.docx')
-                if if_print:
-                    if os.path.exists(r'F:\برنامج التحليلات\hematology latest.docx'):
-                        os.remove(r'F:\برنامج التحليلات\hematology latest.docx')
-                # word.ActiveDocument.Close()
             if word_type == 'هرمونات مشترك':
                 f = open('word/هرمونات مشترك latest.docx', 'rb')
                 f.read()
@@ -1688,15 +1786,36 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     run = n.runs
                                     font = run[0].font
                                     font.bold = True
-                                    font.size = Pt(12)
+                                    font.size = Pt(14)
                                     font.name = 'Monotype Koufi'
-                                if n.text == 'حـضـرة الـدكتـور    الـفاضـــل :                                                                                            الـمـحـتـرم':
-                                    n.text = f'حـضـرة الـدكتـور    الـفاضـــل :{doctor}                                                                                            الـمـحـتـرم'
+                                if n.text == 'حـضـرة الـدكتـورة    الـفاضـــلة :                                                                                            ':
+                                    n.text = f'حـضـرة الـدكتـور    الـفاضـــل : {doctor}'
                                     run = n.runs
                                     font = run[0].font
                                     font.bold = True
-                                    font.size = Pt(12)
+                                    font.size = Pt(14)
                                     font.name = 'Monotype Koufi'
+                                if n.text == 'المحترم':
+                                    if genus == 0:
+                                        n.text = 'المحترم'
+                                    else:
+                                        n.text = 'المحترمة'
+                                    run = n.runs
+
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.bold = True
+                                    font.size = Pt(14)
+                                if n.text == 'المحترمة2':
+                                    if doctor == 'عدوية شمس سعيد':
+                                        n.text = f'المحترمة'
+                                    else:
+                                        n.text = f'المحترم'
+                                    run = n.runs
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.bold = True
+                                    font.size = Pt(14)
                                 if n.text == '0r':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1705,7 +1824,12 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Toxoplasma IgG':
                                             k = analyst_and_result['result']
-                                        n.text = f'  {k}'
+                                        ng = ''
+                                        if k > 0.9:
+                                            ng = 'Positive'
+                                        else:
+                                            ng = 'Negative'
+                                        n.text = f'  {k}  {ng}'
                                         run = n.runs
                                         font = run[0].font
                                         font.bold = True
@@ -1719,7 +1843,12 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Toxoplasma IgM':
                                             k = analyst_and_result['result']
-                                        n.text = f'  {k}'
+                                        ng = ''
+                                        if k > 0.9:
+                                            ng = 'Positive'
+                                        else:
+                                            ng = 'Negative'
+                                        n.text = f'  {k}  {ng}'
                                         run = n.runs
                                         font = run[0].font
                                         font.bold = True
@@ -1733,7 +1862,12 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Cytomegalo Virus IgG':
                                             k = analyst_and_result['result']
-                                        n.text = f'  {k}'
+                                        ng = ''
+                                        if k > 0.9:
+                                            ng = 'Positive'
+                                        else:
+                                            ng = 'Negative'
+                                        n.text = f'  {k}  {ng}'
                                         run = n.runs
                                         font = run[0].font
                                         font.bold = True
@@ -1747,7 +1881,12 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Cytomegalo Virus IgM':
                                             k = analyst_and_result['result']
-                                        n.text = f'  {k}'
+                                        ng = ''
+                                        if k > 0.9:
+                                            ng = 'Positive'
+                                        else:
+                                            ng = 'Negative'
+                                        n.text = f'  {k}  {ng}'
                                         run = n.runs
                                         font = run[0].font
                                         font.bold = True
@@ -1761,7 +1900,12 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Rubella IgG':
                                             k = analyst_and_result['result']
-                                        n.text = f'  {k}'
+                                        ng = ''
+                                        if k > 0.9:
+                                            ng = 'Positive'
+                                        else:
+                                            ng = 'Negative'
+                                        n.text = f'  {k}  {ng}'
                                         run = n.runs
                                         font = run[0].font
                                         font.bold = True
@@ -1775,7 +1919,12 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Rubella IgM':
                                             k = analyst_and_result['result']
-                                        n.text = f'  {k}'
+                                        ng = ''
+                                        if k > 0.9:
+                                            ng = 'Positive'
+                                        else:
+                                            ng = 'Negative'
+                                        n.text = f'  {k}  {ng}'
                                         run = n.runs
                                         font = run[0].font
                                         font.bold = True
@@ -1789,7 +1938,12 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Anti - Phspholipin IgG':
                                             k = analyst_and_result['result']
-                                        n.text = f'  {k}'
+                                        ng = ''
+                                        if k > 0.9:
+                                            ng = 'Positive'
+                                        else:
+                                            ng = 'Negative'
+                                        n.text = f'  {k}  {ng}'
                                         run = n.runs
                                         font = run[0].font
                                         font.bold = True
@@ -1803,7 +1957,12 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Anti - Phspholipin  IgM':
                                             k = analyst_and_result['result']
-                                        n.text = f'  {k}'
+                                        ng = ''
+                                        if k > 0.9:
+                                            ng = 'Positive'
+                                        else:
+                                            ng = 'Negative'
+                                        n.text = f'  {k}  {ng}'
                                         run = n.runs
                                         font = run[0].font
                                         font.bold = True
@@ -1817,7 +1976,12 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Anti - Cardiolipin  IgG':
                                             k = analyst_and_result['result']
-                                        n.text = f'  {k}'
+                                        ng = ''
+                                        if k > 0.9:
+                                            ng = 'Positive'
+                                        else:
+                                            ng = 'Negative'
+                                        n.text = f'  {k}  {ng}'
                                         run = n.runs
                                         font = run[0].font
                                         font.bold = True
@@ -1831,7 +1995,12 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Anti - Cardiolipin  IgM':
                                             k = analyst_and_result['result']
-                                        n.text = f'  {k}'
+                                        ng = ''
+                                        if k > 0.9:
+                                            ng = 'Positive'
+                                        else:
+                                            ng = 'Negative'
+                                        n.text = f'  {k}  {ng}'
                                         run = n.runs
                                         font = run[0].font
                                         font.bold = True
@@ -1845,7 +2014,12 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Herps   IgG':
                                             k = analyst_and_result['result']
-                                        n.text = f'  {k}'
+                                        ng = ''
+                                        if k > 0.9:
+                                            ng = 'Positive'
+                                        else:
+                                            ng = 'Negative'
+                                        n.text = f'  {k}  {ng}'
                                         run = n.runs
                                         font = run[0].font
                                         font.bold = True
@@ -1859,7 +2033,12 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Herpes  IgM':
                                             k = analyst_and_result['result']
-                                        n.text = f'  {k}'
+                                        ng = ''
+                                        if k > 0.9:
+                                            ng = 'Positive'
+                                        else:
+                                            ng = 'Negative'
+                                        n.text = f'  {k}  {ng}'
                                         run = n.runs
                                         font = run[0].font
                                         font.bold = True
@@ -1968,30 +2147,67 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         font.bold = True
                                         font.size = Pt(12)
                                         font.name = 'Tahoma'
-                                if n.text == 'Date:    /     / 20':
+                                if n.text == 'Date:    /     / 20              ':
                                     n.text = f'Date:   {year} /  {month} / {day}'
                                     run = n.runs
                                     font = run[0].font
                                     font.bold = True
                                     font.size = Pt(14)
                                     font.name = 'Tahoma'
+                for element in document.paragraphs:
+                    if element.text == 'Date:    /     / 20              ':
+                        element.text = f'Date:   {year} /  {month} / {day}'
+                        run = element.runs
+                        font = run[0].font
+                        font.bold = True
+                        font.size = Pt(14)
+                        font.name = 'Tahoma'
                 document.save('هرمونات مشترك latest.docx')
                 f.close()
-                if prev == 'T':
 
+        try:
+            if prev == 'T':
+                if os.path.exists(r'F:\برنامج التحليلات\bio latest17.docx'):
                     word = client.Dispatch("Word.Application")
+                    word.Documents.Open(r'F:\برنامج التحليلات\bio latest17.docx')
+                if os.path.exists(r'F:\برنامج التحليلات\GSE latest.docx'):
+                    word = client.Dispatch("Word.Application")
+                    word.Documents.Open(r'F:\برنامج التحليلات\GSE latest.docx')
+                if os.path.exists(r'F:\برنامج التحليلات\GUE latest.docx'):
+                    word = client.Dispatch("Word.Application")
+                    word.Documents.Open(r'F:\برنامج التحليلات\GUE latest.docx')
+                if os.path.exists(r'F:\برنامج التحليلات\hematology latest.docx'):
+                    word = client.Dispatch("Word.Application")
+                    word.Documents.Open(r'F:\برنامج التحليلات\hematology latest.docx')
+                if os.path.exists(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx'):
+                    word = client.Dispatch("Word.Application")
+                    word.Documents.Open(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
 
-                    word.Documents.Open(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
-                else:
-                    word = client.Dispatch("Word.Application")
-                    word.Documents.Open(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
-                    word.ActiveDocument.PrintOut()
-                    time.sleep(2)
-                    if os.path.exists(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx'):
-                        os.remove(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
-                if if_print:
-                    if os.path.exists(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx'):
-                        os.remove(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
+
+            else:
+
+                word = client.Dispatch("Word.Application")
+
+                word.Documents.Open(r'F:\برنامج التحليلات\bio latest17.docx')
+                word.ActiveDocument.PrintOut()
+                time.sleep(2)
+                if os.path.exists(r'F:\برنامج التحليلات\bio latest17.docx'):
+                    os.remove(r'F:\برنامج التحليلات\bio latest17.docx')
+
+                if os.path.exists(r'F:\برنامج التحليلات\GSE latest.docx'):
+                    os.remove(r'F:\برنامج التحليلات\GSE latest.docx')
+
+                if os.path.exists(r'F:\برنامج التحليلات\GUE latest.docx'):
+                    os.remove(r'F:\برنامج التحليلات\GUE latest.docx')
+
+                if os.path.exists(r'F:\برنامج التحليلات\hematology latest.docx'):
+                    os.remove(r'F:\برنامج التحليلات\hematology latest.docx')
+
+                if os.path.exists(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx'):
+                    os.remove(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
+
+        except Exception as e:
+            print(e)
 
 
 def main():

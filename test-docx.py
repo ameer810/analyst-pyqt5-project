@@ -318,112 +318,112 @@ from docx.shared import Pt
 #
 # document.save('word/GUE latest.docx')
 # f.close()
-from win32com import client
-import time
-f = open('word/bio latest17.docx', 'rb')
-f.read()
-
-document = Document(f)
-for i in document.tables:
-    for k in i.rows:
-        for j in k.cells:
-            for n in j.paragraphs:
-                if n.text == 'أسـم المريض :       المحترم':
-                    n.text = f'أسـم المريض :{"kf"}       المحترم'
-                    run=n.runs
-                    font = run[0].font
-                    font.name = 'Monotype Koufi'
-                    font.bold = True
-                    font.size = Pt(11)
-                if n.text == 'حضرة الدكتور   :       المحترم':
-                    n.text = f'حضرة الدكتور   : {"doctor"}      المحترم'
-                    run = n.runs
-                    font = run[0].font
-                    font.name = 'Monotype Koufi'
-                    font.bold = True
-                    font.size = Pt(11)
-
-                if n.text == 'Random  blood sugar :':
-                            n.text = f'Random  blood sugar : {3}'
-                            run = n.runs
-                            font = run[0].font
-                            font.bold=True
-                            font.size = Pt(11)
-                            font.name = 'Tahoma'
-                if n.text == 'Blood Urea               :':
-
-                            n.text = f'Blood Urea               : {3}'
-                            run = n.runs
-                            font = run[0].font
-                            font.bold = True
-                            font.size = Pt(11)
-                            font.name = 'Tahoma'
-                if n.text == 'S. Creatinin               :':
-                            n.text = f'S. Creatinin               : {3}'
-                            run = n.runs
-                            font = run[0].font
-                            font.bold = True
-                            font.size = Pt(11)
-                            font.name = 'Tahoma'
-                if n.text == 'S. Uric acid                  :':
-                            n.text = f'S. Uric acid                  : {3}'
-                            run = n.runs
-                            font = run[0].font
-                            font.bold = True
-                            font.size = Pt(11)
-                            font.name = 'Tahoma'
-                if n.text == 'S. Cholesterol            :':
-                            n.text = f'S. Cholesterol            : {3}'
-                            run = n.runs
-                            font = run[0].font
-                            font.bold = True
-                            font.size = Pt(11)
-                            font.name = 'Tahoma'
-                if n.text == 'S. Triglycerid             :':
-                            n.text = f'S. Triglycerid             : {3}'
-                            run = n.runs
-                            font = run[0].font
-                            font.bold = True
-                            font.size = Pt(11)
-                            font.name = 'Tahoma'
-                if n.text == 'Total serum Bilirubin:':
-                            n.text = f'Total serum Bilirubin: {3}'
-                            run = n.runs
-                            font = run[0].font
-                            font.bold = True
-                            font.size = Pt(11)
-                            font.name = 'Tahoma'
-                if n.text == 'S.Calcium :':
-                            n.text = f'S.Calcium : {3}'
-                            run = n.runs
-                            font = run[0].font
-                            font.bold = True
-                            font.size = Pt(11)
-                            font.name = 'Tahoma'
-                if n.text == 'Vitamin D              :':
-                            n.text = f'Vitamin D              : {3}'
-                            run = n.runs
-                            font = run[0].font
-                            font.bold = True
-                            font.size = Pt(11)
-                            font.name = 'Tahoma'
-                if n.text == 'Date:    /     / 20':
-                    n.text = f'Date:   {10} /  {2} / {8239}'
-                    run = n.runs
-                    font = run[0].font
-                    font.bold = True
-                    font.size = Pt(11)
-                    font.name = 'Tahoma'
-document.save('word/bio latest17.docx')
-f.close()
-
-word = client.Dispatch("Word.Application")
-
-word.Documents.Open(r'F:\برنامج التحليلات\word\bio latest17.docx')
-# word.Application.ActivePrinter = "PostScript"
-word.ActiveDocument.PrintOut()
-time.sleep(2)
-word.ActiveDocument.Close()
+# from win32com import client
+# import time
+# f = open('word/bio latest17.docx', 'rb')
+# f.read()
+#
+# document = Document(f)
+# for i in document.tables:
+#     for k in i.rows:
+#         for j in k.cells:
+#             for n in j.paragraphs:
+#                 if n.text == 'أسـم المريض :       المحترم':
+#                     n.text = f'أسـم المريض :{"kf"}       المحترم'
+#                     run=n.runs
+#                     font = run[0].font
+#                     font.name = 'Monotype Koufi'
+#                     font.bold = True
+#                     font.size = Pt(11)
+#                 if n.text == 'حضرة الدكتور   :       المحترم':
+#                     n.text = f'حضرة الدكتور   : {"doctor"}      المحترم'
+#                     run = n.runs
+#                     font = run[0].font
+#                     font.name = 'Monotype Koufi'
+#                     font.bold = True
+#                     font.size = Pt(11)
+#
+#                 if n.text == 'Random  blood sugar :':
+#                             n.text = f'Random  blood sugar : {3}'
+#                             run = n.runs
+#                             font = run[0].font
+#                             font.bold=True
+#                             font.size = Pt(11)
+#                             font.name = 'Tahoma'
+#                 if n.text == 'Blood Urea               :':
+#
+#                             n.text = f'Blood Urea               : {3}'
+#                             run = n.runs
+#                             font = run[0].font
+#                             font.bold = True
+#                             font.size = Pt(11)
+#                             font.name = 'Tahoma'
+#                 if n.text == 'S. Creatinin               :':
+#                             n.text = f'S. Creatinin               : {3}'
+#                             run = n.runs
+#                             font = run[0].font
+#                             font.bold = True
+#                             font.size = Pt(11)
+#                             font.name = 'Tahoma'
+#                 if n.text == 'S. Uric acid                  :':
+#                             n.text = f'S. Uric acid                  : {3}'
+#                             run = n.runs
+#                             font = run[0].font
+#                             font.bold = True
+#                             font.size = Pt(11)
+#                             font.name = 'Tahoma'
+#                 if n.text == 'S. Cholesterol            :':
+#                             n.text = f'S. Cholesterol            : {3}'
+#                             run = n.runs
+#                             font = run[0].font
+#                             font.bold = True
+#                             font.size = Pt(11)
+#                             font.name = 'Tahoma'
+#                 if n.text == 'S. Triglycerid             :':
+#                             n.text = f'S. Triglycerid             : {3}'
+#                             run = n.runs
+#                             font = run[0].font
+#                             font.bold = True
+#                             font.size = Pt(11)
+#                             font.name = 'Tahoma'
+#                 if n.text == 'Total serum Bilirubin:':
+#                             n.text = f'Total serum Bilirubin: {3}'
+#                             run = n.runs
+#                             font = run[0].font
+#                             font.bold = True
+#                             font.size = Pt(11)
+#                             font.name = 'Tahoma'
+#                 if n.text == 'S.Calcium :':
+#                             n.text = f'S.Calcium : {3}'
+#                             run = n.runs
+#                             font = run[0].font
+#                             font.bold = True
+#                             font.size = Pt(11)
+#                             font.name = 'Tahoma'
+#                 if n.text == 'Vitamin D              :':
+#                             n.text = f'Vitamin D              : {3}'
+#                             run = n.runs
+#                             font = run[0].font
+#                             font.bold = True
+#                             font.size = Pt(11)
+#                             font.name = 'Tahoma'
+#                 if n.text == 'Date:    /     / 20':
+#                     n.text = f'Date:   {10} /  {2} / {8239}'
+#                     run = n.runs
+#                     font = run[0].font
+#                     font.bold = True
+#                     font.size = Pt(11)
+#                     font.name = 'Tahoma'
+# document.save('word/bio latest17.docx')
+# f.close()
+#
+# word = client.Dispatch("Word.Application")
+#
+# word.Documents.Open(r'F:\برنامج التحليلات\word\bio latest17.docx')
+# # word.Application.ActivePrinter = "PostScript"
+# word.ActiveDocument.PrintOut()
+# time.sleep(2)
+# word.ActiveDocument.Close()
 # # f = open('word/GSE latest.docx', 'rb')
 # # f.read()
 # #
@@ -732,3 +732,22 @@ word.ActiveDocument.Close()
                     if os.path.exists(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx'):
                         os.remove(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
 '''
+from win32com import client
+for i in range(0,2):
+    f = open('word/bio latest17.docx', 'rb')
+    f.read()
+    document = Document(f)
+    # for i in document.tables:
+    #     for k in i.rows:
+    #         for j in k.cells:
+    #
+    #             for n in j.paragraphs:
+    #                 print('1'+n.text+'2')
+    # # for kd in document.paragraphs:
+    # #     print('1'+kd.text+'2')
+    document.save('bio latest17.docx')
+    f.close()
+word = client.Dispatch("Word.Application")
+word.Documents.Open(r'F:\برنامج التحليلات\bio latest17.docx')
+
+

@@ -2164,7 +2164,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
     </widget>
     <widget class="QPushButton" name="pushButton_2">
      <property name="enabled">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="geometry">
       <rect>
@@ -2188,7 +2188,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
     </widget>
     <widget class="QPushButton" name="pushButton_3">
      <property name="enabled">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="geometry">
       <rect>
@@ -2217,7 +2217,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
      <property name="geometry">
       <rect>
        <x>17</x>
-       <y>510</y>
+       <y>620</y>
        <width>201</width>
        <height>91</height>
       </rect>
@@ -2265,7 +2265,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
      <property name="geometry">
       <rect>
        <x>17</x>
-       <y>620</y>
+       <y>510</y>
        <width>201</width>
        <height>91</height>
       </rect>
@@ -2280,6 +2280,30 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
      </property>
      <property name="text">
       <string>تسجيل الدخول</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_12">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>18</x>
+       <y>510</y>
+       <width>201</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>12</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>طباعة اوراق</string>
      </property>
     </widget>
    </widget>
@@ -2303,7 +2327,7 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
      </font>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -2595,6 +2619,11 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          </row>
          <column>
           <property name="text">
+           <string>الرقم التعريفي</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
            <string>اسم المراجع</string>
           </property>
          </column>
@@ -2606,11 +2635,6 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          <column>
           <property name="text">
            <string>طبيب المراجع</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>الرقم التعريفي</string>
           </property>
          </column>
         </widget>
@@ -3093,7 +3117,12 @@ QDateTimeEdit:disabled {
          </property>
          <item>
           <property name="text">
-           <string>----------------------</string>
+           <string>--------------</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>عدوية شمس سعيد</string>
           </property>
          </item>
         </widget>
@@ -9459,6 +9488,144 @@ QDialog QGroupBox QFrame {
         </widget>
        </widget>
       </widget>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_3">
+     <attribute name="title">
+      <string>Page</string>
+     </attribute>
+     <widget class="QLabel" name="label_17">
+      <property name="geometry">
+       <rect>
+        <x>850</x>
+        <y>200</y>
+        <width>111</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>12</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>نوع التقرير</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="comboBox_27">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>211</y>
+        <width>701</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="duplicatesEnabled">
+       <bool>false</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string>bio</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>GSE</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>GUE</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>hematology</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>هرمونات مشترك</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QSpinBox" name="spinBox_4">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>320</y>
+        <width>701</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>17</pointsize>
+       </font>
+      </property>
+      <property name="minimum">
+       <number>-1</number>
+      </property>
+      <property name="maximum">
+       <number>1000000000</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_18">
+      <property name="geometry">
+       <rect>
+        <x>860</x>
+        <y>300</y>
+        <width>111</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>12</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>عدد النسخ</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_23">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>490</y>
+        <width>491</width>
+        <height>91</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>16</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>طباعة</string>
+      </property>
      </widget>
     </widget>
    </widget>
