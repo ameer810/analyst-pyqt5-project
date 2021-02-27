@@ -733,21 +733,21 @@ from docx.shared import Pt
                         os.remove(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
 '''
 from win32com import client
-for i in range(0,2):
-    f = open('word/bio latest17.docx', 'rb')
-    f.read()
-    document = Document(f)
-    # for i in document.tables:
-    #     for k in i.rows:
-    #         for j in k.cells:
-    #
-    #             for n in j.paragraphs:
-    #                 print('1'+n.text+'2')
-    # # for kd in document.paragraphs:
-    # #     print('1'+kd.text+'2')
-    document.save('bio latest17.docx')
-    f.close()
-word = client.Dispatch("Word.Application")
-word.Documents.Open(r'F:\برنامج التحليلات\bio latest17.docx')
+# for i in range(0,2):
+f = open('word/هرمونات مشترك latest.docx', 'rb')
+f.read()
+document = Document(f)
+for i in document.tables:
+    for k in i.rows:
+        for j in k.cells:
+
+            for n in j.paragraphs:
+                print('1'+n.text+'2')
+for kd in document.paragraphs:
+    print('1'+kd.text+'2'+'h')
+document.save('ali.docx')
+f.close()
+# word = client.Dispatch("Word.Application")
+# word.Documents.Open(r'F:\برنامج التحليلات\bio latest17.docx')
 
 

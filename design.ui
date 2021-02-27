@@ -4779,6 +4779,9 @@ QDateTimeEdit:disabled {
       <string>Page</string>
      </attribute>
      <widget class="QTabWidget" name="tabWidget_4">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -4800,7 +4803,7 @@ QDateTimeEdit:disabled {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_14">
        <attribute name="title">
@@ -9025,11 +9028,130 @@ QDialog QGroupBox QFrame {
         </property>
        </widget>
       </widget>
+      <widget class="QWidget" name="tab_10">
+       <attribute name="title">
+        <string>المسارات</string>
+       </attribute>
+       <widget class="QLabel" name="label_19">
+        <property name="geometry">
+         <rect>
+          <x>640</x>
+          <y>108</y>
+          <width>181</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>Segoe UI</family>
+          <pointsize>12</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>مسار ملفات التحاليل</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_14">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>110</x>
+          <y>110</y>
+          <width>521</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>13</pointsize>
+         </font>
+        </property>
+        <property name="placeholderText">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_20">
+        <property name="geometry">
+         <rect>
+          <x>640</x>
+          <y>228</y>
+          <width>181</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>Segoe UI</family>
+          <pointsize>12</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>مسار حفظ الملفات</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_15">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>110</x>
+          <y>230</y>
+          <width>521</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>13</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="placeholderText">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_24">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>190</x>
+          <y>380</y>
+          <width>451</width>
+          <height>91</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>Segoe UI</family>
+          <pointsize>12</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>تطبيق</string>
+        </property>
+       </widget>
+      </widget>
       <widget class="QWidget" name="tab_15">
        <attribute name="title">
         <string>المشتريات</string>
        </attribute>
        <widget class="QTableWidget" name="tableWidget_3">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>-1</x>
@@ -9078,6 +9200,9 @@ QDialog QGroupBox QFrame {
         </column>
        </widget>
        <widget class="QLineEdit" name="lineEdit_11">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>4</x>
@@ -9096,6 +9221,9 @@ QDialog QGroupBox QFrame {
         </property>
        </widget>
        <widget class="QComboBox" name="comboBox_6">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>718</x>
@@ -9128,6 +9256,9 @@ QDialog QGroupBox QFrame {
         </item>
        </widget>
        <widget class="QPushButton" name="pushButton_16">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -9147,6 +9278,9 @@ QDialog QGroupBox QFrame {
         </property>
        </widget>
        <widget class="QDateEdit" name="dateEdit">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>170</x>
@@ -9157,6 +9291,9 @@ QDialog QGroupBox QFrame {
         </property>
        </widget>
        <widget class="QLabel" name="label_6">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>214</x>
@@ -9178,6 +9315,9 @@ QDialog QGroupBox QFrame {
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEdit_12">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>337</x>
@@ -9196,6 +9336,9 @@ QDialog QGroupBox QFrame {
         </property>
        </widget>
        <widget class="QLabel" name="label_7">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>540</x>
@@ -9217,6 +9360,9 @@ QDialog QGroupBox QFrame {
         </property>
        </widget>
        <widget class="QLabel" name="label_8">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>370</x>
@@ -9236,6 +9382,9 @@ QDialog QGroupBox QFrame {
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEdit_13">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>680</x>
@@ -9254,6 +9403,9 @@ QDialog QGroupBox QFrame {
         </property>
        </widget>
        <widget class="QLabel" name="label_12">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>890</x>
@@ -9275,6 +9427,9 @@ QDialog QGroupBox QFrame {
         </property>
        </widget>
        <widget class="QLabel" name="label_13">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>940</x>
@@ -9296,6 +9451,9 @@ QDialog QGroupBox QFrame {
         </property>
        </widget>
        <widget class="QLabel" name="label_14">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>640</x>
@@ -9317,6 +9475,9 @@ QDialog QGroupBox QFrame {
         </property>
        </widget>
        <widget class="QSpinBox" name="spinBox_3">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="geometry">
          <rect>
           <x>485</x>
