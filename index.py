@@ -93,32 +93,49 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.cur.execute(''' UPDATE paths SET file_path=%s,save_file_path=%s WHERE id=1''',
                          (files_path, save_files_path))
         self.db.commit()
-        QMessageBox.information(self,'','تم تطبيق المعلومات بنجاح')
+        QMessageBox.information(self, '', 'تم تطبيق المعلومات بنجاح')
         self.Show_paths()
 
     def Print_empty_papers(self):
+        self.cur.execute(''' SELECT * FROM paths WHERE id=1 ''')
+        mydata = self.cur.fetchone()
+        word_files = mydata[1]
+        save_word_files = mydata[2]
         paper_type = self.comboBox_27.currentIndex()
         copyes_num = self.spinBox_4.Value()
         word = client.Dispatch("Word.Application")
 
         category = ''
+        file = ''
         if paper_type == 0:
             category = 'bio'
+            file = 'bio org.docx'
         if paper_type == 1:
             category = 'GSE'
+            file = 'GSE org.docx'
         if paper_type == 2:
             category = 'GUE'
+            file = 'GUE org.docx'
         if paper_type == 3:
             category = 'hematology'
+            file = 'hematology org.docx'
         if paper_type == 4:
             category = 'هرمونات مشترك'
-        word.Documents.Open(r'F:\برنامج التحليلات\bio latest17.docx')
+            file = 'هرمونات مشترك الاصلي.docx'
+        QMessageBox.information(self, 'info', 'تتم الطباعة الان')
+        word.Documents.Open(r'%s\%s' % (word_files, file))
         word.ActiveDocument.PrintOut(Copies=copyes_num)
         time.sleep(2)
+        word.ActiveDocument.Close()
+
 
     def Preview(self):
         global if_print
         self.Print_Sale_Data('T')
+        self.cur.execute(''' SELECT * FROM paths WHERE id=1 ''')
+        mydata = self.cur.fetchone()
+        word_files = mydata[1]
+        save_word_files = mydata[2]
         warning = QMessageBox.warning(self, '',
                                       "هل قمت بطباعة جميع الملفات التي تمت معاينتها؟\n لا تضغط نعم الا لو قمت بطباعتها",
                                       QMessageBox.Yes | QMessageBox.No)
@@ -131,20 +148,20 @@ class mainapp(QMainWindow, FORM_CLASS):
                 if_print = True
 
                 print('its start')
-                if os.path.exists(r'F:\برنامج التحليلات\bio latest17.docx'):
-                    os.remove(r'F:\برنامج التحليلات\bio latest17.docx')
+                if os.path.exists(r'%s\bio latest17.docx' % save_word_files):
+                    os.remove(r'%s\bio latest17.docx' % save_word_files)
 
-                if os.path.exists(r'F:\برنامج التحليلات\GSE latest.docx'):
-                    os.remove(r'F:\برنامج التحليلات\GSE latest.docx')
+                if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
+                    os.remove(r'%s\GSE latest.docx' % save_word_files)
 
-                if os.path.exists(r'F:\برنامج التحليلات\GUE latest.docx'):
-                    os.remove(r'F:\برنامج التحليلات\GUE latest.docx')
+                if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
+                    os.remove(r'%s\GUE latest.docx' % save_word_files)
 
-                if os.path.exists(r'F:\برنامج التحليلات\hematology latest.docx'):
-                    os.remove(r'F:\برنامج التحليلات\hematology latest.docx')
+                if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
+                    os.remove(r'%s\hematology latest.docx' % save_word_files)
 
-                if os.path.exists(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx'):
-                    os.remove(r'F:\برنامج التحليلات\هرمونات مشترك latest.docx')
+                if os.path.exists(r'%s\هرمونات مشترك latest' % save_word_files):
+                    os.remove(r'%s\هرمونات مشترك latest' % save_word_files)
 
     # def Reset_password(self):
     #     user_name = self.lineEdit_7.text()
@@ -187,7 +204,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.lineEdit_20.setText('')
         self.lineEdit_21.setText('')
         self.spinBox_7.setValue(0)
-        self.spinBox_8.setValue(0)
+        self.doubleSpinBox_7.setValue(0)
         self.comboBox_14.setCurrentIndex(0)
         self.comboBox_16.setCurrentIndex(0)
         self.comboBox_17.setCurrentIndex(0)
@@ -349,7 +366,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             all_result.append(str(result))
             real_doctor = self.tableWidget_5.item(row, 3).text()
         self.Bio_Word(real_name, real_doctor, all_analyst, all_result, year, month, day, word_type, prev, genuses)
-        if prev!='T':
+        if prev != 'T':
             QMessageBox.information(self, 'info', 'تتم الطباعة حالياً')
 
     def get_total_price(self):
@@ -374,7 +391,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         analyst_or_clients_notes = self.textEdit.toPlainText()
         analyst_lineEdit_result = self.lineEdit_21.text()
         analyst_combo_result = self.comboBox_17.currentText()
-        analyst_number_result = self.spinBox_8.value()
+        analyst_number_result = self.doubleSpinBox_7.value()
         client_id = self.spinBox.value()
 
         self.cur.execute('''SELECT price,category FROM addanalyst WHERE name = %s''', (analyst_name,))
@@ -441,7 +458,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         # analyst_or_clients_notes = self.textEdit.setPlainText('')
         # analyst_lineEdit_result = self.lineEdit_21.setText('')
         # analyst_combo_result = self.comboBox_17.setCurrentIndex(0)
-        # analyst_number_result = self.spinBox_8.setValue(0)
+        # analyst_number_result = self.doubleSpinBox_7.setValue(0)
         # client_id = self.spinBox.setValue(0)
         # self.Show_All_one_client_analyst()
 
@@ -464,7 +481,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.lineEdit_20.setText('')
             self.lineEdit_21.setText('')
             self.spinBox_7.setValue(0)
-            self.spinBox_8.setValue(0)
+            self.doubleSpinBox_7.setValue(0)
             self.comboBox_14.setCurrentIndex(0)
             self.comboBox_17.setCurrentIndex(0)
             self.textEdit.setPlainText('')
@@ -520,20 +537,20 @@ class mainapp(QMainWindow, FORM_CLASS):
         if analyst_category[0] == 'عدد':
             self.comboBox_17.hide()
             self.lineEdit_21.hide()
-            self.spinBox_8.show()
+            self.doubleSpinBox_7.show()
         if analyst_category[0] == 'خيارات':
             self.lineEdit_21.hide()
-            self.spinBox_8.hide()
+            self.doubleSpinBox_7.hide()
 
             self.comboBox_17.show()
             self.comboBox_17.setEditable(False)
         if analyst_category[0] == 'حقل كتابة':
             self.lineEdit_21.show()
-            self.spinBox_8.hide()
+            self.doubleSpinBox_7.hide()
             self.comboBox_17.hide()
         if analyst_category[0] == 'خيارات مع تعديل':
             self.lineEdit_21.hide()
-            self.spinBox_8.hide()
+            self.doubleSpinBox_7.hide()
             self.comboBox_17.clear()
             self.comboBox_17.show()
             self.comboBox_17.setEditable(True)
@@ -575,7 +592,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         for ih in all_data:
             hs_data = ih[0]['value']
             l_data += tuple(hs_data)
-        print(l_data, 'k')
+        # print(l_data, 'k')
         for row, form in enumerate(l_data):
             for col, item in enumerate(form):
                 # print(index)
@@ -996,7 +1013,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         save_word_files = mydata[2]
         for word_type in word_types:
             if word_type == 'bio':
-                f = open(r'%s/bio latest17.docx' % word_files, 'rb')
+                f = open(r'%s\bio latest17.docx' % word_files, 'rb')
                 f.read()
                 document = Document(f)
                 for i in document.tables:
@@ -1178,11 +1195,11 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.bold = True
                                     font.size = Pt(11)
                                     font.name = 'Tahoma'
-                document.save(r'%s/bio latest17.docx' % save_word_files)
+                document.save(r'%s\bio latest17.docx' % save_word_files)
                 f.close()
 
             if word_type == 'GSE':
-                f = open(r'%s/GSE latest.docx' % word_files, 'rb')
+                f = open(r'%s\GSE latest.docx' % word_files, 'rb')
                 f.read()
 
                 document = Document(f)
@@ -1359,12 +1376,12 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.bold = True
                                     font.size = Pt(12)
                                     font.name = 'Tahoma'
-                document.save(r'%s/GSE latest.docx' % save_word_files)
+                document.save(r'%s\GSE latest.docx' % save_word_files)
                 f.close()
 
             if word_type == 'GUE':
 
-                f = open(r'%s/GUE latest.docx' % word_files, 'rb')
+                f = open(r'%s\GUE latest.docx' % word_files, 'rb')
                 f.read()
 
                 document = Document(f)
@@ -1548,11 +1565,11 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.name = 'Tahoma'
                                     font.bold = True
                                     font.size = Pt(12)
-                document.save(r'%s/GUE latest.docx' % save_word_files)
+                document.save(r'%s\GUE latest.docx' % save_word_files)
                 f.close()
 
             if word_type == 'hematology':
-                f = open(r'%s/hematology latest.docx' % word_files, 'rb')
+                f = open(r'%s\hematology latest.docx' % word_files, 'rb')
                 f.read()
 
                 document = Document(f)
@@ -1614,7 +1631,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             font = run[0].font
                                             font.name = 'Tahoma'
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(12)
                                 if n.text == 'PCV           :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1628,7 +1645,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             font = run[0].font
                                             font.name = 'Tahoma'
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(12)
                                 if n.text == 'WBCs         :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1642,7 +1659,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             font = run[0].font
                                             font.name = 'Tahoma'
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(12)
                                 if n.text == 'E.S.R          :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1656,7 +1673,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             font = run[0].font
                                             font.name = 'Tahoma'
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(12)
                                 if n.text == 'Blood Group:':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1670,7 +1687,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             font = run[0].font
                                             font.name = 'Tahoma'
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(12)
                                 if n.text == 'Rh:':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1684,7 +1701,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             font = run[0].font
                                             font.name = 'Tahoma'
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(12)
                                 if n.text == 'Pregnancy test  in urine   :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1698,7 +1715,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             font = run[0].font
                                             font.name = 'Tahoma'
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(12)
                                 if n.text == 'Pregnancy test  in serum  :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1712,7 +1729,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             font = run[0].font
                                             font.name = 'Tahoma'
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(12)
                                 if n.text == 'R.B.Sugar                           :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1726,7 +1743,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             font = run[0].font
                                             font.name = 'Tahoma'
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(12)
                                 if n.text == 'Bl. Urea                              :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1740,7 +1757,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             font = run[0].font
                                             font.name = 'Tahoma'
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(12)
                                 if n.text == 'Salmonella typhi  IgG :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1754,7 +1771,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             font = run[0].font
                                             font.name = 'Tahoma'
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(12)
                                 if n.text == 'Salmonella typhi  IgM :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1768,7 +1785,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             font = run[0].font
                                             font.name = 'Tahoma'
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(12)
                                 if n.text == 'Rose-Bengal test   :':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1782,7 +1799,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             font = run[0].font
                                             font.name = 'Tahoma'
                                             font.bold = True
-                                            font.size = Pt(14)
+                                            font.size = Pt(12)
                                 if n.text == 'Date:    /     / 20':
                                     n.text = f'Date:   {year} /  {month} / {day}'
                                     run = n.runs
@@ -1791,11 +1808,240 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.bold = True
                                     font.size = Pt(12)
 
-                document.save(r'%s/hematology latest.docx' % save_word_files)
+                document.save(r'%s\hematology latest.docx' % save_word_files)
                 f.close()
+            if word_type == 'SFA':
+                f = open(r'%s\SFA latest.docx' % word_files, 'rb')
+                f.read()
+                document = Document(f)
+                for i in document.tables:
+                    for k in i.rows:
+                        for j in k.cells:
 
+                            for n in j.paragraphs:
+                                if n.text == 'أسـم المريض :':
+                                    if genus == 0:
+                                        n.text = f'أسـم المريض :{name}'
+                                    else:
+                                        n.text = f'أسـم المريضة :{name}'
+                                    run = n.runs
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.bold = True
+                                    font.size = Pt(11)
+                                if n.text == 'حضرة الدكتورة   :':
+                                    if doctor == 'عدوية شمس سعيد':
+                                        n.text = f'حضرة الدكتورة   : {doctor}'
+                                    else:
+                                        n.text = f'حضرة الدكتور   : {doctor}'
+                                    run = n.runs
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.bold = True
+                                    font.size = Pt(11)
+                                if n.text == 'المحترم':
+                                    if genus == 0:
+                                        n.text = 'المحترم'
+                                    else:
+                                        n.text = 'المحترمة'
+                                    run = n.runs
+
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.bold = True
+                                    font.size = Pt(11)
+                                if n.text == 'المحترمة2':
+                                    if doctor == 'عدوية شمس سعيد':
+                                        n.text = f'المحترمة'
+                                    else:
+                                        n.text = f'المحترم'
+                                    run = n.runs
+                                    font = run[0].font
+                                    font.name = 'Monotype Koufi'
+                                    font.bold = True
+                                    font.size = Pt(11)
+                                if n.text == 'Volume       :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Volume':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Volume       : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.bold = False
+                                            font.size = Pt(14)
+                                if n.text == 'Reaction      :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Reaction':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Reaction      : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.bold = False
+                                            font.size = Pt(14)
+                                if n.text == 'Colour        :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Colour:SFA':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Colour        : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.bold = False
+                                            font.size = Pt(14)
+                                if n.text == 'Liquefaction :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Liquefaction':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Liquefaction : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.bold = False
+                                            font.size = Pt(14)
+                                if n.text == 'Count          :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Count':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Count          : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.bold = False
+                                            font.size = Pt(14)
+                                if n.text == 'Active          :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Motility:Active':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Active          : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.bold = False
+                                            font.size = Pt(14)
+                                if n.text == 'Sluggish       :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Motility:Sluggish':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Sluggish       : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.bold = False
+                                            font.size = Pt(14)
+                                if n.text == 'Dead           :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Motility:Dead':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Dead           : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.bold = False
+                                            font.size = Pt(14)
+                                if n.text == 'Normal        :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Morphology:Normal':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Normal        : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.bold = False
+                                            font.size = Pt(14)
+                                if n.text == 'Abnormal     :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Morphology:Abnormal':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Abnormal     : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.bold = False
+                                            font.size = Pt(14)
+                                if n.text == 'Pus cells       :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Morphology:Pus cells':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Pus cells       : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.bold = False
+                                            font.size = Pt(14)
+                                if n.text == 'Other           :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Other:SFA':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Other           : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.bold = False
+                                            font.size = Pt(14)
+                                if n.text == 'Date:    /     / 20':
+                                    n.text = f'Date:   {year} /  {month} / {day}'
+                                    run = n.runs
+                                    font = run[0].font
+                                    font.name = 'Tahoma'
+                                    font.bold = True
+                                    font.size = Pt(12)
+                                # print('1'+n.text+'2')
+                # for kd in document.paragraphs:
+                #     print('1'+kd.text+'2'+'h')
+                document.save(r'%s\SFA latest.docx' % save_word_files)
+                f.close()
             if word_type == 'هرمونات مشترك':
-                f = open(r'%s/هرمونات مشترك latest.docx' % word_files, 'rb')
+                f = open(r'%s\هرمونات مشترك latest.docx' % word_files, 'rb')
                 f.read()
 
                 document = Document(f)
@@ -1875,12 +2121,12 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'Toxoplasma IgM':
                                             k = analyst_and_result['result']
                                             ng = ''
-                                            g=analyst_and_result['result']
+                                            g = analyst_and_result['result']
                                             if int(g) > 0.9:
                                                 ng = 'Positive'
                                             else:
                                                 ng = 'Negative'
-                                            print(k,ng,'here ohf')
+                                            # print(k, ng, 'here ohf')
                                             n.text = f'  {k}  {ng}'
                                             run = n.runs
                                             font = run[0].font
@@ -2205,57 +2451,114 @@ class mainapp(QMainWindow, FORM_CLASS):
                         font.bold = True
                         font.size = Pt(12)
                         font.name = 'Tahoma'
-                document.save(r'%s/هرمونات مشترك latest.docx' % save_word_files)
+                document.save(r'%s\هرمونات مشترك latest.docx' % save_word_files)
                 f.close()
 
         try:
             if prev == 'T':
                 word = client.Dispatch("Word.Application")
-                if os.path.exists(r'%s/bio latest17.docx' % save_word_files):
-                    word.Documents.Open(r'%s/bio latest17.docx' % save_word_files)
-                if os.path.exists(r'%s/GSE latest.docx' % save_word_files):
-                    word.Documents.Open(r'%s/GSE latest.docx' % save_word_files)
-                if os.path.exists(r'%s/GUE latest.docx' % save_word_files):
-                    word.Documents.Open(r'%s/GUE latest.docx' % save_word_files)
-                if os.path.exists(r'%s/hematology latest.docx' % save_word_files):
-                    word.Documents.Open(r'%s/hematology latest.docx' % save_word_files)
-                if os.path.exists(r'%s/هرمونات مشترك latest.docx' % save_word_files):
-                    word.Documents.Open(r'%s/هرمونات مشترك latest.docx' % save_word_files)
+                if os.path.exists(r'%s\bio latest17.docx' % save_word_files):
+                    word.Documents.Open(r'%s\bio latest17.docx' % save_word_files)
+                if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
+                    word.Documents.Open(r'%s\GSE latest.docx' % save_word_files)
+                if os.path.exists(r'%s\SFA latest.docx' % save_word_files):
+                    word.Documents.Open(r'%s\SFA latest.docx' % save_word_files)
+                if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
+                    word.Documents.Open(r'%s\GUE latest.docx' % save_word_files)
+                if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
+                    word.Documents.Open(r'%s\hematology latest.docx' % save_word_files)
+                if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
+                    word.Documents.Open(r'%s\هرمونات مشترك latest.docx' % save_word_files)
 
 
             else:
-
+                move = 1
                 word = client.Dispatch("Word.Application")
+                if move == 1:
+                    if os.path.exists(r'%s\bio latest17.docx' % save_word_files):
 
-                if os.path.exists(r'%s\bio latest17.docx' % save_word_files):
-                    word.Documents.Open(r'%s/bio latest17.docx' % save_word_files)
-                    word.ActiveDocument.PrintOut()
-                    time.sleep(4)
-                    os.remove(r'%s\bio latest17.docx' % save_word_files)
+                        word.Documents.Open(r'%s\bio latest17.docx' % save_word_files)
+                        word.ActiveDocument.PrintOut()
+                        move = 0
+                        warning = QMessageBox.warning(self, '',
+                                                      "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
+                                                      QMessageBox.Yes | QMessageBox.No)
+                        if warning == QMessageBox.Yes:
+                            move = 1
+                            word.ActiveDocument.Close()
+                        os.remove(r'%s\bio latest17.docx' % save_word_files)
 
-                if os.path.exists(r'%s/GSE latest.docx' % save_word_files):
-                    word.Documents.Open(r'%s/GSE latest.docx' % save_word_files)
-                    word.ActiveDocument.PrintOut()
-                    time.sleep(4)
-                    os.remove(r'%s/GSE latest.docx' % save_word_files)
+                if move == 1:
+                    if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
+                        word.Documents.Open(r'%s\GSE latest.docx' % save_word_files)
+                        word.ActiveDocument.PrintOut()
+                        move = 0
+                        warning = QMessageBox.warning(self, '',
+                                                      "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
+                                                      QMessageBox.Yes | QMessageBox.No)
+                        if warning == QMessageBox.Yes:
+                            move = 1
+                            word.ActiveDocument.Close()
+                        os.remove(r'%s\GSE latest.docx' % save_word_files)
 
-                if os.path.exists(r'%s/GUE latest.docx' % save_word_files):
-                    word.Documents.Open(r'%s\GUE latest.docx' % save_word_files)
-                    word.ActiveDocument.PrintOut()
-                    time.sleep(4)
-                    os.remove(r'%s/GUE latest.docx' % save_word_files)
+                if move == 1:
 
-                if os.path.exists(r'%s/hematology latest.docx' % save_word_files):
-                    word.Documents.Open(r'%s\hematology latest.docx' % save_word_files)
-                    word.ActiveDocument.PrintOut()
-                    time.sleep(4)
-                    os.remove(r'%s/hematology latest.docx' % save_word_files)
+                    if os.path.exists(r'%s\SFA latest.docx' % save_word_files):
+                        word.Documents.Open(r'%s\SFA latest.docx' % save_word_files)
+                        word.ActiveDocument.PrintOut()
+                        move = 0
+                        warning = QMessageBox.warning(self, '',
+                                                      "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
+                                                      QMessageBox.Yes | QMessageBox.No)
+                        if warning == QMessageBox.Yes:
+                            move = 1
+                            word.ActiveDocument.Close()
+                        os.remove(r'%s\SFA latest.docx' % save_word_files)
 
-                if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
-                    word.Documents.Open(r'%s\هرمونات مشترك latest.docx' % save_word_files)
-                    word.ActiveDocument.PrintOut()
-                    time.sleep(4)
-                    os.remove(r'%s\هرمونات مشترك latest.docx' % save_word_files)
+                if move == 1:
+
+                    if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
+                        word.Documents.Open(r'%s\GUE latest.docx' % save_word_files)
+                        word.ActiveDocument.PrintOut()
+                        move = 0
+                        warning = QMessageBox.warning(self, '',
+                                                      "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
+                                                      QMessageBox.Yes | QMessageBox.No)
+                        if warning == QMessageBox.Yes:
+                            move = 1
+                            word.ActiveDocument.Close()
+                        os.remove(r'%s\GUE latest.docx' % save_word_files)
+
+                if move == 1:
+
+                    if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
+                        word.Documents.Open(r'%s\hematology latest.docx' % save_word_files)
+                        word.ActiveDocument.PrintOut()
+                        move = 0
+                        warning = QMessageBox.warning(self, '',
+                                                      "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
+                                                      QMessageBox.Yes | QMessageBox.No)
+                        if warning == QMessageBox.Yes:
+                            move = 1
+                            word.ActiveDocument.Close()
+
+                        os.remove(r'%s\hematology latest.docx' % save_word_files)
+
+                if move == 1:
+
+                    if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
+                        word.Documents.Open(r'%s\هرمونات مشترك latest.docx' % save_word_files)
+                        word.ActiveDocument.PrintOut()
+                        move = 0
+                        warning = QMessageBox.warning(self, '',
+                                                      "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
+                                                      QMessageBox.Yes | QMessageBox.No)
+                        if warning == QMessageBox.Yes:
+                            move = 1
+                            word.ActiveDocument.Close()
+
+                        os.remove(r'%s\هرمونات مشترك latest.docx' % save_word_files)
+
 
         except Exception as e:
             print(e)

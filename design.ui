@@ -3248,44 +3248,6 @@ QDateTimeEdit:disabled {
           </rect>
          </property>
         </widget>
-        <widget class="QSpinBox" name="spinBox_8">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>60</x>
-           <y>150</y>
-           <width>501</width>
-           <height>41</height>
-          </rect>
-         </property>
-         <property name="minimum">
-          <number>-1000000</number>
-         </property>
-         <property name="maximum">
-          <number>1000000</number>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="lineEdit_21">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>60</x>
-           <y>140</y>
-           <width>501</width>
-           <height>51</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <family>Segoe UI</family>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-        </widget>
         <widget class="QTableWidget" name="tableWidget_5">
          <property name="enabled">
           <bool>true</bool>
@@ -3575,6 +3537,41 @@ QDateTimeEdit:disabled {
          </property>
          <property name="text">
           <string>تفريغ</string>
+         </property>
+        </widget>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_7">
+         <property name="geometry">
+          <rect>
+           <x>60</x>
+           <y>150</y>
+           <width>501</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="minimum">
+          <double>-1111111111111.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>10000000000000000000.000000000000000</double>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_21">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>60</x>
+           <y>150</y>
+           <width>501</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>10</pointsize>
+          </font>
          </property>
         </widget>
        </widget>
@@ -4803,7 +4800,7 @@ QDateTimeEdit:disabled {
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_14">
        <attribute name="title">
@@ -9035,7 +9032,7 @@ QDialog QGroupBox QFrame {
        <widget class="QLabel" name="label_19">
         <property name="geometry">
          <rect>
-          <x>640</x>
+          <x>670</x>
           <y>108</y>
           <width>181</width>
           <height>51</height>
@@ -9059,7 +9056,7 @@ QDialog QGroupBox QFrame {
         </property>
         <property name="geometry">
          <rect>
-          <x>110</x>
+          <x>140</x>
           <y>110</y>
           <width>521</width>
           <height>51</height>
@@ -9077,7 +9074,7 @@ QDialog QGroupBox QFrame {
        <widget class="QLabel" name="label_20">
         <property name="geometry">
          <rect>
-          <x>640</x>
+          <x>670</x>
           <y>228</y>
           <width>181</width>
           <height>51</height>
@@ -9101,7 +9098,7 @@ QDialog QGroupBox QFrame {
         </property>
         <property name="geometry">
          <rect>
-          <x>110</x>
+          <x>140</x>
           <y>230</y>
           <width>521</width>
           <height>51</height>
@@ -9125,16 +9122,16 @@ QDialog QGroupBox QFrame {
         </property>
         <property name="geometry">
          <rect>
-          <x>190</x>
-          <y>380</y>
+          <x>260</x>
+          <y>400</y>
           <width>451</width>
-          <height>91</height>
+          <height>71</height>
          </rect>
         </property>
         <property name="font">
          <font>
           <family>Segoe UI</family>
-          <pointsize>12</pointsize>
+          <pointsize>15</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
