@@ -29,7 +29,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.setupUi(self)
         self.tabWidget.tabBar().setVisible(False)
         self.DB_Connect()
-
+        self.Delete_Files()
         self.handel_buttons()
         self.Show_All_The_Sales()
         self.Show_all_analysts_in_combo()
@@ -78,6 +78,29 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_34.clicked.connect(self.Preview)
         self.pushButton_23.clicked.connect(self.Print_empty_papers)
         self.pushButton_24.clicked.connect(self.Add_Path)
+
+    def Delete_Files(self):
+        self.cur.execute(''' SELECT * FROM paths WHERE id=1 ''')
+        mydata = self.cur.fetchone()
+        word_files = mydata[1]
+        save_word_files = mydata[2]
+        if os.path.exists(r'%s\bio latest17.docx' % save_word_files):
+            os.remove(r'%s\bio latest17.docx' % save_word_files)
+
+        if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
+            os.remove(r'%s\GSE latest.docx' % save_word_files)
+
+        if os.path.exists(r'%s\SFA latest.docx' % save_word_files):
+            os.remove(r'%s\SFA latest.docx' % save_word_files)
+
+        if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
+            os.remove(r'%s\GUE latest.docx' % save_word_files)
+
+        if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
+            os.remove(r'%s\hematology latest.docx' % save_word_files)
+
+        if os.path.exists(r'%s\هرمونات مشترك latest' % save_word_files):
+            os.remove(r'%s\هرمونات مشترك latest' % save_word_files)
 
     def Show_paths(self):
         self.cur.execute(''' SELECT * FROM paths WHERE id=1 ''')
@@ -128,7 +151,6 @@ class mainapp(QMainWindow, FORM_CLASS):
         time.sleep(2)
         word.ActiveDocument.Close()
 
-
     def Preview(self):
         global if_print
         self.Print_Sale_Data('T')
@@ -146,13 +168,15 @@ class mainapp(QMainWindow, FORM_CLASS):
             if warning2 == QMessageBox.Yes:
                 print('now delete')
                 if_print = True
-
                 print('its start')
                 if os.path.exists(r'%s\bio latest17.docx' % save_word_files):
                     os.remove(r'%s\bio latest17.docx' % save_word_files)
 
                 if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
                     os.remove(r'%s\GSE latest.docx' % save_word_files)
+
+                if os.path.exists(r'%s\SFA latest.docx' % save_word_files):
+                    os.remove(r'%s\SFA latest.docx' % save_word_files)
 
                 if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
                     os.remove(r'%s\GUE latest.docx' % save_word_files)
@@ -208,6 +232,8 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.comboBox_14.setCurrentIndex(0)
         self.comboBox_16.setCurrentIndex(0)
         self.comboBox_17.setCurrentIndex(0)
+        self.comboBox_15.setEnabled(True)
+        self.comboBox_15.setCurrentIndex(0)
         self.textEdit.setPlainText('')
         self.lineEdit_20.setEnabled(True)
         self.spinBox_7.setEnabled(True)
@@ -365,9 +391,13 @@ class mainapp(QMainWindow, FORM_CLASS):
             result = self.tableWidget_5.item(row, 2).text()
             all_result.append(str(result))
             real_doctor = self.tableWidget_5.item(row, 3).text()
-        self.Bio_Word(real_name, real_doctor, all_analyst, all_result, year, month, day, word_type, prev, genuses)
+        try:
+            self.Bio_Word(real_name, real_doctor, all_analyst, all_result, year, month, day, word_type, prev, genuses)
+        except:
+            QMessageBox.information(self, 'خطأ', 'هنالك خطأ يرجى مراجعة العملية')
         if prev != 'T':
-            QMessageBox.information(self, 'info', 'تتم الطباعة حالياً')
+            # QMessageBox.information(self, 'info', 'تتم الطباعة حالياً')
+            self.Delete_Files()
 
     def get_total_price(self):
         total_price = 0
@@ -554,9 +584,10 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.comboBox_17.clear()
             self.comboBox_17.show()
             self.comboBox_17.setEditable(True)
-
-        if analyst_name == '':
-            pass
+        colors = ['yallow', 'brown', 'green', 'milk']
+        if analyst_name == 'Colour:SFA' or analyst_name == 'Color:GSE':
+            for item in colors:
+                self.comboBox_17.addItem(str(item))
             # add items to combox
 
     def get_client_id(self):
@@ -1262,7 +1293,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
-                                            font.size = Pt(11)
+                                            font.size = Pt(14)
                                             font.name = 'Tahoma'
                                 if n.text == 'Consistency:':
                                     for row in range(0, len(analysts)):
@@ -1276,7 +1307,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
-                                            font.size = Pt(11)
+                                            font.size = Pt(14)
                                             font.name = 'Tahoma'
                                 if n.text == 'R.B.Cs:':
                                     for row in range(0, len(analysts)):
@@ -1286,11 +1317,11 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'R.B.Cs':
                                             k = analyst_and_result['result']
-                                            n.text = f'R.B.Cs:: {k}'
+                                            n.text = f'R.B.Cs: {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
-                                            font.size = Pt(11)
+                                            font.size = Pt(14)
                                             font.name = 'Tahoma'
                                 if n.text == 'Pus cells:':
                                     for row in range(0, len(analysts)):
@@ -1304,7 +1335,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
-                                            font.size = Pt(11)
+                                            font.size = Pt(14)
                                             font.name = 'Tahoma'
                                 if n.text == 'E. Histolytica:':
                                     for row in range(0, len(analysts)):
@@ -1318,7 +1349,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
-                                            font.size = Pt(11)
+                                            font.size = Pt(14)
                                             font.name = 'Tahoma'
                                 if n.text == 'G. Lembilia:':
                                     for row in range(0, len(analysts)):
@@ -1332,7 +1363,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
-                                            font.size = Pt(11)
+                                            font.size = Pt(14)
                                             font.name = 'Tahoma'
                                 if n.text == 'Ova:':
                                     for row in range(0, len(analysts)):
@@ -1346,7 +1377,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
-                                            font.size = Pt(11)
+                                            font.size = Pt(14)
                                             font.name = 'Tahoma'
                                 if n.text == 'Other:':
                                     for row in range(0, len(analysts)):
@@ -1360,7 +1391,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
-                                            font.size = Pt(11)
+                                            font.size = Pt(14)
                                             font.name = 'Tahoma'
                                 if n.text == 'Date:    /     / 20':
                                     for row in range(0, len(analysts)):
@@ -2443,6 +2474,44 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.bold = True
                                     font.size = Pt(12)
                                     font.name = 'Tahoma'
+                                if n.text == '0r':
+                                    n.text = ''
+                                if n.text == '1r':
+                                    n.text = ''
+                                if n.text == '2r':
+                                    n.text = ''
+                                if n.text == '3r':
+                                    n.text = ''
+                                if n.text == '4r':
+                                    n.text = ''
+                                if n.text == '5r':
+                                    n.text = ''
+                                if n.text == '6r':
+                                    n.text = ''
+                                if n.text == '7r':
+                                    n.text = ''
+                                if n.text == '8r':
+                                    n.text = ''
+                                if n.text == '9r':
+                                    n.text = ''
+                                if n.text == '10r':
+                                    n.text = ''
+                                if n.text == '11r':
+                                    n.text = ''
+                                if n.text == 'r0r':
+                                    n.text = ''
+                                if n.text == 'r1r':
+                                    n.text = ''
+                                if n.text == 'r2r':
+                                    n.text = ''
+                                if n.text == 'r3r':
+                                    n.text = ''
+                                if n.text == 'r4r':
+                                    n.text = ''
+                                if n.text == 'r5r':
+                                    n.text = ''
+                                if n.text == 'r6r':
+                                    n.text = ''
                 for element in document.paragraphs:
                     if element.text == 'Date:    /     / 20':
                         element.text = f'Date:{year}/{month}/{day}'
@@ -2485,7 +2554,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                                       QMessageBox.Yes | QMessageBox.No)
                         if warning == QMessageBox.Yes:
                             move = 1
-                            word.ActiveDocument.Close()
+                        word.ActiveDocument.Close()
                         os.remove(r'%s\bio latest17.docx' % save_word_files)
 
                 if move == 1:
@@ -2498,7 +2567,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                                       QMessageBox.Yes | QMessageBox.No)
                         if warning == QMessageBox.Yes:
                             move = 1
-                            word.ActiveDocument.Close()
+                        word.ActiveDocument.Close()
                         os.remove(r'%s\GSE latest.docx' % save_word_files)
 
                 if move == 1:
@@ -2512,7 +2581,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                                       QMessageBox.Yes | QMessageBox.No)
                         if warning == QMessageBox.Yes:
                             move = 1
-                            word.ActiveDocument.Close()
+                        word.ActiveDocument.Close()
                         os.remove(r'%s\SFA latest.docx' % save_word_files)
 
                 if move == 1:
@@ -2526,7 +2595,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                                       QMessageBox.Yes | QMessageBox.No)
                         if warning == QMessageBox.Yes:
                             move = 1
-                            word.ActiveDocument.Close()
+                        word.ActiveDocument.Close()
                         os.remove(r'%s\GUE latest.docx' % save_word_files)
 
                 if move == 1:
@@ -2540,8 +2609,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                                       QMessageBox.Yes | QMessageBox.No)
                         if warning == QMessageBox.Yes:
                             move = 1
-                            word.ActiveDocument.Close()
-
+                        word.ActiveDocument.Close()
                         os.remove(r'%s\hematology latest.docx' % save_word_files)
 
                 if move == 1:
@@ -2555,9 +2623,9 @@ class mainapp(QMainWindow, FORM_CLASS):
                                                       QMessageBox.Yes | QMessageBox.No)
                         if warning == QMessageBox.Yes:
                             move = 1
-                            word.ActiveDocument.Close()
-
+                        word.ActiveDocument.Close()
                         os.remove(r'%s\هرمونات مشترك latest.docx' % save_word_files)
+                self.Delete_Files()
 
 
         except Exception as e:
