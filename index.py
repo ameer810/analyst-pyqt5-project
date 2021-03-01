@@ -39,6 +39,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         # self.groupBox.setEnabled(False)
         self.Show_paths()
 
+
     def DB_Connect(self):
         self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel', charset="utf8",
                                   use_unicode=True, port=3306)
@@ -353,21 +354,29 @@ class mainapp(QMainWindow, FORM_CLASS):
     def Search_In_All_Sales(self):
         client_name = self.lineEdit_25.text()
         if client_name != '0':
-            self.cur.execute(''' SELECT * FROM addclient WHERE client_name=%s ORDER BY -date''', (client_name,))
+            self.cur.execute(''' SELECT * FROM addclient WHERE client_name=%s ORDER BY id''', (client_name,))
         else:
             self.cur.execute(''' SELECT * FROM addclient ORDER BY -date''')
         analyst_data = self.cur.fetchall()
         self.tableWidget_6.setRowCount(0)
         self.tableWidget_6.insertRow(0)
-        for row, form in enumerate(analyst_data):
-            for col, item in enumerate(form):
-                if col == 3:
-                    self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(analyst_data[row][4])))
+        if client_name !='0'and client_name!='':
+            for i,k in enumerate(analyst_data[0]):
+                if i == 3:
+                    self.tableWidget_6.setItem(0, i, QTableWidgetItem(str(analyst_data[0][4])))
                 else:
-                    self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
-                col += 1
-            row_pos = self.tableWidget_6.rowCount()
-            self.tableWidget_6.insertRow(row_pos)
+                    self.tableWidget_6.setItem(0, i, QTableWidgetItem(str(k)))
+                print('ok')
+        else:
+            for row, form in enumerate(analyst_data):
+                for col, item in enumerate(form):
+                    if col == 3:
+                        self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(analyst_data[row][4])))
+                    else:
+                        self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
+                    col += 1
+                row_pos = self.tableWidget_6.rowCount()
+                self.tableWidget_6.insertRow(row_pos)
         # self.Add_Data_To_history(6, 1)
 
     def Print_Sale_Data(self, prev):
@@ -393,10 +402,11 @@ class mainapp(QMainWindow, FORM_CLASS):
             real_doctor = self.tableWidget_5.item(row, 3).text()
         try:
             self.Bio_Word(real_name, real_doctor, all_analyst, all_result, year, month, day, word_type, prev, genuses)
-        except:
+        except Exception as e:
+            print(e)
             QMessageBox.information(self, 'خطأ', 'هنالك خطأ يرجى مراجعة العملية')
         if prev != 'T':
-            # QMessageBox.information(self, 'info', 'تتم الطباعة حالياً')
+
             self.Delete_Files()
 
     def get_total_price(self):
@@ -633,8 +643,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                 #     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
                 # if col == 2:
                 #     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
-                # if col == 3:
-                self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
+                if col == 3:
+                    self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(l_data[row][4])))
+                else:
+                    self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
             row_pos = self.tableWidget_6.rowCount()
             self.tableWidget_6.insertRow(row_pos)
@@ -2133,7 +2145,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             k = analyst_and_result['result']
                                             ng = ''
                                             g = analyst_and_result['result']
-                                            if int(g) > 0.9:
+                                            if float(g) > 0.9:
                                                 ng = 'Positive'
                                             else:
                                                 ng = 'Negative'
@@ -2153,7 +2165,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             k = analyst_and_result['result']
                                             ng = ''
                                             g = analyst_and_result['result']
-                                            if int(g) > 0.9:
+                                            if float(g) > 0.9:
                                                 ng = 'Positive'
                                             else:
                                                 ng = 'Negative'
@@ -2174,7 +2186,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             k = analyst_and_result['result']
                                             ng = ''
                                             g = analyst_and_result['result']
-                                            if int(g) > 0.9:
+                                            if float(g) > 0.9:
                                                 ng = 'Positive'
                                             else:
                                                 ng = 'Negative'
@@ -2194,7 +2206,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             k = analyst_and_result['result']
                                             ng = ''
                                             g = analyst_and_result['result']
-                                            if int(g) > 0.9:
+                                            if float(g) > 0.9:
                                                 ng = 'Positive'
                                             else:
                                                 ng = 'Negative'
