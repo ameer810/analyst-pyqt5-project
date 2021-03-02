@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+{% load bootstrap4 %}
+
+
+    <section class="home-slider owl-carousel img" style="background-image: url({% static 'images/bg_2.jpg' %});">
+
+      <div class="slider-item" style="background-image: url(images/bg_3.jpg);">
+      	<div class="overlay"></div>
+        <div class="container">
+          <div class="row slider-text justify-content-center align-items-center">
+
+            <div class="col-md-7 col-sm-12 text-center ftco-animate">
+            	<h1 class="mb-3 mt-5 bread">{{object}}</h1>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="ftco-section ftco-degree-bg">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 ftco-animate">
+            <h1 class="mb-3">{{object.name}}</h1>
+            <h5>Description :</h5>
+            <p>{{object.description}}</p>
+            <pre></pre>
+            <pre></pre>
+            <p>
+
+              <img src="{{object.image.url}}" style="color: #FFFF;" class="img-fluid">
+
+            <pre></pre>
+             <h3 class="price"><span>Price : ${{object.price}}</span></h3>
+            <div class="tag-widget post-tag-container mb-5 mt-5">
+              <a href="{{ object.get_add_to_cart_url }}" class="btn btn-primary btn-md my-0 p">
+              Add to cart
+              <i class="fas fa-shopping-cart ml-1"></i>
+            </a>
+            </div>
+            
+
+
+          </div> <!-- .col-md-8 -->
+          <div class="col-md-4 sidebar ftco-animate">
+            <div class="sidebar-box">
+              {% if request.user.is_superuser %}
+                  <a href="{% url 'meals:delete_meal' object.slug %}"><button style="  border: none;background: #F91842;  -webkit-border-radius: 5px;  -moz-border-radius: 5px;  border-radius: 5px;  color: #fff;  font-size: 16px;  font-weight: 600;  display: inline-block;  padding: 12px 36px;font-family: "Roboto", sans-serif; cursor: pointer;" class="boxed-btn2 w-55">Delete</button></a>
+                {% endif %}
+              <form action="#" class="search-form">
+
+                <div class="form-group">
+                	<div class="">
+	                  <span class=""></span>
+                  </div>
+                  <input type="text" class="form-control">
+                </div>
+              </form>
+            </div>
+            <div class="sidebar-box ftco-animate">
+              <div class="categories">
+
+                <h3>Category</h3>
+                <li><span>{{object.category}}</span></li>
+
+              </div>
+            </div>
+
+            <div class="sidebar-box ftco-animate">
+              <h3>Tag Cloud</h3>
+              <div class="tagcloud">
+                <a href="#" class="tag-cloud-link">dish</a>
+                <a href="#" class="tag-cloud-link">menu</a>
+                <a href="#" class="tag-cloud-link">food</a>
+                <a href="#" class="tag-cloud-link">sweet</a>
+                <a href="#" class="tag-cloud-link">tasty</a>
+                <a href="#" class="tag-cloud-link">delicious</a>
+                <a href="#" class="tag-cloud-link">desserts</a>
+                <a href="#" class="tag-cloud-link">drinks</a>
+              </div>
+            </div>
+
+          </div>
+
+<div class="col-md-6 appointment ftco-animate">
+
+        </div>
+      </div>
+    </section> <!-- .section -->
+{% endblock body %}
+
+    
+  </body>
+</html>
+

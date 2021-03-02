@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+
+{% if request.user.is_superuser %}
+
+
+
+
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+  <main>
+    <div class="container">
+
+    <div class="table-responsive text-nowrap">
+    <h2>Order Summary</h2><table>
+
+   {% for i in data %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col"><b style="color: #FFFF;">id</b></th>
+            <th scope="col"><b style="color: #FFFF;">Date</b></th>
+            <th scope="col"><b style="color: #FFFF;">user</b></th>
+            <th scope="col"><b style="color: #FFFF;">phone number</b></th>
+            <th scope="col"><b style="color: #FFFF;">type</b></th>
+            <th scope="col"><b 	style="color: #FFFF;">Meal title</b></th>
+            <th scope="col"><b style="color: #FFFF;">Price</b></th>
+            <th scope="col"><b style="color: #FFFF;">Quantity</b></th>
+            <th scope="col"><b style="color: #FFFF;">Total Price</b></th>
+        </tr>
+        </thead>
+        <tbody>
+         <a href="{% url 'meals:checkout_for_manager' i.id %}">show info for {{i.id}} id</a>
+
+        {% for order_item in  i.meals.all %}
+        <tr>
+            <td style="color: #fac564;">{{i.id}}</td>
+            <td style="color: #fac564;">{{i.created_at|date:'Y M D'}}   {{i.created_at|time:"TIME_FORMAT"}}</td>
+            <td style="color: #fac564;">{{i.user}}</td>
+            <td style="color: #fac564;">{{i.checkout.phone_number}}</td>
+            <td style="color: #fac564;">{{i.checkout.Pay_type}}</td>
+            <td style="color: #fac564;">{{ order_item.meal.name }}</td>
+            <td><p style="color: #fac564;">${{ order_item.meal.price }}</p></td>
+            <td>
+                <a style="color: #fac564;" href="#">{{ order_item.Quantity }}</a>
+
+            </td>
+            <td>
+            {% if order_item.meal.saved_price %}
+                <a style="color: #fac564;" href="#">${{ order_item.get_amount_saved }}</a>
+                <span>Saving ${{ order_item.get_total_discount_item_price }}</span>
+            {% endif %}
+            </td>
+
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan='5'><p style="color: #fac564;">Your cart is empty</p></td>
+        </tr>
+
+        {% endfor %}
+            <a class="float-right" style='color: red;' href="{% url 'meals:approve_order' i.id %}">Approved</a>
+
+        {% if i.get_total %}
+
+        <tr>
+            <td colspan="4"><b style="color :#fac564;">Order Total</b></td>
+            <td><b style="color: #008000;">${{ i.get_total }}</b></td>
+        </tr>
+            {% endif %}
+
+
+        {% endfor %}
+        </tbody>
+    </table>
+
+    </div>
+
+    </div>
+  </main>
+    {% else %}
+<h2>in correct url</h2>
+
+    {% endif %}
+{% endblock body %}
+

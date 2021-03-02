@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block body %}
+{% if request.user.is_superuser %}
+
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+  <main>
+    <div class="container">
+
+    <div class="table-responsive text-nowrap">
+    <h2>restaurant Order Summary</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col"><b style="color: #FFFF;">Date</b></th>
+
+            <th scope="col"><b style="color: #FFFF;">phone number</b></th>
+            <th scope="col"><b style="color: #FFFF;">table type</b></th>
+            <th scope="col"><b style="color: #FFFF;">table locations</b></th>
+            <th scope="col"><b 	style="color: #FFFF;">Meal title</b></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for i in Booking_orders %}
+
+        <tr>
+            <th style="color: #fac564;" scope="row">{{i.Booking_Date}}</th>
+
+
+            <td><p style="color: #fac564;">{{ i.phone_number }}</p></td>
+            <td><a style="color: #fac564;" href="#">{{ i.table_type }}</a></td>
+            <td><a style="color: #fac564;" href="#">{{ i.table_locations }}</a>
+            {% for x in i.table_meals.all %}
+            <td>{{ x }}</td>
+            {% endfor %}
+            <td><a class="float-right" style='color: red;' href="{% url 'meals:approve_book' i.id %}">Approved</a></td>
+
+
+        </tr>
+
+        {% empty %}
+        <tr>
+            <td colspan='5'><p style="color: #fac564;">restaurant orders is empty</p></td>
+        </tr>
+        <tr>
+
+        </tr>
+
+        {% endfor %}
+        {% else %}
+         <h2>Incorrect Url</h2>
+        {% endif %}
+        </tbody>
+    </table>
+
+    </div>
+
+    </div>
+  </main>
+
+{% endblock body %}

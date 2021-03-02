@@ -1,0 +1,379 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+
+
+
+    <section class="home-slider owl-carousel img" style="background-image: url({% static '/images/bg_1.jpg' %});">
+      <div class="slider-item">
+      	<div class="overlay"></div>
+        <div class="container">
+          <div class="row slider-text align-items-center" data-scrollax-parent="true">
+
+            <div class="col-md-6 col-sm-12 ftco-animate">
+            	<span class="subheading">Delicious</span>
+              <h1 class="mb-4">Italian Cuizine</h1>
+              <p class="mb-4 mb-md-5">A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+              <p><a href="#" class="btn btn-primary p-3 px-xl-4 py-xl-3">Order Now</a> <a href="#" class="btn btn-white btn-outline-white p-3 px-xl-4 py-xl-3">View Menu</a></p>
+            </div>
+            <div class="col-md-6 ftco-animate">
+            	<img src="{% static '/images/bg_1.png' %}" class="img-fluid" alt="">
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="slider-item">
+      	<div class="overlay"></div>
+        <div class="container">
+          <div class="row slider-text align-items-center" data-scrollax-parent="true">
+
+            <div class="col-md-6 col-sm-12 order-md-last ftco-animate">
+            	<span class="subheading">Crunchy</span>
+              <h1 class="mb-4">Italian Pizza</h1>
+              <p class="mb-4 mb-md-5">A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+              <p><a href="#" class="btn btn-primary p-3 px-xl-4 py-xl-3">Order Now</a> <a href="#" class="btn btn-white btn-outline-white p-3 px-xl-4 py-xl-3">View Menu</a></p>
+            </div>
+            <div class="col-md-6 ftco-animate">
+            	<img src="{% static '/images/bg_2.png' %}" class="img-fluid" alt="">
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="slider-item" style="background-image: url({% static '/images/bg_3.jpg' %});">
+      	<div class="overlay"></div>
+        <div class="container">
+          <div class="row slider-text justify-content-center align-items-center" data-scrollax-parent="true">
+
+            <div class="col-md-7 col-sm-12 text-center ftco-animate">
+            	<span class="subheading">Welcome</span>
+              <h1 class="mb-4">We cooked your desired Pizza Recipe</h1>
+              <p class="mb-4 mb-md-5">A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+              <p><a href="#" class="btn btn-primary p-3 px-xl-4 py-xl-3">Order Now</a> <a href="#" class="btn btn-white btn-outline-white p-3 px-xl-4 py-xl-3">View Menu</a></p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ftco-intro">
+    	<div class="container-wrap">
+    		<div class="wrap d-md-flex">
+	    		<div class="info">
+	    			<div class="row no-gutters">
+	    				<div class="col-md-4 d-flex ftco-animate">
+	    					<div class="icon"><span class="icon-phone"></span></div>
+	    					<div class="text">
+	    						<h3>07812385670</h3>
+	    						<p>Our number</p>
+	    					</div>
+	    				</div>
+	    				<div class="col-md-4 d-flex ftco-animate">
+	    					<div class="icon"><span class="icon-my_location"></span></div>
+	    					<div class="text">
+	    						<h3>Iraq</h3>
+	    						<p>Baghdad, Al-Mansor </p>
+	    					</div>
+	    				</div>
+	    				<div class="col-md-4 d-flex ftco-animate">
+	    					<div class="icon"><span class="icon-clock-o"></span></div>
+	    					<div class="text">
+	    						<h3>Open Daily</h3>
+	    						<p>8:00am - 11:00pm</p>
+	    					</div>
+	    				</div>
+	    			</div>
+	    		</div>
+
+	    		<div class="social d-md-flex pl-md-5 p-4 align-items-center">
+	    			<ul class="social-icon">
+              <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
+              <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
+              <li class="ftco-animate"><a href="#"><span class="icon-instagram"></span></a></li>
+            </ul>
+	    		</div>
+    		</div>
+    	</div>
+    </section>
+
+    <section class="ftco-about d-md-flex">
+    	<div class="one-half img" style="background-image: url({% static '/images/about.jpg' %});"></div>
+    	<div class="one-half ftco-animate">
+        <div class="heading-section ftco-animate ">
+          <h2 class="mb-4">Welcome to <span class="flaticon-pizza">Pizza</span> A Restaurant</h2>
+        </div>
+        <div>
+			{% for info in info3 %}
+               <p>{{info.restaurant_info_description}}</p>
+			{% endfor %}
+  			</div>
+    	</div>
+    </section>
+
+    <section class="ftco-section ftco-services">
+    	<div class="overlay"></div>
+    	<div class="container">
+    		<div class="row justify-content-center mb-5 pb-3">
+          <div class="col-md-7 heading-section ftco-animate text-center">
+            <h2 class="mb-4">Our Services</h2>
+            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+          </div>
+        </div>
+    		<div class="row">
+          <div class="col-md-4 ftco-animate">
+            <div class="media d-block text-center block-6 services">
+
+				{% for info in Rest_info %}
+				{% if info.restaurant_services_Type == '1' %}
+              <div class="icon d-flex justify-content-center align-items-center mb-5">
+              	<span class="flaticon-diet"></span>
+              </div>
+               <div class="media-body">
+                <h3 class="heading">{{info.restaurant_services_title}}</h3>
+                <p>{{info.restaurant_services_description}}</p>
+              </div>
+				{% endif %}
+			{% endfor %}
+
+            </div>
+          </div>
+          <div class="col-md-4 ftco-animate">
+            <div class="media d-block text-center block-6 services">
+				{% for info in Rest_info %}
+				{% if info.restaurant_services_Type == '2' %}
+              <div class="icon d-flex justify-content-center align-items-center mb-5">
+              	<span class="flaticon-bicycle"></span>
+              </div>
+              <div class="media-body">
+                <h3 class="heading">{{info.restaurant_services_title}}</h3>
+                <p>{{info.restaurant_services_description}}</p>
+              </div>
+            </div>
+          </div>
+				{% endif %}
+
+			{% endfor %}
+          <div class="col-md-4 ftco-animate">
+            <div class="media d-block text-center block-6 services">
+				{% for info in Rest_info %}
+				{% if info.restaurant_services_Type == '3' %}
+              <div class="icon d-flex justify-content-center align-items-center mb-5"><span class="flaticon-pizza-1"></span></div>
+              <div class="media-body">
+                <h3 class="heading">{{info.restaurant_services_title}}</h3>
+                <p>{{info.restaurant_services_description}}</p>
+              </div>
+				{% endif %}
+
+			{% endfor %}
+            </div>
+          </div>
+        </div>
+    	</div>
+    </section>
+
+    <section class="ftco-section">
+    	<div class="container">
+    		<div class="row justify-content-center mb-5 pb-3">
+          <div class="col-md-7 heading-section ftco-animate text-center">
+            <h2 class="mb-4">Hot Pizza Meals</h2>
+            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+          </div>
+        </div>
+    	</div>
+
+    	<div class="container-wrap">
+    		<div class="row no-gutters d-flex">
+                <div class="row justify-content-center mb-5 pb-3">
+				{% for meal in meal_list %}
+
+    			<div class="col-lg-4 d-flex ftco-animate">
+    				<div class="services-wrap d-flex">
+    					<a href="{% url 'meals:product' meal.slug %}" class="img" style="background-image: url(../media/{{meal.image}});"></a>
+
+    					<div class="text p-4">
+							<a href="{% url 'meals:product' meal.slug %}"><h3>{{meal.name}}</h3></a>
+
+    						<p class="price"><span>${{meal.price}}</span></p> <a href="{% url 'meals:product' meal.slug %}" class="ml-2 btn btn-white btn-outline-white">View</a>
+
+    					</div>
+    				</div>
+    			</div>
+
+				{% endfor %}
+    	<div class="container">
+    		<div class="row justify-content-center mb-5 pb-3 mt-5 pt-5">
+          <div class="col-md-7 heading-section text-center ftco-animate">
+            <h2 class="mb-4">Our Menu Pricing</h2>
+            <p class="flip"><span class="deg1"></span><span class="deg2"></span><span class="deg3"></span></p>
+            <p class="mt-5">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+          </div>
+        </div>
+        <div class="row">
+        	<div class="col-md-6">
+			{% for meal_speciald in meal_special_list %}
+
+        		<div class="pricing-entry d-flex ftco-animate">
+    					<a href="#" class="img" style="background-image: url(../media/{{meal_speciald.image}});"></a>
+        			<div class="desc pl-3">
+	        			<div class="d-flex text align-items-center">
+	        				<h3>{{meal_speciald.name}}</h3>
+	        				<span class="price">${{meal_speciald.price}}</span>
+	        			</div>
+	        			<div class="d-block">
+	        				<p>{{meal_speciald.description}}</p>
+                            <pre></pre>
+							<pre></pre>
+    						<a href="{% url 'meals:product' meal_speciald.slug %}" class="ml-2 btn btn-white btn-outline-white">View</a>
+	        			</div>
+        			</div>
+        		</div>
+				{% endfor %}
+	</section>
+
+    <section class="ftco-gallery">
+    	<div class="container-wrap">
+    		<div class="row no-gutters">
+					<div class="col-md-3 ftco-animate">
+						<a class="gallery img d-flex align-items-center" style="background-image: url({% static 'images/gallery-1.jpg' %});">
+							<div class="icon mb-4 d-flex align-items-center justify-content-center">
+    						<span class="icon-search"></span>
+    					</div>
+						</a>
+					</div>
+					<div class="col-md-3 ftco-animate">
+						<a class="gallery img d-flex align-items-center" style="background-image: url({% static 'images/gallery-2.jpg' %});">
+							<div class="icon mb-4 d-flex align-items-center justify-content-center">
+    						<span class="icon-search"></span>
+    					</div>
+						</a>
+					</div>
+					<div class="col-md-3 ftco-animate">
+						<a class="gallery img d-flex align-items-center" style="background-image: url({% static 'images/gallery-3.jpg' %});">
+							<div class="icon mb-4 d-flex align-items-center justify-content-center">
+    						<span class="icon-search"></span>
+    					</div>
+						</a>
+					</div>
+					<div class="col-md-3 ftco-animate">
+						<a class="gallery img d-flex align-items-center" style="background-image: url({% static 'images/gallery-4.jpg' %});">
+							<div class="icon mb-4 d-flex align-items-center justify-content-center">
+    						<span class="icon-search"></span>
+    					</div>
+						</a>
+					</div>
+        </div>
+    	</div>
+    </section>
+
+
+		<section class="ftco-counter ftco-bg-dark img" id="section-counter" style="background-image: url(images/bg_2.jpg);" data-stellar-background-ratio="0.5">
+			<div class="overlay"></div>
+      <div class="container">
+        <div class="row justify-content-center">
+        	<div class="col-md-10">
+        		<div class="row">
+		          <div class="col-md-6 col-lg-3 d-flex justify-content-center counter-wrap ftco-animate">
+					  {% for info in Rest_info2 %}
+				{% if info.restaurant_services_Type_2 == '1' %}
+		            <div class="block-18 text-center">
+		              <div class="text">
+		              	<div class="icon"><span class="flaticon-pizza-1"></span></div>
+		              	<strong class="number" data-number="{{info.Pizza_Branches}}">0</strong>
+		              	<span>Pizza Branches</span>
+		              </div>
+		            </div>
+		          </div>
+					{% endif %}
+			{% endfor %}
+		          <div class="col-md-6 col-lg-3 d-flex justify-content-center counter-wrap ftco-animate">
+		            {% for info in Rest_info2 %}
+				{% if info.restaurant_services_Type_2 == '2' %}
+					  <div class="block-18 text-center">
+		              <div class="text">
+		              	<div class="icon"><span class="flaticon-medal"></span></div>
+		              	<strong class="number" data-number="{{info.Number_of_Awards}}">0</strong>
+		              	<span>Number of Awards</span>
+		              </div>
+		            </div>
+		          </div>
+					{% endif %}
+			{% endfor %}
+		          <div class="col-md-6 col-lg-3 d-flex justify-content-center counter-wrap ftco-animate">
+		            {% for info in Rest_info2 %}
+				{% if info.restaurant_services_Type_2 == '3' %}
+					  <div class="block-18 text-center">
+		              <div class="text">
+		              	<div class="icon"><span class="flaticon-laugh"></span></div>
+		              	<strong class="number" data-number="{{info.Happy_Customer}}">0</strong>
+		              	<span>Happy Customer</span>
+		              </div>
+		            </div>
+		          </div>
+					{% endif %}
+			{% endfor %}
+		          <div class="col-md-6 col-lg-3 d-flex justify-content-center counter-wrap ftco-animate">
+		            {% for info in Rest_info2 %}
+				{% if info.restaurant_services_Type_2 == '4' %}
+					  <div class="block-18 text-center">
+		              <div class="text">
+		              	<div class="icon"><span class="flaticon-chef"></span></div>
+		              	<strong class="number" data-number="900">0</strong>
+		              	<span>Staff</span>
+		              </div>
+						  {% endif %}
+			{% endfor %}
+		            </div>
+		          </div>
+		        </div>
+		      </div>
+        </div>
+      </div>
+    </section>
+
+
+		<section class="ftco-appointment">
+			<div class="overlay"></div>
+    	<div class="container-wrap">
+    		<div class="row no-gutters d-md-flex align-items-center">
+    			<div class="col-md-6 d-flex align-self-stretch">
+    				<div id="map"></div>
+    			</div>
+	    		<div class="col-md-6 appointment ftco-animate">
+	    			<h3 class="mb-3">Contact Us</h3>
+	    			<form method="post" class="appointment-form">
+						{% csrf_token %}
+	    				<div class="d-md-flex">
+		    				<div class="form-group">
+		    					<input type="text" name="firstname" class="form-control" placeholder="First Name">
+		    				</div>
+	    				</div>
+	    				<div class="d-me-flex">
+	    					<div class="form-group">
+		    					<input type="text" name="lastname"  class="form-control" placeholder="Last Name">
+		    				</div>
+	    				</div>
+						<div class="d-me-flex">
+	    					<div class="form-group">
+		    					<input value="ameersaad810@gmail.com" type="text" name="email"  class="form-control" placeholder="Last Name">
+		    				</div>
+	    				</div>
+	    				<div class="form-group">
+	              <textarea name="message" id="" cols="30" rows="3" class="form-control" placeholder="Message"></textarea>
+	            </div>
+	            <div class="form-group">
+	              <input type="submit" value="Send" class="btn btn-primary py-3 px-4">
+	            </div>
+	    			</form>
+	    		</div>
+    		</div>
+    	</div>
+    </section>
+
+{% endblock body %}
+    
+  </body>
+</html>

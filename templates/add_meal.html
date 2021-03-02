@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+{% load bootstrap4 %}
+
+{% if request.user.is_superuser %}
+    <section class="home-slider owl-carousel img" style="background-image: url({% static 'images/bg_2.jpg' %});">
+
+      <div class="slider-item" style="background-image: url(images/bg_3.jpg);">
+      	<div class="overlay"></div>
+        <div class="container">
+          <div class="row slider-text justify-content-center align-items-center">
+
+            <div class="col-md-7 col-sm-12 text-center ftco-animate">
+            	<h1 class="mb-3 mt-5 bread">ADD MEAL</h1>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="ftco-section ftco-degree-bg">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 ftco-animate">
+
+              <form method="POST">
+                  {% csrf_token %}
+                  {% bootstrap_form form %}
+
+                  <button type="submit"  class="btn py-3 px-4 btn-primary">Post</button>
+              </form>
+
+            <div class="tag-widget post-tag-container mb-5 mt-5">
+
+            </div>
+
+
+
+          </div> <!-- .col-md-8 -->
+          <div class="col-md-4 sidebar ftco-animate">
+            <div class="sidebar-box">
+            </div>
+            <div class="sidebar-box ftco-animate">
+              <div class="categories">
+
+              </div>
+            </div>
+
+            <div class="sidebar-box ftco-animate">
+              <h3>Tag Cloud</h3>
+              <div class="tagcloud">
+                <a href="#" class="tag-cloud-link">dish</a>
+                <a href="#" class="tag-cloud-link">menu</a>
+                <a href="#" class="tag-cloud-link">food</a>
+                <a href="#" class="tag-cloud-link">sweet</a>
+                <a href="#" class="tag-cloud-link">tasty</a>
+                <a href="#" class="tag-cloud-link">delicious</a>
+                <a href="#" class="tag-cloud-link">desserts</a>
+                <a href="#" class="tag-cloud-link">drinks</a>
+              </div>
+            </div>
+
+          </div>
+
+<div class="col-md-6 appointment ftco-animate">
+
+        </div>
+      </div>
+    </section> <!-- .section -->
+    {% else %}
+    {% endif %}
+
+    <h2>in correct url</h2>
+   {% endblock body %}
+
+
+  </body>
+</html>

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+
+
+{% block body %}
+{% if request.user.is_superuser %}
+
+
+
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+  <main>
+    <div class="container">
+
+    <div class="table-responsive text-nowrap">
+    <h2>Order Summary</h2>
+     <select id="filter_selection" onchange="filter_selection()">
+                <option value="all">all</option>
+                <option value="From old">From old</option>
+                <option value="latest 10">latest 10</option>
+                <option value="latest 25">latest 25</option>
+                <option value="latest 50">latest 50</option>
+            </select>
+        <pre></pre>
+        {% for i in admin_meal_list %}
+    <table class="table">
+        <thead>
+        <tr>
+            <a href="{% url 'meals:edit_meal' i.name %}">edit</a>
+            <a href="{% url 'meals:delete_meal' i.name %}"><button style="  border: none;background: #F91842;  -webkit-border-radius: 5px;  -moz-border-radius: 5px;  border-radius: 5px;  color: #fff;  font-size: 12px;  font-weight: 600;  display: inline-block;  padding: 12px 36px;font-family: "Roboto", sans-serif; cursor: pointer;" class="boxed-btn2 w-55">Delete</button></a>
+            <pre></pre>
+            <th scope="col"><b style="color: #FFFF;">Date</b></th>
+            <th scope="col"><b style="color: #FFFF;">user</b></th>
+            <th scope="col"><b style="color: #FFFF;">type</b></th>
+            <th scope="col"><b 	style="color: #FFFF;">Meal title</b></th>
+            <th scope="col"><b style="color: #FFFF;">Price</b></th>
+            <th scope="col"><b style="color: #FFFF;">Saved</b></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td style="color: #fac564;">{{i.published_at|date:'Y M D'}}   {{i.published_at|time:"TIME_FORMAT"}}</td>
+            <td style="color: #fac564;">{{i.user}}</td>
+            <td style="color: #fac564;">{{i.MEAL_TYPe}}</td>
+            <td style="color: #fac564;">{{ i.name }}</td>
+            <td><p style="color: #fac564;">${{ i.price }}</p></td>
+            <td><p style="color: #fac564;">${{ i.saved_price }}</p></td>
+            <td>
+
+            </td>
+
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan='5'><p style="color: #fac564;">Your cart is empty</p></td>
+        </tr>
+
+        {% endfor %}
+
+
+        </tbody>
+    </table>
+
+    </div>
+
+    </div>
+  </main>
+    {% else %}
+<h2>in correct url</h2>
+
+    {% endif %}
+<script type="text/javascript">
+        function filter_selection(){
+            selection = $("#filter_selection").val();
+            window.location.replace("/meals/all-admin-meals?order="+selection);
+        }
+        </script>
+{% endblock body %}
+

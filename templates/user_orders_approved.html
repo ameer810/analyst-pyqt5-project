@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% for i in data %}
+<table>
+{% for x in i.meals.all %}
+<tr>
+<td>{{x.meal.name}}</td>
+<td>{{x.Quantity}}</td>
+<td>{{x.meal.price}}</td>
+<td>{{x.get_total_item_price}} plz</td>
+
+</tr>
+{%endfor%}
+</table>
+{% endfor %}
+
+
+{% block body %}
+
+
+
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+  <main>
+    <div class="container">
+
+    <div class="table-responsive text-nowrap">
+    <h2>Order Summary</h2>
+        {% for i in data %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col"><b style="color: #FFFF;">Date</b></th>
+            <th scope="col"><b style="color: #FFFF;">order type</b></th>
+            <th scope="col"><b 	style="color: #FFFF;">Meal title</b></th>
+            <th scope="col"><b style="color: #FFFF;">Price</b></th>
+            <th scope="col"><b style="color: #FFFF;">Quantity</b></th>
+            <th scope="col"><b style="color: #FFFF;">Total Price</b></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order_item in  i.meals.all %}
+        <tr>
+            <td style="color: #fac564;">{{i.created_at|date:'d M o h m'}}</td>
+            <td style="color: #fac564;">{{i.approved}}</td>
+            <td style="color: #fac564;">{{ order_item.meal.name }}</td>
+            <td><p style="color: #fac564;">${{ order_item.meal.price }}</p></td>
+
+            <td>
+                <a style="color: #fac564;" href="#">{{ order_item.Quantity }}</a>
+
+            </td>
+            <td>
+            {% if order_item.meal.saved_price %}
+                <a style="color: #fac564;" href="#">${{ order_item.get_amount_saved }}</a>
+                <span>Saving ${{ order_item.get_total_discount_item_price }}</span>
+            {% endif %}
+            </td>
+
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan='5'><p style="color: #fac564;">Your cart is empty</p></td>
+        </tr>
+
+        {% endfor %}
+
+        {% if i.get_total %}
+
+        <tr>
+            <td colspan="4"><b style="color :#fac564;">Order Total</b></td>
+            <td><b style="color: #008000;">${{ i.get_total }}</b></td>
+        </tr>
+            {% endif %}
+
+
+        {% endfor %}
+        </tbody>
+    </table>
+
+    </div>
+
+    </div>
+  </main>
+
+
+{% endblock body %}
+

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block body %}
+
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<main>
+    <div class="container">
+
+    <div class="table-responsive text-nowrap">
+    <h2>Order Summary</h2><table>
+        <a href="/meals/admin-orders"><p> return to cart</p></a>
+
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col"><b style="color: #FFFF;">id</b></th>
+            <th scope="col"><b style="color: #FFFF;">Region</b></th>
+            <th scope="col"><b style="color: #FFFF;">Sub-region</b></th>
+            <th scope="col"><b style="color: #FFFF;">Street name</b></th>
+            <th scope="col"><b style="color: #FFFF;">Neighborhood name</b></th>
+            <th scope="col"><b 	style="color: #FFFF;">special marque</b></th>
+            <th scope="col"><b style="color: #FFFF;">Role_number</b></th>
+            <th scope="col"><b style="color: #FFFF;">home_number</b></th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr>
+                         <td style="color: #fac564;">{{i.id}}</td>
+                         <td style="color: #fac564;">{{i.checkout.Region}}</td>
+                         <td style="color: #fac564;">{{i.checkout.Sub_region}}</td>
+                         <td style="color: #fac564;">{{i.checkout.Street_name}}</td>
+                         <td style="color: #fac564;">{{i.checkout.Neighborhood_name1}}</td>
+                         <td style="color: #fac564;">{{i.checkout.special_marque}}</td>
+                         <td style="color: #fac564;">{{i.checkout.Role_number}}</td>
+                         <td style="color: #fac564;">{{i.checkout.home_number}}</td>
+        <tr>
+
+        </tbody>
+    </table>
+
+    </div>
+
+    </div>
+  </main>
+{% endblock body %}

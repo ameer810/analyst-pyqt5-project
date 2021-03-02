@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block body %}
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+  <main>
+    <div class="container">
+
+    <div class="table-responsive text-nowrap">
+    <h2>restaurant Order Summary</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col"><b style="color: #FFFF;">Date</b></th>
+            <th scope="col"><b 	style="color: #FFFF;">Meal title</b></th>
+            <th scope="col"><b style="color: #FFFF;">Price</b></th>
+            <th scope="col"><b style="color: #FFFF;">Quantity</b></th>
+            <th scope="col"><b style="color: #FFFF;">Total Item Price</b></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order_item in AdminOrders %}
+        <tr>
+            <th style="color: #fac564;" scope="row">{{AdminOrders2.created_at|date:'d M o h m'}}</th>
+            <td style="color: #fac564;">{{ order_item.meal.name }}</td>
+            <td><p style="color: #fac564;">${{ order_item.meal.price }}</p></td>
+            <td>
+                <a style="color: #fac564;" href="#">{{ order_item.Quantity }}</a>
+
+            </td>
+
+            <td>
+            {% if order_item.meal.saved_price %}
+                <a style="color: #fac564;" href="#">${{ order_item.get_total_discount_item_price }}</a>
+                <span class="badge badge-primary">Saving ${{ order_item.get_amount_saved }}</span>
+            {% else %}
+                <p style="color: #fac564;">${{ order_item.get_total_item_price }}</p>
+            {% endif %}
+
+
+<a style='color: red;' href="{% url 'meals:remove-from-cart2' order_item.meal.slug %}">
+                <i class="fas fa-trash float-right"></i></a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan='5'><p style="color: #fac564;">restaurant orders is empty</p></td>
+        </tr>
+        <tr>
+            <td colspan="5">
+            </td>
+        </tr>
+        {% endfor %}
+
+        {% if AdminOrders2.get_total %}
+
+        <tr>
+            <td colspan="4"><b style="color :#fac564;">Order Total</b></td>
+            <td><b style="color: #008000;">${{ AdminOrders2.get_total }}</b></td>
+        </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+    </div>
+
+    </div>
+  </main>
+
+{% endblock body %}
