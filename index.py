@@ -52,6 +52,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton.clicked.connect(self.Open_Sales_Page)
         # self.pushButton_6.clicked.connect(self.Open_Login_Page)
         self.pushButton_4.clicked.connect(self.Open_Settings_Page)
+        self.pushButton_12.clicked.connect(self.Open_Print_Page)
         # self.pushButton_3.clicked.connect(self.Open_History_Page)
         self.pushButton_5.clicked.connect(self.Open_clients_Page)
         # self.pushButton_2.clicked.connect(self.Open_Analyse_Page)
@@ -77,6 +78,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_34.clicked.connect(self.Preview)
         self.pushButton_23.clicked.connect(self.Print_empty_papers)
         self.pushButton_24.clicked.connect(self.Add_Path)
+        self.pushButton_36.clicked.connect(self.Show_All_Clients)
 
     def Delete_Files(self):
         self.cur.execute(''' SELECT * FROM paths WHERE id=1 ''')
@@ -243,38 +245,27 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.textEdit.setEnabled(True)
 
     def Show_All_Clients(self):
-        self.cur.execute(''' SELECT client_name FROM addclient ORDER BY -date ''')
+        client_name = self.lineEdit_27.text()
+        if client_name != '0':
+            self.cur.execute(''' SELECT * FROM addclient WHERE client_name=%s ORDER BY id''', (client_name,))
+        else:
+            self.cur.execute(''' SELECT * FROM addclient ORDER BY -date''')
         analyst_data = self.cur.fetchall()
-        all_names = {}
-        all_data = []
-        id = 0
-
-        for item in analyst_data:
-            if item[0] not in all_names:
-                all_names[item[0]] = 0
-
-        for s in all_names.keys():
-            self.cur.execute(''' SELECT id FROM addclient WHERE client_name=%s ORDER BY id ''', (s,))
-            analyst_data2 = self.cur.fetchall()
-            all_names[s] = analyst_data2[0][0]
-            id = analyst_data2[0][0]
-            self.cur.execute(''' SELECT * FROM addclient WHERE id=%s ORDER BY -date ''', (id,))
-            latest_data = self.cur.fetchall()
-            data = [{'name': s, 'value': latest_data}]
-            all_data.append(data)
-        l_data = ()
-        for ih in all_data:
-            hs_data = ih[0]['value']
-            l_data += tuple(hs_data)
         self.tableWidget_2.setRowCount(0)
         self.tableWidget_2.insertRow(0)
-        for row, form in enumerate(l_data):
-            for col, item in enumerate(form):
-                self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(item)))
-                col += 1
-            row_pos = self.tableWidget_2.rowCount()
-            self.tableWidget_2.insertRow(row_pos)
-
+        try:
+            if client_name != '0' and client_name != '':
+                for i, k in enumerate(analyst_data[0]):
+                    if i == 3:
+                        self.tableWidget_2.setItem(0, i, QTableWidgetItem(str(analyst_data[0][4])))
+                    else:
+                        self.tableWidget_2.setItem(0, i, QTableWidgetItem(str(k)))
+                    print('ok')
+            else:
+                self.Show_All_The_Sales()
+        except:
+            self.tableWidget_2.setRowCount(0)
+            self.tableWidget_2.insertRow(0)
     def Search_In_History(self):
         actionsd = self.comboBox_24.currentIndex()
         tabley = self.comboBox_20.currentIndex()
@@ -361,23 +352,19 @@ class mainapp(QMainWindow, FORM_CLASS):
         analyst_data = self.cur.fetchall()
         self.tableWidget_6.setRowCount(0)
         self.tableWidget_6.insertRow(0)
-        if client_name != '0' and client_name != '':
-            for i, k in enumerate(analyst_data[0]):
-                if i == 3:
-                    self.tableWidget_6.setItem(0, i, QTableWidgetItem(str(analyst_data[0][4])))
-                else:
-                    self.tableWidget_6.setItem(0, i, QTableWidgetItem(str(k)))
-                print('ok')
-        else:
-            for row, form in enumerate(analyst_data):
-                for col, item in enumerate(form):
-                    if col == 3:
-                        self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(analyst_data[row][4])))
+        try:
+            if client_name != '0' and client_name != '':
+                for i, k in enumerate(analyst_data[0]):
+                    if i == 3:
+                        self.tableWidget_6.setItem(0, i, QTableWidgetItem(str(analyst_data[0][4])))
                     else:
-                        self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
-                    col += 1
-                row_pos = self.tableWidget_6.rowCount()
-                self.tableWidget_6.insertRow(row_pos)
+                        self.tableWidget_6.setItem(0, i, QTableWidgetItem(str(k)))
+                    print('ok')
+            else:
+                self.Show_All_The_Sales()
+        except:
+            self.tableWidget_6.setRowCount(0)
+            self.tableWidget_6.insertRow(0)
         # self.Add_Data_To_history(6, 1)
 
     def Print_Sale_Data(self, prev):
@@ -573,27 +560,28 @@ class mainapp(QMainWindow, FORM_CLASS):
         analyst_name = self.comboBox_16.currentText()
         self.cur.execute('''SELECT category FROM addanalyst WHERE name = %s''', (analyst_name,))
         analyst_category = self.cur.fetchone()
-
-        if analyst_category[0] == 'عدد':
-            self.comboBox_17.hide()
-            self.lineEdit_21.hide()
-            self.doubleSpinBox_7.show()
-        if analyst_category[0] == 'خيارات':
-            self.lineEdit_21.hide()
-            self.doubleSpinBox_7.hide()
-
-            self.comboBox_17.show()
-            self.comboBox_17.setEditable(False)
-        if analyst_category[0] == 'حقل كتابة':
-            self.lineEdit_21.show()
-            self.doubleSpinBox_7.hide()
-            self.comboBox_17.hide()
-        if analyst_category[0] == 'خيارات مع تعديل':
-            self.lineEdit_21.hide()
-            self.doubleSpinBox_7.hide()
-            self.comboBox_17.clear()
-            self.comboBox_17.show()
-            self.comboBox_17.setEditable(True)
+        try:
+            if analyst_category[0] == 'عدد':
+                self.comboBox_17.hide()
+                self.lineEdit_21.hide()
+                self.doubleSpinBox_7.show()
+            if analyst_category[0] == 'خيارات':
+                self.lineEdit_21.hide()
+                self.doubleSpinBox_7.hide()
+                self.comboBox_17.show()
+                self.comboBox_17.setEditable(False)
+            if analyst_category[0] == 'حقل كتابة':
+                self.lineEdit_21.show()
+                self.doubleSpinBox_7.hide()
+                self.comboBox_17.hide()
+            if analyst_category[0] == 'خيارات مع تعديل':
+                self.lineEdit_21.hide()
+                self.doubleSpinBox_7.hide()
+                # self.comboBox_17.clear()
+                self.comboBox_17.show()
+                self.comboBox_17.setEditable(True)
+        except:
+            QMessageBox.information(self,'تحذير',"يرجى اختيار تحليل صحيح")
         colors = ['yallow', 'brown', 'green', 'milk']
         RBCs_Pus_cells_GUE_GSE = ['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
                                   '5 - 7', '6 - 8', '6 - 7', '+', '++', '+++', '++++', 'Full Field']
@@ -605,11 +593,15 @@ class mainapp(QMainWindow, FORM_CLASS):
         Reaction = ['Acidic', 'Alkaline']
         Sugar = ['Nil', '+', '++', '+++', 'Trace']
         Crystals = ['Am.Urate', 'Am.Phosphatase', 'Uric Acid', 'Ca.Oxalate']
-        Casts = ['Granular cast +' , 'Granular cast ++' , 'Granular cast +++']
-        Blood_Group=['A (+ve)','B (+ve)','AB (+ve)','O (+ve)','O (-ve)','A (-ve)','B (-ve)','AB (-ve)']
-        Pregnancy_test_in_urine_serum=['Positive (+ve)','Negative (-ve)']
-        test=['Toxoplasma IgG','Toxoplasma IgM','Cytomegalo Virus IgG','Cytomegalo Virus IgM','Rubella IgG','Rubella IgM','Anti - Phspholipin IgG','Anti - Phspholipin  IgM','Anti - Cardiolipin  IgG','Anti - Cardiolipin  IgM','Herps   IgG','Herpes  IgM']
-        test_choices=['0.5 Negative','0.6 Negative','0.7 Negative','0.8 Negative','1.1 Positive','1.1 Positive','1.2 Positive','1.3 Positive','1.4 Positive','1.5 Positive']
+        Casts = ['Granular cast +', 'Granular cast ++', 'Granular cast +++']
+        Blood_Group = ['A (+ve)', 'B (+ve)', 'AB (+ve)', 'O (+ve)', 'O (-ve)', 'A (-ve)', 'B (-ve)', 'AB (-ve)']
+        Pregnancy_test_in_urine_serum = ['Positive (+ve)', 'Negative (-ve)']
+        test = ['Toxoplasma IgG', 'Toxoplasma IgM', 'Cytomegalo Virus IgG', 'Cytomegalo Virus IgM', 'Rubella IgG',
+                'Rubella IgM', 'Anti - Phspholipin IgG', 'Anti - Phspholipin  IgM', 'Anti - Cardiolipin  IgG',
+                'Anti - Cardiolipin  IgM', 'Herps   IgG', 'Herpes  IgM']
+        test_choices = ['0.5 Negative', '0.6 Negative', '0.7 Negative', '0.8 Negative', '1.1 Positive', '1.1 Positive',
+                        '1.2 Positive', '1.3 Positive', '1.4 Positive', '1.5 Positive']
+        self.comboBox_17.clear()
         if analyst_name == 'Colour:SFA' or analyst_name == 'Color:GSE':
             for item in colors:
                 self.comboBox_17.addItem(str(item))
@@ -643,14 +635,13 @@ class mainapp(QMainWindow, FORM_CLASS):
         if analyst_name == 'Casts':
             for item10 in Casts:
                 self.comboBox_17.addItem(str(item10))
-        if analyst_name == 'Pregnancy test  in serum' or analyst_name == 'Pregnancy test  in urine' or analyst_name=='Salmonella typhi  IgG' or analyst_name=='Salmonella typhi  ImG' or analyst_name=='Rose-Bengal test' or analyst_name=='Rh':
+        if analyst_name == 'Pregnancy test  in serum' or analyst_name == 'Pregnancy test  in urine' or analyst_name == 'Salmonella typhi  IgG' or analyst_name == 'Salmonella typhi  ImG' or analyst_name == 'Rose-Bengal test' or analyst_name == 'Rh':
             for item11 in Pregnancy_test_in_urine_serum:
                 self.comboBox_17.addItem(str(item11))
         for fitem in test:
-            if analyst_name==fitem:
+            if analyst_name == fitem:
                 for item12 in test_choices:
                     self.comboBox_17.addItem(str(item12))
-
     def get_client_id(self):
         global client_id_glob
         client_id_glob = self.spinBox.value()
@@ -680,6 +671,8 @@ class mainapp(QMainWindow, FORM_CLASS):
             all_data.append(data)
         self.tableWidget_6.setRowCount(0)
         self.tableWidget_6.insertRow(0)
+        self.tableWidget_2.setRowCount(0)
+        self.tableWidget_2.insertRow(0)
         l_data = ()
         for ih in all_data:
             hs_data = ih[0]['value']
@@ -696,11 +689,15 @@ class mainapp(QMainWindow, FORM_CLASS):
                 #     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
                 if col == 3:
                     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(l_data[row][4])))
+                    self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(l_data[row][4])))
                 else:
                     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
+                    self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
             row_pos = self.tableWidget_6.rowCount()
             self.tableWidget_6.insertRow(row_pos)
+            row_pos = self.tableWidget_2.rowCount()
+            self.tableWidget_2.insertRow(row_pos)
         # print(all_data)
 
     # def Show_All_The_Analysts(self):
@@ -1061,6 +1058,8 @@ class mainapp(QMainWindow, FORM_CLASS):
 
     def Open_Settings_Page(self):
         self.tabWidget.setCurrentIndex(6)
+    def Open_Print_Page(self):
+        self.tabWidget.setCurrentIndex(7)
 
     # def Open_History_Page(self):
     #     self.tabWidget.setCurrentIndex(5)
@@ -1075,27 +1074,27 @@ class mainapp(QMainWindow, FORM_CLASS):
     #     self.tabWidget.setCurrentIndex(1)
 
     def Light_Blue_Theme(self):
-        style = open('themes/light_blue.css', 'r')
+        style = open('thems/light_blue.css', 'r')
         style = style.read()
         self.setStyleSheet(style)
 
     def Dark_Blue_Theme(self):
-        style = open('themes/darkblue.css', 'r')
+        style = open('thems/darkblue.css', 'r')
         style = style.read()
         self.setStyleSheet(style)
 
     def Dark_Gray_Theme(self):
-        style = open('themes/darkgray.css', 'r')
+        style = open('thems/darkgray.css', 'r')
         style = style.read()
         self.setStyleSheet(style)
 
     def Dark_Orange_Theme(self):
-        style = open('themes/darkorange.css', 'r')
+        style = open('thems/darkorange.css', 'r')
         style = style.read()
         self.setStyleSheet(style)
 
     def Dark_Theme(self):
-        style = open('themes/qdark.css', 'r')
+        style = open('thems/qdark.css', 'r')
         style = style.read()
         self.setStyleSheet(style)
 

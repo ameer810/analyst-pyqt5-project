@@ -1,7 +1,6 @@
 - analysts:
     -analyst:[choices]
-    -Reaction:[Alkaline,Acidic]
-    -test:[0.5 Negative,0.6 Negative,0.7 Negative,0.8 Negative,1.1 Positive,1.1 Positive,1.2 Positive,1.3 Positive,1.4 Positive,1.5 Positive]
+    --test:[0.5 Negative,0.6 Negative,0.7 Negative,0.8 Negative,1.1 Positive,1.1 Positive,1.2 Positive,1.3 Positive,1.4 Positive,1.5 Positive]
     --Rh:[Positive (+ve),Negative (-ve)]
     --Rose-Bengal test:[Positive (+ve),Negative (-ve)]
     --Salmonella typhi  IgG:[Positive (+ve),Negative (-ve)]

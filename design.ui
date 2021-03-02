@@ -2590,9 +2590,9 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>0</y>
+          <y>-10</y>
           <width>1001</width>
-          <height>661</height>
+          <height>671</height>
          </rect>
         </property>
         <property name="title">
@@ -2602,9 +2602,9 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>30</y>
+           <y>100</y>
            <width>981</width>
-           <height>621</height>
+           <height>531</height>
           </rect>
          </property>
          <property name="font">
@@ -2637,6 +2637,67 @@ border-bottom-color:2px solid rgb(191, 191, 191);</string>
            <string>طبيب المراجع</string>
           </property>
          </column>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_27">
+         <property name="geometry">
+          <rect>
+           <x>330</x>
+           <y>36</y>
+           <width>391</width>
+           <height>41</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>13</pointsize>
+          </font>
+         </property>
+         <property name="placeholderText">
+          <string/>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_60">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>740</x>
+           <y>27</y>
+           <width>241</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>12</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>الاسم الكامل للمراجع</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_36">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>30</y>
+           <width>241</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>بحث</string>
+         </property>
         </widget>
        </widget>
       </widget>
@@ -3685,7 +3746,7 @@ QDateTimeEdit:disabled {
           </font>
          </property>
          <property name="text">
-          <string>الاسم الثلاثي للمراجع</string>
+          <string>الاسم الكامل للمراجع</string>
          </property>
         </widget>
        </widget>
@@ -9688,7 +9749,7 @@ QDialog QGroupBox QFrame {
        </font>
       </property>
       <property name="layoutDirection">
-       <enum>Qt::LeftToRight</enum>
+       <enum>Qt::RightToLeft</enum>
       </property>
       <property name="duplicatesEnabled">
        <bool>false</bool>
@@ -9737,6 +9798,9 @@ QDialog QGroupBox QFrame {
        <font>
         <pointsize>17</pointsize>
        </font>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::RightToLeft</enum>
       </property>
       <property name="minimum">
        <number>-1</number>
