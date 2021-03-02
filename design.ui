@@ -3218,7 +3218,7 @@ QDateTimeEdit:disabled {
          <property name="geometry">
           <rect>
            <x>580</x>
-           <y>137</y>
+           <y>150</y>
            <width>81</width>
            <height>51</height>
           </rect>
@@ -9716,6 +9716,11 @@ QDialog QGroupBox QFrame {
       <item>
        <property name="text">
         <string>هرمونات مشترك</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>SFA</string>
        </property>
       </item>
      </widget>

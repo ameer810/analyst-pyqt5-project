@@ -2,16 +2,15 @@ import datetime
 import os
 import sys
 import time
-
 import MySQLdb
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUiType
 from docx import *
-from shutil import copyfile
+# from shutil import copyfile
 from docx.shared import Pt
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+# import smtplib
+# from email.mime.text import MIMEText
+# from email.mime.multipart import MIMEMultipart
 
 from win32com import client
 
@@ -38,7 +37,6 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.Show_All_Clients()
         # self.groupBox.setEnabled(False)
         self.Show_paths()
-
 
     def DB_Connect(self):
         self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel', charset="utf8",
@@ -143,6 +141,9 @@ class mainapp(QMainWindow, FORM_CLASS):
         if paper_type == 3:
             category = 'hematology'
             file = 'hematology org.docx'
+        if paper_type == 5:
+            category = 'SFA'
+            file = 'SFA org.docx'
         if paper_type == 4:
             category = 'هرمونات مشترك'
             file = 'هرمونات مشترك الاصلي.docx'
@@ -360,8 +361,8 @@ class mainapp(QMainWindow, FORM_CLASS):
         analyst_data = self.cur.fetchall()
         self.tableWidget_6.setRowCount(0)
         self.tableWidget_6.insertRow(0)
-        if client_name !='0'and client_name!='':
-            for i,k in enumerate(analyst_data[0]):
+        if client_name != '0' and client_name != '':
+            for i, k in enumerate(analyst_data[0]):
                 if i == 3:
                     self.tableWidget_6.setItem(0, i, QTableWidgetItem(str(analyst_data[0][4])))
                 else:
@@ -406,7 +407,6 @@ class mainapp(QMainWindow, FORM_CLASS):
             print(e)
             QMessageBox.information(self, 'خطأ', 'هنالك خطأ يرجى مراجعة العملية')
         if prev != 'T':
-
             self.Delete_Files()
 
     def get_total_price(self):
@@ -595,10 +595,61 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.comboBox_17.show()
             self.comboBox_17.setEditable(True)
         colors = ['yallow', 'brown', 'green', 'milk']
+        RBCs_Pus_cells_GUE_GSE = ['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
+                                  '5 - 7', '6 - 8', '6 - 7', '+', '++', '+++', '++++', 'Full Field']
+        Consistency = ['Solid', 'Liquid', 'Semi solid', 'Semi liquid', 'Mucoid']
+        G_Lembilia_E_Histolytica = ['Cyst', 'Trophozoite']
+        Epith_cells = ['Few', '+', '++', '+++', '++++']
+        Ova = ['Nil']
+        Appearance = ['Turbid', 'Clear']
+        Reaction = ['Acidic', 'Alkaline']
+        Sugar = ['Nil', '+', '++', '+++', 'Trace']
+        Crystals = ['Am.Urate', 'Am.Phosphatase', 'Uric Acid', 'Ca.Oxalate']
+        Casts = ['Granular cast +' , 'Granular cast ++' , 'Granular cast +++']
+        Blood_Group=['A (+ve)','B (+ve)','AB (+ve)','O (+ve)','O (-ve)','A (-ve)','B (-ve)','AB (-ve)']
+        Pregnancy_test_in_urine_serum=['Positive (+ve)','Negative (-ve)']
+        test=['Toxoplasma IgG','Toxoplasma IgM','Cytomegalo Virus IgG','Cytomegalo Virus IgM','Rubella IgG','Rubella IgM','Anti - Phspholipin IgG','Anti - Phspholipin  IgM','Anti - Cardiolipin  IgG','Anti - Cardiolipin  IgM','Herps   IgG','Herpes  IgM']
+        test_choices=['0.5 Negative','0.6 Negative','0.7 Negative','0.8 Negative','1.1 Positive','1.1 Positive','1.2 Positive','1.3 Positive','1.4 Positive','1.5 Positive']
         if analyst_name == 'Colour:SFA' or analyst_name == 'Color:GSE':
             for item in colors:
                 self.comboBox_17.addItem(str(item))
-            # add items to combox
+        if analyst_name == 'R.B.Cs:GSE' or analyst_name == 'Pus cells:GSE' or analyst_name == 'RBCs:GUE' or analyst_name == 'Pus cells:GUE':
+            for item0 in RBCs_Pus_cells_GUE_GSE:
+                self.comboBox_17.addItem(str(item0))
+        if analyst_name == 'Consistency':
+            for item1 in Consistency:
+                self.comboBox_17.addItem(str(item1))
+        if analyst_name == 'G. Lembilia' or analyst_name == 'G. Lembilia':
+            for item2 in G_Lembilia_E_Histolytica:
+                self.comboBox_17.addItem(str(item2))
+        if analyst_name == 'Ova':
+            for item4 in Ova:
+                self.comboBox_17.addItem(str(item4))
+        if analyst_name == 'Appearance':
+            for item5 in Appearance:
+                self.comboBox_17.addItem(str(item5))
+        if analyst_name == 'Reaction':
+            for item6 in Reaction:
+                self.comboBox_17.addItem(str(item6))
+        if analyst_name == 'Sugar' or analyst_name == 'Albumin':
+            for item7 in Sugar:
+                self.comboBox_17.addItem(str(item7))
+        if analyst_name == 'Epith .cells':
+            for item8 in Epith_cells:
+                self.comboBox_17.addItem(str(item8))
+        if analyst_name == 'Crystals':
+            for item9 in Crystals:
+                self.comboBox_17.addItem(str(item9))
+        if analyst_name == 'Casts':
+            for item10 in Casts:
+                self.comboBox_17.addItem(str(item10))
+        if analyst_name == 'Pregnancy test  in serum' or analyst_name == 'Pregnancy test  in urine' or analyst_name=='Salmonella typhi  IgG' or analyst_name=='Salmonella typhi  ImG' or analyst_name=='Rose-Bengal test' or analyst_name=='Rh':
+            for item11 in Pregnancy_test_in_urine_serum:
+                self.comboBox_17.addItem(str(item11))
+        for fitem in test:
+            if analyst_name==fitem:
+                for item12 in test_choices:
+                    self.comboBox_17.addItem(str(item12))
 
     def get_client_id(self):
         global client_id_glob
@@ -1327,7 +1378,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             'analyst': analysts[row],
                                             'result': results[row]
                                         }
-                                        if analyst_and_result['analyst'] == 'R.B.Cs':
+                                        if analyst_and_result['analyst'] == 'R.B.Cs:GSE':
                                             k = analyst_and_result['result']
                                             n.text = f'R.B.Cs: {k}'
                                             run = n.runs
@@ -1341,7 +1392,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             'analyst': analysts[row],
                                             'result': results[row]
                                         }
-                                        if analyst_and_result['analyst'] == 'Pus cells':
+                                        if analyst_and_result['analyst'] == 'Pus cells:GSE':
                                             k = analyst_and_result['result']
                                             n.text = f'Pus cells: {k}'
                                             run = n.runs
@@ -1391,6 +1442,45 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             font.bold = True
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
+                                if n.text == 'Bacteria    :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Bacteria:GUE':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Bacteria    : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.size = Pt(14)
+                                if n.text == 'Monillia     :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Monillia:GUE':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Monillia     : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.size = Pt(14)
+                                if n.text == 'Fatty drop:':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Fatty drop:GSE':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Fatty drop: {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.size = Pt(14)
                                 if n.text == 'Other:':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
@@ -1529,7 +1619,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             'analyst': analysts[row],
                                             'result': results[row]
                                         }
-                                        if analyst_and_result['analyst'] == 'RBCs':
+                                        if analyst_and_result['analyst'] == 'RBCs:GUE':
                                             k = analyst_and_result['result']
                                             n.text = f'RBCs         : {k}'
                                             run = n.runs
@@ -1542,7 +1632,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             'analyst': analysts[row],
                                             'result': results[row]
                                         }
-                                        if analyst_and_result['analyst'] == 'Pus cells':
+                                        if analyst_and_result['analyst'] == 'Pus cells:GUE':
                                             k = analyst_and_result['result']
                                             n.text = f'Pus cells    : {k}'
                                             run = n.runs
@@ -1584,6 +1674,32 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         if analyst_and_result['analyst'] == 'Casts':
                                             k = analyst_and_result['result']
                                             n.text = f'Casts        : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.size = Pt(14)
+                                if n.text == 'Bacteria    :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Bacteria:GUE':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Bacteria    : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.size = Pt(14)
+                                if n.text == 'Monillia     :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Monillia:GUE':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Monillia     : {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
