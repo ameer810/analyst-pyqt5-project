@@ -3261,6 +3261,9 @@ QDateTimeEdit:disabled {
            <pointsize>11</pointsize>
           </font>
          </property>
+         <property name="editable">
+          <bool>true</bool>
+         </property>
          <item>
           <property name="text">
            <string>--------------------------</string>

@@ -1,10 +1,14 @@
 import datetime
 import os
-import sys
+
 import time
 import MySQLdb
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUiType
+import sys
+
 from docx import *
 # from shutil import copyfile
 from docx.shared import Pt
@@ -13,12 +17,14 @@ from docx.shared import Pt
 # from email.mime.multipart import MIMEMultipart
 
 from win32com import client
-
+from pydesign import Ui_MainWindow as main_wind
 FORM_CLASS, _ = loadUiType("design.ui")
 user_id = 4
 client_id_glob = 0
 chick_if_add_new = False
 if_print = False
+analysts_name_glo = []
+clients_name_glo = []
 
 
 class mainapp(QMainWindow, FORM_CLASS):
@@ -37,6 +43,10 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.Show_All_Clients()
         # self.groupBox.setEnabled(False)
         self.Show_paths()
+        self.add_Analyst_to_list()
+        self.Auto_complete_combo()
+        self.add_client_to_list()
+        self.Auto_complete_combo2()
 
     def DB_Connect(self):
         self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel', charset="utf8",
@@ -79,6 +89,41 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_23.clicked.connect(self.Print_empty_papers)
         self.pushButton_24.clicked.connect(self.Add_Path)
         self.pushButton_36.clicked.connect(self.Show_All_Clients)
+
+    def add_Analyst_to_list(self):
+        self.cur.execute(''' SELECT name FROM addanalyst ''')
+        data = self.cur.fetchall()
+        for i in data:
+            analysts_name_glo.append(i[0])
+
+    def Auto_Complete(self, model):
+        model.setStringList(analysts_name_glo)
+
+    def Auto_complete_combo(self):
+        combo = self.comboBox_16
+        completer = QCompleter()
+        combo.setCompleter(completer)
+        model = QStringListModel()
+        completer.setModel(model)
+        self.Auto_Complete(model)
+
+    def add_client_to_list(self):
+        self.cur.execute(''' SELECT client_name FROM addclient ''')
+        data = self.cur.fetchall()
+        for i in data:
+            clients_name_glo.append(i[0])
+
+    def Auto_Complete2(self, model):
+        model.setStringList(clients_name_glo)
+
+    def Auto_complete_combo2(self):
+        combo = self.lineEdit_25, self.lineEdit_27
+        completer = QCompleter()
+        for i in combo:
+            i.setCompleter(completer)
+            model = QStringListModel()
+            completer.setModel(model)
+            self.Auto_Complete2(model)
 
     def Delete_Files(self):
         self.cur.execute(''' SELECT * FROM paths WHERE id=1 ''')
@@ -266,6 +311,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         except:
             self.tableWidget_2.setRowCount(0)
             self.tableWidget_2.insertRow(0)
+
     def Search_In_History(self):
         actionsd = self.comboBox_24.currentIndex()
         tabley = self.comboBox_20.currentIndex()
@@ -581,7 +627,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                 self.comboBox_17.show()
                 self.comboBox_17.setEditable(True)
         except:
-            QMessageBox.information(self,'تحذير',"يرجى اختيار تحليل صحيح")
+            QMessageBox.information(self, 'تحذير', "يرجى اختيار تحليل صحيح")
         colors = ['yallow', 'brown', 'green', 'milk']
         RBCs_Pus_cells_GUE_GSE = ['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
                                   '5 - 7', '6 - 8', '6 - 7', '+', '++', '+++', '++++', 'Full Field']
@@ -611,7 +657,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         if analyst_name == 'Consistency':
             for item1 in Consistency:
                 self.comboBox_17.addItem(str(item1))
-        if analyst_name == 'G. Lembilia' or analyst_name == 'G. Lembilia':
+        if analyst_name == 'E. Histolytica' or analyst_name == 'G. Lembilia':
             for item2 in G_Lembilia_E_Histolytica:
                 self.comboBox_17.addItem(str(item2))
         if analyst_name == 'Ova':
@@ -642,6 +688,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             if analyst_name == fitem:
                 for item12 in test_choices:
                     self.comboBox_17.addItem(str(item12))
+
     def get_client_id(self):
         global client_id_glob
         client_id_glob = self.spinBox.value()
@@ -1058,6 +1105,7 @@ class mainapp(QMainWindow, FORM_CLASS):
 
     def Open_Settings_Page(self):
         self.tabWidget.setCurrentIndex(6)
+
     def Open_Print_Page(self):
         self.tabWidget.setCurrentIndex(7)
 
