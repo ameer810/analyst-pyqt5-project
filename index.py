@@ -3,6 +3,7 @@ import os
 
 import time
 import MySQLdb
+import pyautogui
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -130,23 +131,26 @@ class mainapp(QMainWindow, FORM_CLASS):
         mydata = self.cur.fetchone()
         word_files = mydata[1]
         save_word_files = mydata[2]
-        if os.path.exists(r'%s\bio latest17.docx' % save_word_files):
-            os.remove(r'%s\bio latest17.docx' % save_word_files)
+        try:
+            if os.path.exists(r'%s\bio latest17.docx' % save_word_files):
+                os.remove(r'%s\bio latest17.docx' % save_word_files)
 
-        if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
-            os.remove(r'%s\GSE latest.docx' % save_word_files)
+            if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
+                os.remove(r'%s\GSE latest.docx' % save_word_files)
 
-        if os.path.exists(r'%s\SFA latest.docx' % save_word_files):
-            os.remove(r'%s\SFA latest.docx' % save_word_files)
+            if os.path.exists(r'%s\SFA latest.docx' % save_word_files):
+                os.remove(r'%s\SFA latest.docx' % save_word_files)
 
-        if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
-            os.remove(r'%s\GUE latest.docx' % save_word_files)
+            if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
+                os.remove(r'%s\GUE latest.docx' % save_word_files)
 
-        if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
-            os.remove(r'%s\hematology latest.docx' % save_word_files)
+            if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
+                os.remove(r'%s\hematology latest.docx' % save_word_files)
 
-        if os.path.exists(r'%s\هرمونات مشترك latest' % save_word_files):
-            os.remove(r'%s\هرمونات مشترك latest' % save_word_files)
+            if os.path.exists(r'%s\هرمونات مشترك latest' % save_word_files):
+                os.remove(r'%s\هرمونات مشترك latest' % save_word_files)
+        except:
+            pass
 
     def Show_paths(self):
         self.cur.execute(''' SELECT * FROM paths WHERE id=1 ''')
@@ -198,6 +202,8 @@ class mainapp(QMainWindow, FORM_CLASS):
         word.Documents.Open(r'%s\%s' % (word_files, file))
         word.ActiveDocument.PrintOut(Copies=copyes_num)
         time.sleep(2)
+        pyautogui.press('enter')
+        time.sleep(1.5)
         word.ActiveDocument.Close()
 
     def Preview(self):
@@ -444,12 +450,21 @@ class mainapp(QMainWindow, FORM_CLASS):
 
     def get_total_price(self):
         total_price = 0
+        My_num=['Appearance','Reaction','Albumin','Sugar','RBCs:GUE','Pus cells:GUE','Epith .cells','Crystals','Casts','Other:GUE','Volume','Reaction','Colour:SFA','Liquefaction','Count','Motility:Active','Motility:Sluggish','Motility:Dead','Morphology:Normal','Morphology:Abnormal','Morphology:Pus cells','Other:SFA','Color:GSE','Consistency','E. Histolytica','G. Lembilia','Ova','Pus cells:GSE','R.B.Cs:GSE']
+        rMy_num=0
         for row in range(0, self.tableWidget_5.rowCount() - 1):
+            analyst_name= self.tableWidget_5.item(row, 1).text()
+            for kg in My_num:
+                if kg ==analyst_name:
+                    total_price+=3
+                    rMy_num+=1
             a = self.tableWidget_5.item(row, 4).text()
             try:
                 total_price += int(a)
             except ValueError:
                 a = 0
+        for num in range(1,rMy_num-1):
+            total_price-=3
         self.lineEdit_24.setText(str(total_price))
 
     def Sales_Page(self):
@@ -577,12 +592,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                 if analyst_data[0][6] == 'انثى':
                     self.comboBox_14.setCurrentIndex(1)
                     self.comboBox_14.setEnabled(False)
-                self.textEdit.setPlainText(str(analyst_data[0][7]))
+                self.textEdit.setPlainText(str(analyst_data[0][8]))
                 self.textEdit.setEnabled(False)
                 if client_id_glob == 0:
-                    self.cur.execute('''
-                                                     SELECT client_name,analyst_name,analyst_result,doctor_name FROM addnewitem WHERE client_name = %s
-                                                ''', (self.lineEdit_20.text(),))
+                    self.cur.execute('''SELECT client_name,analyst_name,analyst_result,doctor_name FROM addnewitem WHERE client_name = %s''', (self.lineEdit_20.text(),))
                     analyst_data = self.cur.fetchall()
 
                 self.tableWidget_5.setRowCount(0)
@@ -681,7 +694,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         if analyst_name == 'Casts':
             for item10 in Casts:
                 self.comboBox_17.addItem(str(item10))
-        if analyst_name == 'Pregnancy test  in serum' or analyst_name == 'Pregnancy test  in urine' or analyst_name == 'Salmonella typhi  IgG' or analyst_name == 'Salmonella typhi  ImG' or analyst_name == 'Rose-Bengal test' or analyst_name == 'Rh':
+        if analyst_name == 'Pregnancy test  in serum' or analyst_name == 'Pregnancy test  in urine' or analyst_name == 'Salmonella typhi  IgG' or analyst_name == 'Salmonella typhi  ImG' or analyst_name == 'Rose-Bengal test' or analyst_name == 'Rh'or analyst_name == 'HBS Ag'or analyst_name == 'HCV Ab'or analyst_name == 'HIV':
             for item11 in Pregnancy_test_in_urine_serum:
                 self.comboBox_17.addItem(str(item11))
         for fitem in test:
@@ -2000,7 +2013,49 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Rose-Bengal test':
                                             k = analyst_and_result['result']
-                                            n.text = f'Rose-Bengal test   : {k}'
+                                            n.text = f'HBS Ag   : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.bold = True
+                                            font.size = Pt(12)
+                                if n.text == 'HBS Ag                                :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'HBS Ag':
+                                            k = analyst_and_result['result']
+                                            n.text = f'HBS Ag                                : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.bold = True
+                                            font.size = Pt(12)
+                                if n.text == 'HCV Ab                                :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'HCV Ab':
+                                            k = analyst_and_result['result']
+                                            n.text = f'HCV Ab                                : {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.bold = True
+                                            font.size = Pt(12)
+                                if n.text == 'HIV                                      :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'HIV':
+                                            k = analyst_and_result['result']
+                                            n.text = f'HIV                                      : {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
@@ -2306,13 +2361,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Toxoplasma IgG':
                                             k = analyst_and_result['result']
-                                            ng = ''
-                                            g = analyst_and_result['result']
-                                            if float(g) > 0.9:
-                                                ng = 'Positive'
-                                            else:
-                                                ng = 'Negative'
-                                            n.text = f'  {k}  {ng}'
+
+                                            n.text = f'  {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
@@ -2326,14 +2376,9 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Toxoplasma IgM':
                                             k = analyst_and_result['result']
-                                            ng = ''
-                                            g = analyst_and_result['result']
-                                            if float(g) > 0.9:
-                                                ng = 'Positive'
-                                            else:
-                                                ng = 'Negative'
+
                                             # print(k, ng, 'here ohf')
-                                            n.text = f'  {k}  {ng}'
+                                            n.text = f'  {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
@@ -2347,13 +2392,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Cytomegalo Virus IgG':
                                             k = analyst_and_result['result']
-                                            ng = ''
-                                            g = analyst_and_result['result']
-                                            if float(g) > 0.9:
-                                                ng = 'Positive'
-                                            else:
-                                                ng = 'Negative'
-                                            n.text = f'  {k}  {ng}'
+
+                                            n.text = f'  {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
@@ -2367,13 +2407,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Cytomegalo Virus IgM':
                                             k = analyst_and_result['result']
-                                            ng = ''
-                                            g = analyst_and_result['result']
-                                            if float(g) > 0.9:
-                                                ng = 'Positive'
-                                            else:
-                                                ng = 'Negative'
-                                            n.text = f'  {k}  {ng}'
+
+                                            n.text = f'  {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
@@ -2387,13 +2422,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Rubella IgG':
                                             k = analyst_and_result['result']
-                                            ng = ''
-                                            g = analyst_and_result['result']
-                                            if int(g) > 0.9:
-                                                ng = 'Positive'
-                                            else:
-                                                ng = 'Negative'
-                                            n.text = f'  {k}  {ng}'
+
+                                            n.text = f'  {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
@@ -2407,13 +2437,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Rubella IgM':
                                             k = analyst_and_result['result']
-                                            ng = ''
-                                            g = analyst_and_result['result']
-                                            if int(g) > 0.9:
-                                                ng = 'Positive'
-                                            else:
-                                                ng = 'Negative'
-                                            n.text = f'  {k}  {ng}'
+                                            n.text = f'  {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
@@ -2427,13 +2451,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Anti - Phspholipin IgG':
                                             k = analyst_and_result['result']
-                                            ng = ''
-                                            g = analyst_and_result['result']
-                                            if int(g) > 0.9:
-                                                ng = 'Positive'
-                                            else:
-                                                ng = 'Negative'
-                                            n.text = f'  {k}  {ng}'
+
+                                            n.text = f'  {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
@@ -2447,13 +2466,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Anti - Phspholipin  IgM':
                                             k = analyst_and_result['result']
-                                            ng = ''
-                                            g = analyst_and_result['result']
-                                            if int(g) > 0.9:
-                                                ng = 'Positive'
-                                            else:
-                                                ng = 'Negative'
-                                            n.text = f'  {k}  {ng}'
+                                            n.text = f'  {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
@@ -2467,13 +2480,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Anti - Cardiolipin  IgG':
                                             k = analyst_and_result['result']
-                                            ng = ''
-                                            g = analyst_and_result['result']
-                                            if int(g) > 0.9:
-                                                ng = 'Positive'
-                                            else:
-                                                ng = 'Negative'
-                                            n.text = f'  {k}  {ng}'
+
+                                            n.text = f'  {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
@@ -2487,13 +2495,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Anti - Cardiolipin  IgM':
                                             k = analyst_and_result['result']
-                                            ng = ''
-                                            g = analyst_and_result['result']
-                                            if int(g) > 0.9:
-                                                ng = 'Positive'
-                                            else:
-                                                ng = 'Negative'
-                                            n.text = f'  {k}  {ng}'
+
+                                            n.text = f'  {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
@@ -2507,13 +2510,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Herps   IgG':
                                             k = analyst_and_result['result']
-                                            ng = ''
-                                            g = analyst_and_result['result']
-                                            if int(g) > 0.9:
-                                                ng = 'Positive'
-                                            else:
-                                                ng = 'Negative'
-                                            n.text = f'  {k}  {ng}'
+
+                                            n.text = f'  {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
@@ -2527,13 +2525,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         }
                                         if analyst_and_result['analyst'] == 'Herpes  IgM':
                                             k = analyst_and_result['result']
-                                            ng = ''
-                                            g = analyst_and_result['result']
-                                            if int(g) > 0.9:
-                                                ng = 'Positive'
-                                            else:
-                                                ng = 'Negative'
-                                            n.text = f'  {k}  {ng}'
+                                            n.text = f'  {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.bold = True
@@ -2722,20 +2714,31 @@ class mainapp(QMainWindow, FORM_CLASS):
                     if os.path.exists(r'%s\bio latest17.docx' % save_word_files):
 
                         word.Documents.Open(r'%s\bio latest17.docx' % save_word_files)
+                        # word.ActiveDocument()
+
+                        # word.ActiveDocument.ActiveWindow.View()
                         word.ActiveDocument.PrintOut()
+                        time.sleep(2)
+                        pyautogui.press('enter')
+                        time.sleep(1.5)
+                        word.ActiveDocument.Close()
                         move = 0
                         warning = QMessageBox.warning(self, '',
                                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
                                                       QMessageBox.Yes | QMessageBox.No)
                         if warning == QMessageBox.Yes:
                             move = 1
-                        word.ActiveDocument.Close()
+                        # word.ActiveDocument.Close()
                         os.remove(r'%s\bio latest17.docx' % save_word_files)
 
                 if move == 1:
                     if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
                         word.Documents.Open(r'%s\GSE latest.docx' % save_word_files)
                         word.ActiveDocument.PrintOut()
+                        time.sleep(2)
+                        pyautogui.press('enter')
+                        time.sleep(1.5)
+                        word.ActiveDocument.Close()
                         move = 0
                         warning = QMessageBox.warning(self, '',
                                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
@@ -2750,13 +2753,17 @@ class mainapp(QMainWindow, FORM_CLASS):
                     if os.path.exists(r'%s\SFA latest.docx' % save_word_files):
                         word.Documents.Open(r'%s\SFA latest.docx' % save_word_files)
                         word.ActiveDocument.PrintOut()
+                        time.sleep(2)
+                        pyautogui.press('enter')
+                        time.sleep(1.5)
+                        word.ActiveDocument.Close()
                         move = 0
                         warning = QMessageBox.warning(self, '',
                                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
                                                       QMessageBox.Yes | QMessageBox.No)
                         if warning == QMessageBox.Yes:
                             move = 1
-                        word.ActiveDocument.Close()
+                        # word.ActiveDocument.Close()
                         os.remove(r'%s\SFA latest.docx' % save_word_files)
 
                 if move == 1:
@@ -2764,6 +2771,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                     if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
                         word.Documents.Open(r'%s\GUE latest.docx' % save_word_files)
                         word.ActiveDocument.PrintOut()
+                        time.sleep(2)
+                        pyautogui.press('enter')
+                        time.sleep(1.5)
+                        word.ActiveDocument.Close()
                         move = 0
                         warning = QMessageBox.warning(self, '',
                                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
@@ -2778,6 +2789,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                     if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
                         word.Documents.Open(r'%s\hematology latest.docx' % save_word_files)
                         word.ActiveDocument.PrintOut()
+                        time.sleep(2)
+                        pyautogui.press('enter')
+                        time.sleep(1.5)
+                        word.ActiveDocument.Close()
                         move = 0
                         warning = QMessageBox.warning(self, '',
                                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
@@ -2792,13 +2807,17 @@ class mainapp(QMainWindow, FORM_CLASS):
                     if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
                         word.Documents.Open(r'%s\هرمونات مشترك latest.docx' % save_word_files)
                         word.ActiveDocument.PrintOut()
+                        time.sleep(2)
+                        pyautogui.press('enter')
+                        time.sleep(1.5)
+                        word.ActiveDocument.Close()
                         move = 0
                         warning = QMessageBox.warning(self, '',
                                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
                                                       QMessageBox.Yes | QMessageBox.No)
                         if warning == QMessageBox.Yes:
                             move = 1
-                        word.ActiveDocument.Close()
+                        # word.ActiveDocument.Close()
                         os.remove(r'%s\هرمونات مشترك latest.docx' % save_word_files)
                 self.Delete_Files()
 
