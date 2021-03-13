@@ -61,9 +61,9 @@ word.Documents.Open(r'F:\برنامج التحليلات\word\bio latest17.docx'
 
 sleep(1)
 word.ActiveDocument.PrintOut()
+sleep(3)
 
 # my=os.startfile(r'F:\برنامج التحليلات\word\bio latest17.docx','print')
 sleep(2)
 pyautogui.press('left')
-sleep(1.5)
 pyautogui.press('enter')

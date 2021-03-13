@@ -19,6 +19,7 @@ from docx.shared import Pt
 
 from win32com import client
 from pydesign import Ui_MainWindow as main_wind
+
 FORM_CLASS, _ = loadUiType("design.ui")
 user_id = 4
 client_id_glob = 0
@@ -26,7 +27,7 @@ chick_if_add_new = False
 if_print = False
 analysts_name_glo = []
 clients_name_glo = []
-
+GSE_row1=[]
 
 class mainapp(QMainWindow, FORM_CLASS):
     def __init__(self, parent=None):
@@ -48,6 +49,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.Auto_complete_combo()
         self.add_client_to_list()
         self.Auto_complete_combo2()
+
 
     def DB_Connect(self):
         self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel', charset="utf8",
@@ -437,7 +439,10 @@ class mainapp(QMainWindow, FORM_CLASS):
             if data != None:
                 for item in data:
                     word_type.append(data[0])
-            result = self.tableWidget_5.item(row, 2).text()
+            try:
+                result = self.tableWidget_5.cellWidget(row, 2).currentText()
+            except:
+                result = self.tableWidget_5.item(row, 2).text()
             all_result.append(str(result))
             real_doctor = self.tableWidget_5.item(row, 3).text()
         try:
@@ -450,21 +455,25 @@ class mainapp(QMainWindow, FORM_CLASS):
 
     def get_total_price(self):
         total_price = 0
-        My_num=['Appearance','Reaction','Albumin','Sugar','RBCs:GUE','Pus cells:GUE','Epith .cells','Crystals','Casts','Other:GUE','Volume','Reaction','Colour:SFA','Liquefaction','Count','Motility:Active','Motility:Sluggish','Motility:Dead','Morphology:Normal','Morphology:Abnormal','Morphology:Pus cells','Other:SFA','Color:GSE','Consistency','E. Histolytica','G. Lembilia','Ova','Pus cells:GSE','R.B.Cs:GSE']
-        rMy_num=0
+        My_num = ['Appearance', 'Reaction', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells', 'Crystals',
+                  'Casts', 'Other:GUE', 'Volume', 'Reaction', 'Colour:SFA', 'Liquefaction', 'Count', 'Motility:Active',
+                  'Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal',
+                  'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
+                  'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE']
+        rMy_num = 0
         for row in range(0, self.tableWidget_5.rowCount() - 1):
-            analyst_name= self.tableWidget_5.item(row, 1).text()
+            analyst_name = self.tableWidget_5.item(row, 1).text()
             for kg in My_num:
-                if kg ==analyst_name:
-                    total_price+=3
-                    rMy_num+=1
+                if kg == analyst_name:
+                    total_price += 3
+                    rMy_num += 1
             a = self.tableWidget_5.item(row, 4).text()
             try:
                 total_price += int(a)
             except ValueError:
                 a = 0
-        for num in range(1,rMy_num-1):
-            total_price-=3
+        for num in range(1, rMy_num - 1):
+            total_price -= 3
         self.lineEdit_24.setText(str(total_price))
 
     def Sales_Page(self):
@@ -550,6 +559,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         # client_id = self.spinBox.setValue(0)
         # self.Show_All_one_client_analyst()
 
+
     def Show_All_one_client_analyst(self):
         global client_id_glob
         global chick_if_add_new
@@ -584,7 +594,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                 self.comboBox_14.setEnabled(False)
                 self.lineEdit_20.setText(analyst_data[0][0])
                 self.lineEdit_20.setEnabled(False)
-                self.spinBox_7.setValue(int(analyst_data[0][5]))
+                self.spinBox_7.setValue(int(analyst_data[0][6]))
                 self.spinBox_7.setEnabled(False)
                 if analyst_data[0][6] == 'ذكر':
                     self.comboBox_14.setCurrentIndex(0)
@@ -595,7 +605,9 @@ class mainapp(QMainWindow, FORM_CLASS):
                 self.textEdit.setPlainText(str(analyst_data[0][8]))
                 self.textEdit.setEnabled(False)
                 if client_id_glob == 0:
-                    self.cur.execute('''SELECT client_name,analyst_name,analyst_result,doctor_name FROM addnewitem WHERE client_name = %s''', (self.lineEdit_20.text(),))
+                    self.cur.execute(
+                        '''SELECT client_name,analyst_name,analyst_result,doctor_name FROM addnewitem WHERE client_name = %s''',
+                        (self.lineEdit_20.text(),))
                     analyst_data = self.cur.fetchall()
 
                 self.tableWidget_5.setRowCount(0)
@@ -616,6 +628,16 @@ class mainapp(QMainWindow, FORM_CLASS):
                                         'الرقم الذي ادخلته غير صحيح يرجى ادخال رقم صحيح او مراجعة صفحة "كل المبيعات" للتأكد من الرقم')
 
     def Chick_analyst_category(self):
+        pationt_name = self.lineEdit_20.text()
+        doctor_name = self.comboBox_15.currentText()
+        GSE_row1 = [str(pationt_name), 'Color:GSE', '', str(doctor_name), 0]
+        GSE_row2 = [str(pationt_name), 'Consistency', '', str(doctor_name), 0]
+        GSE_row3 = [str(pationt_name), 'R.B.Cs:GSE', '', str(doctor_name), 0]
+        GSE_row4 = [str(pationt_name), 'Pus cells:GSE', '', str(doctor_name), 0]
+        GSE_row5 = [str(pationt_name), 'E. Histolytica', '', str(doctor_name), 0]
+        GSE_row6 = [str(pationt_name), 'G. Lembilia', '', str(doctor_name), 0]
+        GSE_row7 = [str(pationt_name), 'Ova', '', str(doctor_name), 0]
+        GSE_row8 = [str(pationt_name), 'Other:GSE', '', str(doctor_name), 0]
         analyst_name = self.comboBox_16.currentText()
         self.cur.execute('''SELECT category FROM addanalyst WHERE name = %s''', (analyst_name,))
         analyst_category = self.cur.fetchone()
@@ -640,7 +662,81 @@ class mainapp(QMainWindow, FORM_CLASS):
                 self.comboBox_17.show()
                 self.comboBox_17.setEditable(True)
         except:
-            QMessageBox.information(self, 'تحذير', "يرجى اختيار تحليل صحيح")
+            if analyst_name !='Full GSE' and analyst_name !='Full GUE' and analyst_name !='Full SFA':
+                QMessageBox.information(self, 'تحذير', "يرجى اختيار تحليل صحيح")
+        row_count=self.tableWidget_5.rowCount()
+        if analyst_name=='Full GSE':
+            self.comboBox_16.setCurrentText('Color:GSE')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Consistency')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('R.B.Cs:GSE')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Pus cells:GSE')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('E. Histolytica')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('G. Lembilia')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Ova')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Bacteria:GSE')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Monillia:GSE')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Fatty drop:GSE')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentIndex(0)
+        if analyst_name == 'Full GUE':
+            print('plz')
+            QStatusBar.showMessage(self,'يرجى الانتظار سيتم تنفيذ طلبك خلال ثواني')
+            self.comboBox_16.setCurrentText('Appearance')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Reaction')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Albumin')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Sugar')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('RBCs:GUE')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Pus cells:GUE')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Epith .cells')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Crystals')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Casts')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Bacteria:GSE')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Monillia:GSE')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Fatty drop:GSE')
+            self.Sales_Page()
+        if analyst_name=='Full SFA':
+            self.comboBox_16.setCurrentText('Colour:SFA')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Liquefaction')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Count')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Motility:Active')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Motility:Sluggish')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Motility:Dead')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Morphology:Normal')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Morphology:Abnormal')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Morphology:Pus cells')
+            self.Sales_Page()
+
+
+
+
         colors = ['yallow', 'brown', 'green', 'milk']
         RBCs_Pus_cells_GUE_GSE = ['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
                                   '5 - 7', '6 - 8', '6 - 7', '+', '++', '+++', '++++', 'Full Field']
@@ -694,13 +790,14 @@ class mainapp(QMainWindow, FORM_CLASS):
         if analyst_name == 'Casts':
             for item10 in Casts:
                 self.comboBox_17.addItem(str(item10))
-        if analyst_name == 'Pregnancy test  in serum' or analyst_name == 'Pregnancy test  in urine' or analyst_name == 'Salmonella typhi  IgG' or analyst_name == 'Salmonella typhi  ImG' or analyst_name == 'Rose-Bengal test' or analyst_name == 'Rh'or analyst_name == 'HBS Ag'or analyst_name == 'HCV Ab'or analyst_name == 'HIV':
+        if analyst_name == 'Pregnancy test  in serum' or analyst_name == 'Pregnancy test  in urine' or analyst_name == 'Salmonella typhi  IgG' or analyst_name == 'Salmonella typhi  ImG' or analyst_name == 'Rose-Bengal test' or analyst_name == 'Rh' or analyst_name == 'HBS Ag' or analyst_name == 'HCV Ab' or analyst_name == 'HIV':
             for item11 in Pregnancy_test_in_urine_serum:
                 self.comboBox_17.addItem(str(item11))
         for fitem in test:
             if analyst_name == fitem:
                 for item12 in test_choices:
                     self.comboBox_17.addItem(str(item12))
+
 
     def get_client_id(self):
         global client_id_glob
@@ -927,6 +1024,9 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.comboBox_16.clear()
         self.comboBox_21.addItem('----------------')
         self.comboBox_16.addItem('----------------')
+        self.comboBox_16.addItem('Full GSE')
+        self.comboBox_16.addItem('Full GUE')
+        self.comboBox_16.addItem('Full SFA')
         for item in data:
             self.comboBox_21.addItem(str(item[0]))
 
@@ -944,12 +1044,26 @@ class mainapp(QMainWindow, FORM_CLASS):
         num = 0
         all_client_analyst = []
         total = 0
+        rMy_num = 0
+        My_num = ['Appearance', 'Reaction', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells', 'Crystals',
+                  'Casts', 'Other:GUE', 'Volume', 'Reaction', 'Colour:SFA', 'Liquefaction', 'Count', 'Motility:Active',
+                  'Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal',
+                  'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
+                  'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE']
         for i in client_analyst_data:
             num += 1
         for k in range(0, num):
+            for kds in My_num:
+                if client_analyst_data[k][1] == kds:
+                    total += 3
+                    rMy_num += 1
             total += int(client_analyst_data[k][0])
         for j in range(0, num):
             all_client_analyst.append(str(client_analyst_data[j][1]))
+
+        for num8 in range(0, rMy_num - 1):
+            total -= 3
+            print('lkjljiojiouo')
         self.tableWidget_4.setRowCount(0)
         self.tableWidget_4.insertRow(0)
         for row, form in enumerate(client_data):
@@ -1110,8 +1224,10 @@ class mainapp(QMainWindow, FORM_CLASS):
     #     self.tableWidget_8.setRowCount(0)
     #     self.tableWidget_8.insertRow(0)
 
+
     def Open_Sales_Page(self):
         self.tabWidget.setCurrentIndex(3)
+
 
     # def Open_Login_Page(self):
     #     self.tabWidget.setCurrentIndex(0)
@@ -1176,9 +1292,9 @@ class mainapp(QMainWindow, FORM_CLASS):
                             for n in j.paragraphs:
                                 if n.text == 'أسـم المريض :':
                                     if genus == 0:
-                                        n.text = f'أسـم المريض :{name}'
+                                        n.text = f'أسـم المريض :                                     {name}'
                                     else:
-                                        n.text = f'أسـم المريضة :{name}'
+                                        n.text = f'أسـم المريضة :                                     {name}'
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
@@ -1186,9 +1302,9 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.size = Pt(11)
                                 if n.text == 'حضرة الدكتورة   :':
                                     if doctor == 'عدوية شمس سعيد':
-                                        n.text = f'حضرة الدكتورة   : {doctor}'
+                                        n.text = f'حضرة الدكتورة   :                                     {doctor}'
                                     else:
-                                        n.text = f'حضرة الدكتور   : {doctor}'
+                                        n.text = f'حضرة الدكتور   :                                     '
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
@@ -1363,9 +1479,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                             for n in j.paragraphs:
                                 if n.text == 'أسـم المريض :':
                                     if genus == 0:
-                                        n.text = f'أسـم المريض :{name}'
+                                        n.text = f'أسـم المريض :                                     {name}'
                                     else:
-                                        n.text = f'أسـم المريضة :{name}'
+                                        n.text = f'أسـم المريضة :                                     {name}'
+
                                     run = n.runs
 
                                     font = run[0].font
@@ -1374,9 +1491,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.size = Pt(11)
                                 if n.text == 'حضرة الدكتورة   :':
                                     if doctor == 'عدوية شمس سعيد':
-                                        n.text = f'حضرة الدكتورة   : {doctor}'
+                                        n.text = f'حضرة الدكتورة   :                                     {doctor}'
+
                                     else:
-                                        n.text = f'حضرة الدكتور   : {doctor}'
+                                        n.text = f'حضرة الدكتور   :                                     '
                                     run = n.runs
 
                                     font = run[0].font
@@ -1410,7 +1528,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             'analyst': analysts[row],
                                             'result': results[row]
                                         }
-                                        if analyst_and_result['analyst'] == 'Color':
+                                        if analyst_and_result['analyst'] == 'Color:GSE':
                                             k = analyst_and_result['result']
                                             n.text = f'Color: {k}'
                                             run = n.runs
@@ -1584,18 +1702,20 @@ class mainapp(QMainWindow, FORM_CLASS):
                             for n in j.paragraphs:
                                 if n.text == 'أسـم المريض :':
                                     if genus == 0:
-                                        n.text = f'أسـم المريض :{name}'
+                                        n.text = f'أسـم المريض :                                     {name}'
                                     else:
-                                        n.text = f'أسـم المريضة :{name}'
+                                        n.text = f'أسـم المريضة :                                     {name}'
+
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.size = Pt(11)
                                 if n.text == 'حضرة الدكتورة   :':
                                     if doctor == 'عدوية شمس سعيد':
-                                        n.text = f'حضرة الدكتورة   : {doctor}'
+                                        n.text = f'حضرة الدكتورة   :                                     {doctor}'
+
                                     else:
-                                        n.text = f'حضرة الدكتور   : {doctor}'
+                                        n.text = f'حضرة الدكتور   :                                     '
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
@@ -1798,9 +1918,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                             for n in j.paragraphs:
                                 if n.text == 'أسـم المريض :':
                                     if genus == 0:
-                                        n.text = f'أسـم المريض :{name}'
+                                        n.text = f'أسـم المريض :                                     {name}'
                                     else:
-                                        n.text = f'أسـم المريضة :{name}'
+                                        n.text = f'أسـم المريضة :                                     {name}'
+
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
@@ -1808,9 +1929,11 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.size = Pt(11)
                                 if n.text == 'حضرة الدكتورة   :':
                                     if doctor == 'عدوية شمس سعيد':
-                                        n.text = f'حضرة الدكتورة   : {doctor}'
+                                        n.text = f'حضرة الدكتورة   :                                     {doctor}'
+
                                     else:
-                                        n.text = f'حضرة الدكتور   : {doctor}'
+
+                                        n.text = f'حضرة الدكتور   :                                     '
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
@@ -2082,9 +2205,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                             for n in j.paragraphs:
                                 if n.text == 'أسـم المريض :':
                                     if genus == 0:
-                                        n.text = f'أسـم المريض :{name}'
+                                        n.text = f'أسـم المريض :                                     {name}'
                                     else:
-                                        n.text = f'أسـم المريضة :{name}'
+                                        n.text = f'أسـم المريضة :                                     {name}'
+
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
@@ -2092,9 +2216,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.size = Pt(11)
                                 if n.text == 'حضرة الدكتورة   :':
                                     if doctor == 'عدوية شمس سعيد':
-                                        n.text = f'حضرة الدكتورة   : {doctor}'
+                                        n.text = f'حضرة الدكتورة   :                                     {doctor}'
+
                                     else:
-                                        n.text = f'حضرة الدكتور   : {doctor}'
+                                        n.text = f'حضرة الدكتور   :                                     '
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
