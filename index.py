@@ -149,10 +149,10 @@ class mainapp(QMainWindow, FORM_CLASS):
             if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
                 os.remove(r'%s\hematology latest.docx' % save_word_files)
 
-            if os.path.exists(r'%s\هرمونات مشترك latest' % save_word_files):
-                os.remove(r'%s\هرمونات مشترك latest' % save_word_files)
-        except:
-            pass
+            if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
+                os.remove(r'%s\هرمونات مشترك latest.docx' % save_word_files)
+        except Exception as e:
+            print(e)
 
     def Show_paths(self):
         self.cur.execute(''' SELECT * FROM paths WHERE id=1 ''')
@@ -203,10 +203,19 @@ class mainapp(QMainWindow, FORM_CLASS):
         QMessageBox.information(self, 'info', 'تتم الطباعة الان')
         word.Documents.Open(r'%s\%s' % (word_files, file))
         word.ActiveDocument.PrintOut(Copies=copyes_num)
-        time.sleep(2)
-        pyautogui.press('enter')
-        time.sleep(1.5)
-        word.ActiveDocument.Close()
+        # time.sleep(2)
+        # pyautogui.press('enter')
+        # time.sleep(1.5)
+        warning = QMessageBox.warning(self, '',
+                                      "هل قمت بطباعة الملفات؟\n لا تضغط نعم الا لو قمت بطباعته",
+                                      QMessageBox.Yes | QMessageBox.No)
+        if warning == QMessageBox.Yes:
+            move = 1
+            try:
+                word.ActiveDocument.Close()
+            except:
+                pass
+        # word.ActiveDocument.Close()
 
     def Preview(self):
         global if_print
@@ -241,8 +250,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                 if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
                     os.remove(r'%s\hematology latest.docx' % save_word_files)
 
-                if os.path.exists(r'%s\هرمونات مشترك latest' % save_word_files):
-                    os.remove(r'%s\هرمونات مشترك latest' % save_word_files)
+                if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
+                    os.remove(r'%s\هرمونات مشترك latest.docx' % save_word_files)
 
     # def Reset_password(self):
     #     user_name = self.lineEdit_7.text()
@@ -455,8 +464,8 @@ class mainapp(QMainWindow, FORM_CLASS):
 
     def get_total_price(self):
         total_price = 0
-        My_num = ['Appearance', 'Reaction', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells', 'Crystals',
-                  'Casts', 'Other:GUE', 'Volume', 'Reaction', 'Colour:SFA', 'Liquefaction', 'Count', 'Motility:Active',
+        My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells', 'Crystals',
+                  'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Count', 'Motility:Active',
                   'Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal',
                   'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
                   'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE']
@@ -479,6 +488,14 @@ class mainapp(QMainWindow, FORM_CLASS):
     def Sales_Page(self):
         global client_id_glob
         global chick_if_add_new
+        My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
+                  'Crystals',
+                  'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction',
+                  'Motility:Active',
+                  'Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal',
+                  'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
+                  'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE', 'Bacteria:GSE', 'Bacteria:GUE', 'Monillia:GSE', 'Monillia:GUE',
+                  'Fatty drop:GSE', 'Fatty drop:GUE']
         analyst_name = self.comboBox_16.currentText()
         client_name = self.lineEdit_20.text()
         client_age = self.spinBox_7.value()
@@ -491,14 +508,17 @@ class mainapp(QMainWindow, FORM_CLASS):
         analyst_number_result = self.doubleSpinBox_7.value()
         client_id = self.spinBox.value()
 
-        self.cur.execute('''SELECT price,category FROM addanalyst WHERE name = %s''', (analyst_name,))
+        self.cur.execute('''SELECT price,category,sub_category FROM addanalyst WHERE name = %s''', (analyst_name,))
         analyst_price = self.cur.fetchone()
 
         latest_result = 1
         total_price = 0
         if analyst_price != None:
             if analyst_price[1] == 'عدد':
-                latest_result = analyst_number_result
+                if analyst_price[2]=='SFA':
+                    latest_result = ''
+                else:
+                    latest_result = analyst_number_result
             if analyst_price[1] == 'خيارات':
                 latest_result = analyst_combo_result
             if analyst_price[1] == 'حقل كتابة':
@@ -543,7 +563,103 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.tableWidget_5.insertRow(row_pos)
         print('first')
         chick_if_add_new = True
+        for rowd in range(0, self.tableWidget_5.rowCount() - 1):
+            rs_name = self.tableWidget_5.item(rowd, 1).text()
+            mycobmbo = QComboBox(self)
+
+            if rs_name == 'Color:GSE' or rs_name == 'Colour:SFA':
+                mycobmbo = QComboBox(self)
+                mycobmbo.addItems(['yallow', 'brown', 'green', 'milk'])
+            if rs_name == 'Consistency':
+                mycobmbo = QComboBox(self)
+                mycobmbo.addItems(['Solid', 'Liquid', 'Semi solid', 'Semi liquid', 'Mucoid'])
+            if rs_name == 'R.B.Cs:GSE' or rs_name == 'Pus cells:GSE' or rs_name == 'RBCs:GUE' or rs_name == 'Pus cells:GUE':
+                mycobmbo = QComboBox(self)
+                mycobmbo.addItems(['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
+                                   '5 - 7', '6 - 8', '6 - 7', '+', '++', '+++', '++++', 'Full Field'])
+            if rs_name == 'E. Histolytica' or rs_name == 'G. Lembilia':
+                mycobmbo = QComboBox(self)
+                mycobmbo.addItems(['Cyst', 'Trophozoite'])
+            if rs_name == 'Ova':
+                mycobmbo = QComboBox(self)
+                mycobmbo.addItems(['Nill'])
+            if rs_name == 'Appearance':
+                mycobmbo = QComboBox(self)
+                mycobmbo.addItems(['Turbid', 'Clear'])
+            if rs_name == 'Reaction:GUE' or rs_name == 'Reaction:SFA':
+                mycobmbo = QComboBox(self)
+                mycobmbo.addItems(['Acidic', 'Alkaline'])
+            if rs_name == 'Albumin' or rs_name == 'Sugar':
+                mycobmbo = QComboBox(self)
+                mycobmbo.addItems(['Nil', '+', '++', '+++', 'Trace'])
+            if rs_name == 'Epith .cells':
+                mycobmbo = QComboBox(self)
+                mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
+            if rs_name == 'Crystals':
+                mycobmbo = QComboBox(self)
+                mycobmbo.addItems(['Am.Urate', 'Am.Phosphatase', 'Uric Acid', 'Ca.Oxalate'])
+            if rs_name == 'Casts':
+                mycobmbo = QComboBox(self)
+                mycobmbo.addItems(['Granular cast +', 'Granular cast ++', 'Granular cast +++'])
+
+            if rs_name == 'Bacteria:GSE' or rs_name == 'Monillia:GSE' or rs_name == 'Fatty drop:GSE' or rs_name == 'Monillia:GUE' or rs_name == 'Fatty drop:GUE' or rs_name == 'Bacteria:GUE':
+                mycobmbo = QComboBox(self)
+                print('whyyyyyyyy')
+                mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
+            if rs_name == 'Motility:Active' or rs_name == 'Motility:Sluggish' or rs_name == 'Motility:Dead' or rs_name == 'Morphology:Normal' or rs_name == 'Morphology:Abnormal' or rs_name == 'Morphology:Pus cells':
+                mycobmbo = QComboBox(self)
+                mycobmbo.addItems(
+                    ['5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80',
+                     '85'])
+            if rs_name == 'Volume':
+                mycobmbo = QComboBox(self)
+                mycobmbo.addItems(['0.5', '0.6', '0.7'])
+            if rs_name == 'Liquefaction':
+                mycobmbo = QComboBox(self)
+                mycobmbo.addItems(['5', '10', '15', '20', '25', '30', '35', '40', '45'])
+            # if rs_name=='':
+            #     mycobmbo = QComboBox(self)
+            #     mycobmbo.addItems([])
+            # if rs_name=='':
+            #     mycobmbo = QComboBox(self)
+            #     mycobmbo.addItems([])
+            # if rs_name=='':
+            #     mycobmbo = QComboBox(self)
+            #     mycobmbo.addItems([])
+            # if rs_name=='':
+            #     mycobmbo = QComboBox(self)
+            #     mycobmbo.addItems([])
+            # if rs_name=='':
+            #     mycobmbo = QComboBox(self)
+            #     mycobmbo.addItems([])
+            # if rs_name=='':
+            #     mycobmbo = QComboBox(self)
+            #     mycobmbo.addItems([])
+            # if rs_name=='':
+            #     mycobmbo = QComboBox(self)
+            #     mycobmbo.addItems([])
+            # if rs_name=='':
+            #     mycobmbo = QComboBox(self)
+            #     mycobmbo.addItems([])
+            # if rs_name=='':
+            #     mycobmbo = QComboBox(self)
+            #     mycobmbo.addItems([])
+            # if rs_name=='':
+            #     mycobmbo = QComboBox(self)
+            #     mycobmbo.addItems([])
+            # if rs_name=='':
+            #     mycobmbo = QComboBox(self)
+            #     mycobmbo.addItems([])
+            # if rs_name=='':
+            #     mycobmbo = QComboBox(self)
+            #     mycobmbo.addItems([])
+            for jjk in My_num:
+                if rs_name == jjk:
+                    self.tableWidget_5.setCellWidget(rowd, 2, mycobmbo)
         self.Show_All_The_Sales()
+        # mycobmbo = QComboBox(self)
+
+
         # self.Show_All_one_client_analyst()
         # self.Add_Data_To_history(3, 1)
         # self.History()
@@ -563,6 +679,11 @@ class mainapp(QMainWindow, FORM_CLASS):
     def Show_All_one_client_analyst(self):
         global client_id_glob
         global chick_if_add_new
+        My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells', 'Crystals',
+                  'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active',
+                  'Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal',
+                  'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
+                  'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE','Bacteria:GSE','Bacteria:GUE','Monillia:GSE','Monillia:GUE','Fatty drop:GSE','Fatty drop:GUE']
         client_name = self.lineEdit_20.text()
         self.cur.execute('''
              SELECT client_name,analyst_name,analyst_result,doctor_name FROM addnewitem WHERE client_name = %s
@@ -623,21 +744,107 @@ class mainapp(QMainWindow, FORM_CLASS):
                 chick_if_add_new = False
                 self.Show_All_The_Sales()
 
+                for rowd in range(0,self.tableWidget_5.rowCount()-1):
+                    rs_name=self.tableWidget_5.item(rowd,1).text()
+                    mycobmbo = QComboBox(self)
+
+                    if rs_name=='Color:GSE' or rs_name=='Colour:SFA':
+                        mycobmbo = QComboBox(self)
+                        mycobmbo.addItems(['yallow', 'brown', 'green', 'milk'])
+                    if rs_name=='Consistency':
+                        mycobmbo = QComboBox(self)
+                        mycobmbo.addItems(['Solid', 'Liquid', 'Semi solid', 'Semi liquid', 'Mucoid'])
+                    if rs_name=='R.B.Cs:GSE'or rs_name == 'Pus cells:GSE' or rs_name == 'RBCs:GUE' or rs_name == 'Pus cells:GUE':
+                        mycobmbo = QComboBox(self)
+                        mycobmbo.addItems(['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
+                                  '5 - 7', '6 - 8', '6 - 7', '+', '++', '+++', '++++', 'Full Field'])
+                    if rs_name=='E. Histolytica'or rs_name == 'G. Lembilia':
+                        mycobmbo = QComboBox(self)
+                        mycobmbo.addItems(['Cyst', 'Trophozoite'])
+                    if rs_name=='Ova':
+                        mycobmbo = QComboBox(self)
+                        mycobmbo.addItems(['Nill'])
+                    if rs_name== 'Appearance':
+                        mycobmbo = QComboBox(self)
+                        mycobmbo.addItems(['Turbid', 'Clear'])
+                    if rs_name== 'Reaction:GUE' or rs_name=='Reaction:SFA':
+                        mycobmbo = QComboBox(self)
+                        mycobmbo.addItems(['Acidic', 'Alkaline'])
+                    if rs_name== 'Albumin' or rs_name=='Sugar':
+                        mycobmbo = QComboBox(self)
+                        mycobmbo.addItems(['Nil', '+', '++', '+++', 'Trace'])
+                    if rs_name== 'Epith .cells':
+                        mycobmbo = QComboBox(self)
+                        mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
+                    if rs_name== 'Crystals':
+                        mycobmbo = QComboBox(self)
+                        mycobmbo.addItems(['Am.Urate', 'Am.Phosphatase', 'Uric Acid', 'Ca.Oxalate'])
+                    if rs_name== 'Casts':
+                        mycobmbo = QComboBox(self)
+                        mycobmbo.addItems(['Granular cast +', 'Granular cast ++', 'Granular cast +++'])
+
+                    if rs_name== 'Bacteria:GSE' or rs_name=='Monillia:GSE' or rs_name=='Fatty drop:GSE'or rs_name=='Monillia:GUE' or rs_name=='Fatty drop:GUE'or rs_name=='Bacteria:GUE':
+                        mycobmbo = QComboBox(self)
+                        print('whyyyyyyyy')
+                        mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
+                    if rs_name== 'Motility:Active' or rs_name=='Motility:Sluggish'or rs_name=='Motility:Dead'or rs_name=='Morphology:Normal'or rs_name=='Morphology:Abnormal'or rs_name=='Morphology:Pus cells':
+                        mycobmbo = QComboBox(self)
+                        mycobmbo.addItems(['5' ,'10' ,'15' ,'20' ,'25' ,'30' ,'35' ,'40' ,'45' ,'50' ,'55' ,'60' ,'65' ,'70','75' ,'80' ,'85'])
+                    if rs_name== 'Volume':
+                        mycobmbo = QComboBox(self)
+                        mycobmbo.addItems(['0.5','0.6','0.7'])
+                    if rs_name== 'Liquefaction':
+                        mycobmbo = QComboBox(self)
+                        mycobmbo.addItems(['5','10','15','20','25','30','35','40','45'])
+                    # if rs_name=='':
+                    #     mycobmbo = QComboBox(self)
+                    #     mycobmbo.addItems([])
+                    # if rs_name=='':
+                    #     mycobmbo = QComboBox(self)
+                    #     mycobmbo.addItems([])
+                    # if rs_name=='':
+                    #     mycobmbo = QComboBox(self)
+                    #     mycobmbo.addItems([])
+                    # if rs_name=='':
+                    #     mycobmbo = QComboBox(self)
+                    #     mycobmbo.addItems([])
+                    # if rs_name=='':
+                    #     mycobmbo = QComboBox(self)
+                    #     mycobmbo.addItems([])
+                    # if rs_name=='':
+                    #     mycobmbo = QComboBox(self)
+                    #     mycobmbo.addItems([])
+                    # if rs_name=='':
+                    #     mycobmbo = QComboBox(self)
+                    #     mycobmbo.addItems([])
+                    # if rs_name=='':
+                    #     mycobmbo = QComboBox(self)
+                    #     mycobmbo.addItems([])
+                    # if rs_name=='':
+                    #     mycobmbo = QComboBox(self)
+                    #     mycobmbo.addItems([])
+                    # if rs_name=='':
+                    #     mycobmbo = QComboBox(self)
+                    #     mycobmbo.addItems([])
+                    # if rs_name=='':
+                    #     mycobmbo = QComboBox(self)
+                    #     mycobmbo.addItems([])
+                    # if rs_name=='':
+                    #     mycobmbo = QComboBox(self)
+                    #     mycobmbo.addItems([])
+                    for jjk in My_num:
+                        if rs_name==jjk:
+                            self.tableWidget_5.setCellWidget(rowd,2,mycobmbo)
+
             except IndexError:
                 QMessageBox.information(self, 'Error',
                                         'الرقم الذي ادخلته غير صحيح يرجى ادخال رقم صحيح او مراجعة صفحة "كل المبيعات" للتأكد من الرقم')
 
+
     def Chick_analyst_category(self):
         pationt_name = self.lineEdit_20.text()
         doctor_name = self.comboBox_15.currentText()
-        GSE_row1 = [str(pationt_name), 'Color:GSE', '', str(doctor_name), 0]
-        GSE_row2 = [str(pationt_name), 'Consistency', '', str(doctor_name), 0]
-        GSE_row3 = [str(pationt_name), 'R.B.Cs:GSE', '', str(doctor_name), 0]
-        GSE_row4 = [str(pationt_name), 'Pus cells:GSE', '', str(doctor_name), 0]
-        GSE_row5 = [str(pationt_name), 'E. Histolytica', '', str(doctor_name), 0]
-        GSE_row6 = [str(pationt_name), 'G. Lembilia', '', str(doctor_name), 0]
-        GSE_row7 = [str(pationt_name), 'Ova', '', str(doctor_name), 0]
-        GSE_row8 = [str(pationt_name), 'Other:GSE', '', str(doctor_name), 0]
+
         analyst_name = self.comboBox_16.currentText()
         self.cur.execute('''SELECT category FROM addanalyst WHERE name = %s''', (analyst_name,))
         analyst_category = self.cur.fetchone()
@@ -666,6 +873,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                 QMessageBox.information(self, 'تحذير', "يرجى اختيار تحليل صحيح")
         row_count=self.tableWidget_5.rowCount()
         if analyst_name=='Full GSE':
+            # QStatusBar.showMessage(self,'يرجى الانتظار سيتم تنفيذ طلبك خلال ثواني')
             self.comboBox_16.setCurrentText('Color:GSE')
             self.Sales_Page()
             self.comboBox_16.setCurrentText('Consistency')
@@ -689,10 +897,10 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.comboBox_16.setCurrentIndex(0)
         if analyst_name == 'Full GUE':
             print('plz')
-            QStatusBar.showMessage(self,'يرجى الانتظار سيتم تنفيذ طلبك خلال ثواني')
+            # QStatusBar.showMessage(self,'يرجى الانتظار سيتم تنفيذ طلبك خلال ثواني')
             self.comboBox_16.setCurrentText('Appearance')
             self.Sales_Page()
-            self.comboBox_16.setCurrentText('Reaction')
+            self.comboBox_16.setCurrentText('Reaction:GUE')
             self.Sales_Page()
             self.comboBox_16.setCurrentText('Albumin')
             self.Sales_Page()
@@ -715,6 +923,11 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.comboBox_16.setCurrentText('Fatty drop:GSE')
             self.Sales_Page()
         if analyst_name=='Full SFA':
+            # QStatusBar.showMessage(self,'يرجى الانتظار سيتم تنفيذ طلبك خلال ثواني')
+            self.comboBox_16.setCurrentText('Volume')
+            self.Sales_Page()
+            self.comboBox_16.setCurrentText('Reaction:SFA')
+            self.Sales_Page()
             self.comboBox_16.setCurrentText('Colour:SFA')
             self.Sales_Page()
             self.comboBox_16.setCurrentText('Liquefaction')
@@ -734,9 +947,6 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.comboBox_16.setCurrentText('Morphology:Pus cells')
             self.Sales_Page()
 
-
-
-
         colors = ['yallow', 'brown', 'green', 'milk']
         RBCs_Pus_cells_GUE_GSE = ['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
                                   '5 - 7', '6 - 8', '6 - 7', '+', '++', '+++', '++++', 'Full Field']
@@ -750,17 +960,23 @@ class mainapp(QMainWindow, FORM_CLASS):
         Crystals = ['Am.Urate', 'Am.Phosphatase', 'Uric Acid', 'Ca.Oxalate']
         Casts = ['Granular cast +', 'Granular cast ++', 'Granular cast +++']
         Blood_Group = ['A (+ve)', 'B (+ve)', 'AB (+ve)', 'O (+ve)', 'O (-ve)', 'A (-ve)', 'B (-ve)', 'AB (-ve)']
-        Pregnancy_test_in_urine_serum = ['Positive (+ve)', 'Negative (-ve)']
+        Pregnancy_test_in_urine_serum = ['Positive (+ve)', 'Negative (-ve)','Weak Positive']
+        Pregnancy_test_in_urine_serum2 = ['Positive (+ve)', 'Negative (-ve)']
         test = ['Toxoplasma IgG', 'Toxoplasma IgM', 'Cytomegalo Virus IgG', 'Cytomegalo Virus IgM', 'Rubella IgG',
                 'Rubella IgM', 'Anti - Phspholipin IgG', 'Anti - Phspholipin  IgM', 'Anti - Cardiolipin  IgG',
                 'Anti - Cardiolipin  IgM', 'Herps   IgG', 'Herpes  IgM']
         test_choices = ['0.5 Negative', '0.6 Negative', '0.7 Negative', '0.8 Negative', '1.1 Positive', '1.1 Positive',
                         '1.2 Positive', '1.3 Positive', '1.4 Positive', '1.5 Positive']
+        Hb=[4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]
+        motility=[5 ,10 ,15 ,20 ,25 ,30 ,35 ,40 ,45 ,50 ,55 ,60 ,65 ,70 ,75 ,80 ,85]
         self.comboBox_17.clear()
         if analyst_name == 'Colour:SFA' or analyst_name == 'Color:GSE':
             for item in colors:
                 self.comboBox_17.addItem(str(item))
-        if analyst_name == 'R.B.Cs:GSE' or analyst_name == 'Pus cells:GSE' or analyst_name == 'RBCs:GUE' or analyst_name == 'Pus cells:GUE':
+        if analyst_name == 'Motility:Active' or analyst_name == 'Motility:Sluggish'or analyst_name == 'Motility:Dead'or analyst_name == 'Morphology:Normal'or analyst_name == 'Morphology:Abnormal'or analyst_name == 'Morphology:Pus cells':
+            for item101 in motility:
+                self.comboBox_17.addItem(str(item101))
+        if analyst_name == 'R.B.Cs:GSE' or analyst_name == 'Pus cells:GSE' or analyst_name == 'RBCs:GUE' or analyst_name == 'Pus cells:GUE' or analyst_name == 'Morphology:Pus cells' :
             for item0 in RBCs_Pus_cells_GUE_GSE:
                 self.comboBox_17.addItem(str(item0))
         if analyst_name == 'Consistency':
@@ -775,13 +991,13 @@ class mainapp(QMainWindow, FORM_CLASS):
         if analyst_name == 'Appearance':
             for item5 in Appearance:
                 self.comboBox_17.addItem(str(item5))
-        if analyst_name == 'Reaction':
+        if analyst_name == 'Reaction:SFA' or analyst_name=='Reaction:GUE':
             for item6 in Reaction:
                 self.comboBox_17.addItem(str(item6))
         if analyst_name == 'Sugar' or analyst_name == 'Albumin':
             for item7 in Sugar:
                 self.comboBox_17.addItem(str(item7))
-        if analyst_name == 'Epith .cells':
+        if analyst_name == 'Epith .cells' or analyst_name=='Bacteria:GSE' or analyst_name=='Bacteria:GUE' or analyst_name =='Monillia:GSE' or analyst_name =='Monillia:GUE' or analyst_name=='Fatty drop:GSE' or analyst_name=='Fatty drop:GUE':
             for item8 in Epith_cells:
                 self.comboBox_17.addItem(str(item8))
         if analyst_name == 'Crystals':
@@ -790,7 +1006,14 @@ class mainapp(QMainWindow, FORM_CLASS):
         if analyst_name == 'Casts':
             for item10 in Casts:
                 self.comboBox_17.addItem(str(item10))
+        if analyst_name == 'Hb':
+            for item100 in Hb:
+                self.comboBox_17.setEditable(True)
+                self.comboBox_17.addItem(str(item100))
         if analyst_name == 'Pregnancy test  in serum' or analyst_name == 'Pregnancy test  in urine' or analyst_name == 'Salmonella typhi  IgG' or analyst_name == 'Salmonella typhi  ImG' or analyst_name == 'Rose-Bengal test' or analyst_name == 'Rh' or analyst_name == 'HBS Ag' or analyst_name == 'HCV Ab' or analyst_name == 'HIV':
+            for item11 in Pregnancy_test_in_urine_serum2:
+                self.comboBox_17.addItem(str(item11))
+        if analyst_name == 'Pregnancy test  in serum' or analyst_name == 'Pregnancy test  in urine' or analyst_name=='HBS Ag'or analyst_name=='HCV Ab'or analyst_name=='HIV':
             for item11 in Pregnancy_test_in_urine_serum:
                 self.comboBox_17.addItem(str(item11))
         for fitem in test:
@@ -1029,7 +1252,6 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.comboBox_16.addItem('Full SFA')
         for item in data:
             self.comboBox_21.addItem(str(item[0]))
-
             self.comboBox_16.addItem(str(item[0]))
 
     def Clients_Page(self):
@@ -1045,8 +1267,8 @@ class mainapp(QMainWindow, FORM_CLASS):
         all_client_analyst = []
         total = 0
         rMy_num = 0
-        My_num = ['Appearance', 'Reaction', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells', 'Crystals',
-                  'Casts', 'Other:GUE', 'Volume', 'Reaction', 'Colour:SFA', 'Liquefaction', 'Count', 'Motility:Active',
+        My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells', 'Crystals',
+                  'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Count', 'Motility:Active',
                   'Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal',
                   'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
                   'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE']
@@ -1620,28 +1842,28 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             font.bold = True
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
-                                if n.text == 'Bacteria    :':
+                                if n.text == 'Bacteria:':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
                                             'analyst': analysts[row],
                                             'result': results[row]
                                         }
-                                        if analyst_and_result['analyst'] == 'Bacteria:GUE':
+                                        if analyst_and_result['analyst'] == 'Bacteria:GSE':
                                             k = analyst_and_result['result']
-                                            n.text = f'Bacteria    : {k}'
+                                            n.text = f'Bacteria:  {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
                                             font.size = Pt(14)
-                                if n.text == 'Monillia     :':
+                                if n.text == 'Monillia:':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
                                             'analyst': analysts[row],
                                             'result': results[row]
                                         }
-                                        if analyst_and_result['analyst'] == 'Monillia:GUE':
+                                        if analyst_and_result['analyst'] == 'Monillia:GSE':
                                             k = analyst_and_result['result']
-                                            n.text = f'Monillia     : {k}'
+                                            n.text = f'Monillia:  {k}'
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
@@ -1760,7 +1982,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             'analyst': analysts[row],
                                             'result': results[row]
                                         }
-                                        if analyst_and_result['analyst'] == 'Reaction':
+                                        if analyst_and_result['analyst'] == 'Reaction:GUE':
                                             k = analyst_and_result['result']
                                             n.text = f'Reaction      : {k}'
                                             run = n.runs
@@ -2266,7 +2488,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             'analyst': analysts[row],
                                             'result': results[row]
                                         }
-                                        if analyst_and_result['analyst'] == 'Reaction':
+                                        if analyst_and_result['analyst'] == 'Reaction:SFA':
                                             k = analyst_and_result['result']
                                             n.text = f'Reaction      : {k}'
                                             run = n.runs
@@ -2843,34 +3065,40 @@ class mainapp(QMainWindow, FORM_CLASS):
 
                         # word.ActiveDocument.ActiveWindow.View()
                         word.ActiveDocument.PrintOut()
-                        time.sleep(2)
-                        pyautogui.press('enter')
-                        time.sleep(1.5)
-                        word.ActiveDocument.Close()
+                        # time.sleep(2)
+                        # pyautogui.press('enter')
+                        # time.sleep(1.5)
+                        # word.ActiveDocument.Close()
                         move = 0
                         warning = QMessageBox.warning(self, '',
                                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
                                                       QMessageBox.Yes | QMessageBox.No)
                         if warning == QMessageBox.Yes:
                             move = 1
-                        # word.ActiveDocument.Close()
+                            try:
+                                word.ActiveDocument.Close()
+                            except:
+                                pass
                         os.remove(r'%s\bio latest17.docx' % save_word_files)
 
                 if move == 1:
                     if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
                         word.Documents.Open(r'%s\GSE latest.docx' % save_word_files)
                         word.ActiveDocument.PrintOut()
-                        time.sleep(2)
-                        pyautogui.press('enter')
-                        time.sleep(1.5)
-                        word.ActiveDocument.Close()
+                        # time.sleep(2)
+                        # pyautogui.press('enter')
+                        # time.sleep(1.5)
+                        # word.ActiveDocument.Close()
                         move = 0
                         warning = QMessageBox.warning(self, '',
                                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
                                                       QMessageBox.Yes | QMessageBox.No)
                         if warning == QMessageBox.Yes:
                             move = 1
-                        word.ActiveDocument.Close()
+                            try:
+                                word.ActiveDocument.Close()
+                            except:
+                                pass
                         os.remove(r'%s\GSE latest.docx' % save_word_files)
 
                 if move == 1:
@@ -2878,16 +3106,20 @@ class mainapp(QMainWindow, FORM_CLASS):
                     if os.path.exists(r'%s\SFA latest.docx' % save_word_files):
                         word.Documents.Open(r'%s\SFA latest.docx' % save_word_files)
                         word.ActiveDocument.PrintOut()
-                        time.sleep(2)
-                        pyautogui.press('enter')
-                        time.sleep(1.5)
-                        word.ActiveDocument.Close()
+                        # time.sleep(2)
+                        # pyautogui.press('enter')
+                        # time.sleep(1.5)
+                        # word.ActiveDocument.Close()
                         move = 0
                         warning = QMessageBox.warning(self, '',
                                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
                                                       QMessageBox.Yes | QMessageBox.No)
                         if warning == QMessageBox.Yes:
                             move = 1
+                            try:
+                                word.ActiveDocument.Close()
+                            except:
+                                pass
                         # word.ActiveDocument.Close()
                         os.remove(r'%s\SFA latest.docx' % save_word_files)
 
@@ -2896,17 +3128,21 @@ class mainapp(QMainWindow, FORM_CLASS):
                     if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
                         word.Documents.Open(r'%s\GUE latest.docx' % save_word_files)
                         word.ActiveDocument.PrintOut()
-                        time.sleep(2)
-                        pyautogui.press('enter')
-                        time.sleep(1.5)
-                        word.ActiveDocument.Close()
+                        # time.sleep(2)
+                        # pyautogui.press('enter')
+                        # time.sleep(1.5)
+                        # word.ActiveDocument.Close()
                         move = 0
                         warning = QMessageBox.warning(self, '',
                                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
                                                       QMessageBox.Yes | QMessageBox.No)
                         if warning == QMessageBox.Yes:
                             move = 1
-                        word.ActiveDocument.Close()
+                            try:
+                                word.ActiveDocument.Close()
+                            except:
+                                pass
+                        # word.ActiveDocument.Close()
                         os.remove(r'%s\GUE latest.docx' % save_word_files)
 
                 if move == 1:
@@ -2914,17 +3150,21 @@ class mainapp(QMainWindow, FORM_CLASS):
                     if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
                         word.Documents.Open(r'%s\hematology latest.docx' % save_word_files)
                         word.ActiveDocument.PrintOut()
-                        time.sleep(2)
-                        pyautogui.press('enter')
-                        time.sleep(1.5)
-                        word.ActiveDocument.Close()
+                        # time.sleep(2)
+                        # pyautogui.press('enter')
+                        # time.sleep(1.5)
+                        # word.ActiveDocument.Close()
                         move = 0
                         warning = QMessageBox.warning(self, '',
                                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
                                                       QMessageBox.Yes | QMessageBox.No)
                         if warning == QMessageBox.Yes:
                             move = 1
-                        word.ActiveDocument.Close()
+                            try:
+                                word.ActiveDocument.Close()
+                            except:
+                                pass
+                        # word.ActiveDocument.Close()
                         os.remove(r'%s\hematology latest.docx' % save_word_files)
 
                 if move == 1:
@@ -2932,16 +3172,20 @@ class mainapp(QMainWindow, FORM_CLASS):
                     if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
                         word.Documents.Open(r'%s\هرمونات مشترك latest.docx' % save_word_files)
                         word.ActiveDocument.PrintOut()
-                        time.sleep(2)
-                        pyautogui.press('enter')
-                        time.sleep(1.5)
-                        word.ActiveDocument.Close()
+                        # time.sleep(2)
+                        # pyautogui.press('enter')
+                        # time.sleep(1.5)
+                        # word.ActiveDocument.Close()
                         move = 0
                         warning = QMessageBox.warning(self, '',
                                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
                                                       QMessageBox.Yes | QMessageBox.No)
                         if warning == QMessageBox.Yes:
                             move = 1
+                            try:
+                                word.ActiveDocument.Close()
+                            except:
+                                pass
                         # word.ActiveDocument.Close()
                         os.remove(r'%s\هرمونات مشترك latest.docx' % save_word_files)
                 self.Delete_Files()

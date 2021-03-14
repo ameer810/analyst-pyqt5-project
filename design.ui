@@ -3186,6 +3186,11 @@ QDateTimeEdit:disabled {
            <string>عدوية شمس سعيد</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>داود سلمان</string>
+          </property>
+         </item>
         </widget>
         <widget class="QTextEdit" name="textEdit">
          <property name="geometry">
