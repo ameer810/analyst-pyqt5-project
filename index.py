@@ -1,25 +1,22 @@
 import datetime
 import os
-
 import time
 import MySQLdb
-import pyautogui
+# import pyautogui
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUiType
 import sys
-
+from PyQt5.uic.properties import QtCore
 from docx import *
 # from shutil import copyfile
 from docx.shared import Pt
 # import smtplib
 # from email.mime.text import MIMEText
 # from email.mime.multipart import MIMEMultipart
-
 from win32com import client
 from pydesign import Ui_MainWindow as main_wind
-
 FORM_CLASS, _ = loadUiType("design.ui")
 user_id = 4
 client_id_glob = 0
@@ -27,9 +24,11 @@ chick_if_add_new = False
 if_print = False
 analysts_name_glo = []
 clients_name_glo = []
-GSE_row1=[]
 
-class mainapp(QMainWindow, FORM_CLASS):
+
+# GSE_row1=[]
+
+class mainapp(QMainWindow, main_wind):
     def __init__(self, parent=None):
         super(mainapp, self).__init__(parent)
         QMainWindow.__init__(self)
@@ -49,7 +48,6 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.Auto_complete_combo()
         self.add_client_to_list()
         self.Auto_complete_combo2()
-
 
     def DB_Connect(self):
         self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel', charset="utf8",
@@ -456,19 +454,37 @@ class mainapp(QMainWindow, FORM_CLASS):
             real_doctor = self.tableWidget_5.item(row, 3).text()
         try:
             self.Bio_Word(real_name, real_doctor, all_analyst, all_result, year, month, day, word_type, prev, genuses)
+
         except Exception as e:
             print(e)
             QMessageBox.information(self, 'خطأ', 'هنالك خطأ يرجى مراجعة العملية')
+
         if prev != 'T':
             self.Delete_Files()
-
+        for rowj in range(0, self.tableWidget_5.rowCount() - 1):
+            r2_doctor=self.tableWidget_5.item(rowj, 3).text()
+            r2_analyst_name=self.tableWidget_5.item(rowj, 1).text()
+            r2_client_name = self.tableWidget_5.item(rowj, 0).text()
+            try:
+                r2_result = self.tableWidget_5.cellWidget(rowj, 2).currentText()
+            except:
+                r2_result = self.tableWidget_5.item(rowj, 2).text()
+            try:
+                print(r2_result)
+                self.cur.execute(''' UPDATE addnewitem SET doctor_name=%s ,analyst_name=%s ,analyst_result=%s WHERE client_name=%s AND analyst_name=%s''',(r2_doctor,r2_analyst_name,r2_result,r2_client_name,r2_analyst_name))
+                self.db.commit()
+                print('try')
+            except:
+                print('exept')
     def get_total_price(self):
         total_price = 0
-        My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells', 'Crystals',
-                  'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Count', 'Motility:Active',
+        My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
+                  'Crystals',
+                  'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active',
                   'Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal',
                   'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
-                  'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE']
+                  'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE', 'Bacteria:GSE', 'Bacteria:GUE', 'Monillia:GSE', 'Monillia:GUE',
+                  'Fatty drop:GSE', 'Fatty drop:GUE', 'Mucuse:GUE']
         rMy_num = 0
         for row in range(0, self.tableWidget_5.rowCount() - 1):
             analyst_name = self.tableWidget_5.item(row, 1).text()
@@ -481,7 +497,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                 total_price += int(a)
             except ValueError:
                 a = 0
-        for num in range(1, rMy_num - 1):
+        for num in range(1, rMy_num):
             total_price -= 3
         self.lineEdit_24.setText(str(total_price))
 
@@ -490,12 +506,11 @@ class mainapp(QMainWindow, FORM_CLASS):
         global chick_if_add_new
         My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
                   'Crystals',
-                  'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction',
-                  'Motility:Active',
+                  'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active',
                   'Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal',
                   'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
                   'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE', 'Bacteria:GSE', 'Bacteria:GUE', 'Monillia:GSE', 'Monillia:GUE',
-                  'Fatty drop:GSE', 'Fatty drop:GUE']
+                  'Fatty drop:GSE', 'Fatty drop:GUE', 'Mucuse:GUE']
         analyst_name = self.comboBox_16.currentText()
         client_name = self.lineEdit_20.text()
         client_age = self.spinBox_7.value()
@@ -515,7 +530,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         total_price = 0
         if analyst_price != None:
             if analyst_price[1] == 'عدد':
-                if analyst_price[2]=='SFA':
+                if analyst_price[2] == 'SFA':
                     latest_result = ''
                 else:
                     latest_result = analyst_number_result
@@ -543,6 +558,21 @@ class mainapp(QMainWindow, FORM_CLASS):
             latest_result,
             total_price, total_price, datetime.datetime.now()))
         self.db.commit()
+        for rowj in range(0, self.tableWidget_5.rowCount() - 1):
+            r2_doctor=self.tableWidget_5.item(rowj, 3).text()
+            r2_analyst_name=self.tableWidget_5.item(rowj, 1).text()
+            r2_client_name = self.tableWidget_5.item(rowj, 0).text()
+            try:
+                r2_result = self.tableWidget_5.cellWidget(rowj, 2).currentText()
+            except:
+                r2_result = self.tableWidget_5.item(rowj, 2).text()
+            try:
+                print(r2_result)
+                self.cur.execute(''' UPDATE addnewitem SET doctor_name=%s ,analyst_name=%s ,analyst_result=%s WHERE client_name=%s AND analyst_name=%s''',(r2_doctor,r2_analyst_name,r2_result,r2_client_name,r2_analyst_name))
+                self.db.commit()
+                print('try')
+            except:
+                print('exept')
         self.cur.execute(
             ''' SELECT client_name,analyst_name,analyst_result,doctor_name,total_price FROM addnewitem WHERE client_name = %s''',
             (self.lineEdit_20.text(),))
@@ -563,6 +593,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.tableWidget_5.insertRow(row_pos)
         print('first')
         chick_if_add_new = True
+
         for rowd in range(0, self.tableWidget_5.rowCount() - 1):
             rs_name = self.tableWidget_5.item(rowd, 1).text()
             mycobmbo = QComboBox(self)
@@ -655,10 +686,19 @@ class mainapp(QMainWindow, FORM_CLASS):
             #     mycobmbo.addItems([])
             for jjk in My_num:
                 if rs_name == jjk:
+                    r2_analyst_name = self.tableWidget_5.item(rowd, 1).text()
+                    r2_client_name = self.tableWidget_5.item(rowd, 0).text()
+                    self.cur.execute(
+                        ''' SELECT  analyst_result  FROM addnewitem WHERE client_name=%s AND analyst_name=%s ''',
+                        (r2_client_name, r2_analyst_name))
+                    myrs = self.cur.fetchall()
+                    if myrs != '' or myrs != None:
+                        index = mycobmbo.findText(myrs[0][0], Qt.MatchFixedString)
+                        mycobmbo.setCurrentIndex(index)
+                    self.tableWidget_5.setItem(rowd, 2, QTableWidgetItem(str('')))
                     self.tableWidget_5.setCellWidget(rowd, 2, mycobmbo)
         self.Show_All_The_Sales()
         # mycobmbo = QComboBox(self)
-
 
         # self.Show_All_one_client_analyst()
         # self.Add_Data_To_history(3, 1)
@@ -675,15 +715,16 @@ class mainapp(QMainWindow, FORM_CLASS):
         # client_id = self.spinBox.setValue(0)
         # self.Show_All_one_client_analyst()
 
-
     def Show_All_one_client_analyst(self):
         global client_id_glob
         global chick_if_add_new
-        My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells', 'Crystals',
+        My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
+                  'Crystals',
                   'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active',
                   'Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal',
                   'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
-                  'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE','Bacteria:GSE','Bacteria:GUE','Monillia:GSE','Monillia:GUE','Fatty drop:GSE','Fatty drop:GUE']
+                  'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE', 'Bacteria:GSE', 'Bacteria:GUE', 'Monillia:GSE', 'Monillia:GUE',
+                  'Fatty drop:GSE', 'Fatty drop:GUE', 'Mucuse:GUE']
         client_name = self.lineEdit_20.text()
         self.cur.execute('''
              SELECT client_name,analyst_name,analyst_result,doctor_name FROM addnewitem WHERE client_name = %s
@@ -744,58 +785,61 @@ class mainapp(QMainWindow, FORM_CLASS):
                 chick_if_add_new = False
                 self.Show_All_The_Sales()
 
-                for rowd in range(0,self.tableWidget_5.rowCount()-1):
-                    rs_name=self.tableWidget_5.item(rowd,1).text()
+                for rowd in range(0, self.tableWidget_5.rowCount() - 1):
+                    rs_name = self.tableWidget_5.item(rowd, 1).text()
                     mycobmbo = QComboBox(self)
 
-                    if rs_name=='Color:GSE' or rs_name=='Colour:SFA':
+                    if rs_name == 'Color:GSE' or rs_name == 'Colour:SFA':
                         mycobmbo = QComboBox(self)
                         mycobmbo.addItems(['yallow', 'brown', 'green', 'milk'])
-                    if rs_name=='Consistency':
+                    if rs_name == 'Consistency':
                         mycobmbo = QComboBox(self)
                         mycobmbo.addItems(['Solid', 'Liquid', 'Semi solid', 'Semi liquid', 'Mucoid'])
-                    if rs_name=='R.B.Cs:GSE'or rs_name == 'Pus cells:GSE' or rs_name == 'RBCs:GUE' or rs_name == 'Pus cells:GUE':
+                    if rs_name == 'R.B.Cs:GSE' or rs_name == 'Pus cells:GSE' or rs_name == 'RBCs:GUE' or rs_name == 'Pus cells:GUE':
                         mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
-                                  '5 - 7', '6 - 8', '6 - 7', '+', '++', '+++', '++++', 'Full Field'])
-                    if rs_name=='E. Histolytica'or rs_name == 'G. Lembilia':
+                        mycobmbo.addItems(
+                            ['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
+                             '5 - 7', '6 - 8', '6 - 7', '+', '++', '+++', '++++', 'Full Field'])
+                    if rs_name == 'E. Histolytica' or rs_name == 'G. Lembilia':
                         mycobmbo = QComboBox(self)
                         mycobmbo.addItems(['Cyst', 'Trophozoite'])
-                    if rs_name=='Ova':
+                    if rs_name == 'Ova':
                         mycobmbo = QComboBox(self)
                         mycobmbo.addItems(['Nill'])
-                    if rs_name== 'Appearance':
+                    if rs_name == 'Appearance':
                         mycobmbo = QComboBox(self)
                         mycobmbo.addItems(['Turbid', 'Clear'])
-                    if rs_name== 'Reaction:GUE' or rs_name=='Reaction:SFA':
+                    if rs_name == 'Reaction:GUE' or rs_name == 'Reaction:SFA':
                         mycobmbo = QComboBox(self)
                         mycobmbo.addItems(['Acidic', 'Alkaline'])
-                    if rs_name== 'Albumin' or rs_name=='Sugar':
+                    if rs_name == 'Albumin' or rs_name == 'Sugar':
                         mycobmbo = QComboBox(self)
                         mycobmbo.addItems(['Nil', '+', '++', '+++', 'Trace'])
-                    if rs_name== 'Epith .cells':
+                    if rs_name == 'Epith .cells':
                         mycobmbo = QComboBox(self)
                         mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
-                    if rs_name== 'Crystals':
+                    if rs_name == 'Crystals':
                         mycobmbo = QComboBox(self)
                         mycobmbo.addItems(['Am.Urate', 'Am.Phosphatase', 'Uric Acid', 'Ca.Oxalate'])
-                    if rs_name== 'Casts':
+                    if rs_name == 'Casts':
                         mycobmbo = QComboBox(self)
                         mycobmbo.addItems(['Granular cast +', 'Granular cast ++', 'Granular cast +++'])
 
-                    if rs_name== 'Bacteria:GSE' or rs_name=='Monillia:GSE' or rs_name=='Fatty drop:GSE'or rs_name=='Monillia:GUE' or rs_name=='Fatty drop:GUE'or rs_name=='Bacteria:GUE':
+                    if rs_name == 'Bacteria:GSE' or rs_name == 'Monillia:GSE' or rs_name == 'Fatty drop:GSE' or rs_name == 'Monillia:GUE' or rs_name == 'Fatty drop:GUE' or rs_name == 'Bacteria:GUE':
                         mycobmbo = QComboBox(self)
                         print('whyyyyyyyy')
                         mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
-                    if rs_name== 'Motility:Active' or rs_name=='Motility:Sluggish'or rs_name=='Motility:Dead'or rs_name=='Morphology:Normal'or rs_name=='Morphology:Abnormal'or rs_name=='Morphology:Pus cells':
+                    if rs_name == 'Motility:Active' or rs_name == 'Motility:Sluggish' or rs_name == 'Motility:Dead' or rs_name == 'Morphology:Normal' or rs_name == 'Morphology:Abnormal' or rs_name == 'Morphology:Pus cells':
                         mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['5' ,'10' ,'15' ,'20' ,'25' ,'30' ,'35' ,'40' ,'45' ,'50' ,'55' ,'60' ,'65' ,'70','75' ,'80' ,'85'])
-                    if rs_name== 'Volume':
+                        mycobmbo.addItems(
+                            ['5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75',
+                             '80', '85'])
+                    if rs_name == 'Volume':
                         mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['0.5','0.6','0.7'])
-                    if rs_name== 'Liquefaction':
+                        mycobmbo.addItems(['0.5', '0.6', '0.7'])
+                    if rs_name == 'Liquefaction':
                         mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['5','10','15','20','25','30','35','40','45'])
+                        mycobmbo.addItems(['5', '10', '15', '20', '25', '30', '35', '40', '45'])
                     # if rs_name=='':
                     #     mycobmbo = QComboBox(self)
                     #     mycobmbo.addItems([])
@@ -833,13 +877,22 @@ class mainapp(QMainWindow, FORM_CLASS):
                     #     mycobmbo = QComboBox(self)
                     #     mycobmbo.addItems([])
                     for jjk in My_num:
-                        if rs_name==jjk:
-                            self.tableWidget_5.setCellWidget(rowd,2,mycobmbo)
+                        if rs_name == jjk:
+                            r2_analyst_name = self.tableWidget_5.item(rowd, 1).text()
+                            r2_client_name = self.tableWidget_5.item(rowd, 0).text()
+                            self.cur.execute(
+                                ''' SELECT  analyst_result  FROM addnewitem WHERE client_name=%s AND analyst_name=%s ''',
+                                (r2_client_name, r2_analyst_name))
+                            myrs=self.cur.fetchall()
+                            if myrs!='' or myrs!=None:
+                                index = mycobmbo.findText(myrs[0][0], Qt.MatchFixedString)
+                                mycobmbo.setCurrentIndex(index)
+                            self.tableWidget_5.setItem(rowd, 2, QTableWidgetItem(str('')))
+                            self.tableWidget_5.setCellWidget(rowd, 2, mycobmbo)
 
             except IndexError:
                 QMessageBox.information(self, 'Error',
                                         'الرقم الذي ادخلته غير صحيح يرجى ادخال رقم صحيح او مراجعة صفحة "كل المبيعات" للتأكد من الرقم')
-
 
     def Chick_analyst_category(self):
         pationt_name = self.lineEdit_20.text()
@@ -869,10 +922,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                 self.comboBox_17.show()
                 self.comboBox_17.setEditable(True)
         except:
-            if analyst_name !='Full GSE' and analyst_name !='Full GUE' and analyst_name !='Full SFA':
+            if analyst_name != 'Full GSE' and analyst_name != 'Full GUE' and analyst_name != 'Full SFA':
                 QMessageBox.information(self, 'تحذير', "يرجى اختيار تحليل صحيح")
-        row_count=self.tableWidget_5.rowCount()
-        if analyst_name=='Full GSE':
+        row_count = self.tableWidget_5.rowCount()
+        if analyst_name == 'Full GSE':
             # QStatusBar.showMessage(self,'يرجى الانتظار سيتم تنفيذ طلبك خلال ثواني')
             self.comboBox_16.setCurrentText('Color:GSE')
             self.Sales_Page()
@@ -920,9 +973,9 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.Sales_Page()
             self.comboBox_16.setCurrentText('Monillia:GSE')
             self.Sales_Page()
-            self.comboBox_16.setCurrentText('Fatty drop:GSE')
+            self.comboBox_16.setCurrentText('Mucuse:GUE')
             self.Sales_Page()
-        if analyst_name=='Full SFA':
+        if analyst_name == 'Full SFA':
             # QStatusBar.showMessage(self,'يرجى الانتظار سيتم تنفيذ طلبك خلال ثواني')
             self.comboBox_16.setCurrentText('Volume')
             self.Sales_Page()
@@ -947,6 +1000,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.comboBox_16.setCurrentText('Morphology:Pus cells')
             self.Sales_Page()
 
+
         colors = ['yallow', 'brown', 'green', 'milk']
         RBCs_Pus_cells_GUE_GSE = ['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
                                   '5 - 7', '6 - 8', '6 - 7', '+', '++', '+++', '++++', 'Full Field']
@@ -960,23 +1014,23 @@ class mainapp(QMainWindow, FORM_CLASS):
         Crystals = ['Am.Urate', 'Am.Phosphatase', 'Uric Acid', 'Ca.Oxalate']
         Casts = ['Granular cast +', 'Granular cast ++', 'Granular cast +++']
         Blood_Group = ['A (+ve)', 'B (+ve)', 'AB (+ve)', 'O (+ve)', 'O (-ve)', 'A (-ve)', 'B (-ve)', 'AB (-ve)']
-        Pregnancy_test_in_urine_serum = ['Positive (+ve)', 'Negative (-ve)','Weak Positive']
+        Pregnancy_test_in_urine_serum = ['Positive (+ve)', 'Negative (-ve)', 'Weak Positive']
         Pregnancy_test_in_urine_serum2 = ['Positive (+ve)', 'Negative (-ve)']
         test = ['Toxoplasma IgG', 'Toxoplasma IgM', 'Cytomegalo Virus IgG', 'Cytomegalo Virus IgM', 'Rubella IgG',
                 'Rubella IgM', 'Anti - Phspholipin IgG', 'Anti - Phspholipin  IgM', 'Anti - Cardiolipin  IgG',
                 'Anti - Cardiolipin  IgM', 'Herps   IgG', 'Herpes  IgM']
         test_choices = ['0.5 Negative', '0.6 Negative', '0.7 Negative', '0.8 Negative', '1.1 Positive', '1.1 Positive',
                         '1.2 Positive', '1.3 Positive', '1.4 Positive', '1.5 Positive']
-        Hb=[4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]
-        motility=[5 ,10 ,15 ,20 ,25 ,30 ,35 ,40 ,45 ,50 ,55 ,60 ,65 ,70 ,75 ,80 ,85]
+        Hb = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+        motility = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85]
         self.comboBox_17.clear()
         if analyst_name == 'Colour:SFA' or analyst_name == 'Color:GSE':
             for item in colors:
                 self.comboBox_17.addItem(str(item))
-        if analyst_name == 'Motility:Active' or analyst_name == 'Motility:Sluggish'or analyst_name == 'Motility:Dead'or analyst_name == 'Morphology:Normal'or analyst_name == 'Morphology:Abnormal'or analyst_name == 'Morphology:Pus cells':
+        if analyst_name == 'Motility:Active' or analyst_name == 'Motility:Sluggish' or analyst_name == 'Motility:Dead' or analyst_name == 'Morphology:Normal' or analyst_name == 'Morphology:Abnormal' or analyst_name == 'Morphology:Pus cells':
             for item101 in motility:
                 self.comboBox_17.addItem(str(item101))
-        if analyst_name == 'R.B.Cs:GSE' or analyst_name == 'Pus cells:GSE' or analyst_name == 'RBCs:GUE' or analyst_name == 'Pus cells:GUE' or analyst_name == 'Morphology:Pus cells' :
+        if analyst_name == 'R.B.Cs:GSE' or analyst_name == 'Pus cells:GSE' or analyst_name == 'RBCs:GUE' or analyst_name == 'Pus cells:GUE' or analyst_name == 'Morphology:Pus cells':
             for item0 in RBCs_Pus_cells_GUE_GSE:
                 self.comboBox_17.addItem(str(item0))
         if analyst_name == 'Consistency':
@@ -991,13 +1045,13 @@ class mainapp(QMainWindow, FORM_CLASS):
         if analyst_name == 'Appearance':
             for item5 in Appearance:
                 self.comboBox_17.addItem(str(item5))
-        if analyst_name == 'Reaction:SFA' or analyst_name=='Reaction:GUE':
+        if analyst_name == 'Reaction:SFA' or analyst_name == 'Reaction:GUE':
             for item6 in Reaction:
                 self.comboBox_17.addItem(str(item6))
         if analyst_name == 'Sugar' or analyst_name == 'Albumin':
             for item7 in Sugar:
                 self.comboBox_17.addItem(str(item7))
-        if analyst_name == 'Epith .cells' or analyst_name=='Bacteria:GSE' or analyst_name=='Bacteria:GUE' or analyst_name =='Monillia:GSE' or analyst_name =='Monillia:GUE' or analyst_name=='Fatty drop:GSE' or analyst_name=='Fatty drop:GUE':
+        if analyst_name == 'Epith .cells' or analyst_name == 'Bacteria:GSE' or analyst_name == 'Bacteria:GUE' or analyst_name == 'Monillia:GSE' or analyst_name == 'Monillia:GUE' or analyst_name == 'Fatty drop:GSE' or analyst_name == 'Fatty drop:GUE':
             for item8 in Epith_cells:
                 self.comboBox_17.addItem(str(item8))
         if analyst_name == 'Crystals':
@@ -1013,14 +1067,13 @@ class mainapp(QMainWindow, FORM_CLASS):
         if analyst_name == 'Pregnancy test  in serum' or analyst_name == 'Pregnancy test  in urine' or analyst_name == 'Salmonella typhi  IgG' or analyst_name == 'Salmonella typhi  ImG' or analyst_name == 'Rose-Bengal test' or analyst_name == 'Rh' or analyst_name == 'HBS Ag' or analyst_name == 'HCV Ab' or analyst_name == 'HIV':
             for item11 in Pregnancy_test_in_urine_serum2:
                 self.comboBox_17.addItem(str(item11))
-        if analyst_name == 'Pregnancy test  in serum' or analyst_name == 'Pregnancy test  in urine' or analyst_name=='HBS Ag'or analyst_name=='HCV Ab'or analyst_name=='HIV':
+        if analyst_name == 'Pregnancy test  in serum' or analyst_name == 'Pregnancy test  in urine' or analyst_name == 'HBS Ag' or analyst_name == 'HCV Ab' or analyst_name == 'HIV':
             for item11 in Pregnancy_test_in_urine_serum:
                 self.comboBox_17.addItem(str(item11))
         for fitem in test:
             if analyst_name == fitem:
                 for item12 in test_choices:
                     self.comboBox_17.addItem(str(item12))
-
 
     def get_client_id(self):
         global client_id_glob
@@ -1267,11 +1320,13 @@ class mainapp(QMainWindow, FORM_CLASS):
         all_client_analyst = []
         total = 0
         rMy_num = 0
-        My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells', 'Crystals',
-                  'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Count', 'Motility:Active',
+        My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
+                  'Crystals',
+                  'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active',
                   'Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal',
                   'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
-                  'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE']
+                  'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE', 'Bacteria:GSE', 'Bacteria:GUE', 'Monillia:GSE', 'Monillia:GUE',
+                  'Fatty drop:GSE', 'Fatty drop:GUE', 'Mucuse:GUE']
         for i in client_analyst_data:
             num += 1
         for k in range(0, num):
@@ -1446,10 +1501,8 @@ class mainapp(QMainWindow, FORM_CLASS):
     #     self.tableWidget_8.setRowCount(0)
     #     self.tableWidget_8.insertRow(0)
 
-
     def Open_Sales_Page(self):
         self.tabWidget.setCurrentIndex(3)
-
 
     # def Open_Login_Page(self):
     #     self.tabWidget.setCurrentIndex(0)
@@ -1563,7 +1616,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'Random  blood sugar : {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
                                 if n.text == 'Blood Urea               :':
@@ -1578,7 +1631,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'Blood Urea               : {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
                                 if n.text == 'S. Creatinin               :':
@@ -1592,7 +1645,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'S. Creatinin               : {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
                                 if n.text == 'S. Uric acid                  :':
@@ -1606,7 +1659,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'S. Uric acid                  : {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
                                 if n.text == 'S. Cholesterol            :':
@@ -1620,7 +1673,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'S. Cholesterol            : {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
                                 if n.text == 'S. Triglycerid             :':
@@ -1634,7 +1687,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'S. Triglycerid             : {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
                                 if n.text == 'Total serum Bilirubin:':
@@ -1648,7 +1701,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'Total serum Bilirubin: {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
                                 if n.text == 'S.Calcium :':
@@ -1662,7 +1715,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'S.Calcium : {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
                                 if n.text == 'Vitamin D              :':
@@ -1676,7 +1729,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'Vitamin D              : {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
 
@@ -1755,7 +1808,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'Color: {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
                                 if n.text == 'Consistency:':
@@ -1769,7 +1822,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'Consistency: {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
                                 if n.text == 'R.B.Cs:':
@@ -1783,7 +1836,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'R.B.Cs: {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
                                 if n.text == 'Pus cells:':
@@ -1797,7 +1850,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'Pus cells: {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
                                 if n.text == 'E. Histolytica:':
@@ -1811,7 +1864,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'E. Histolytica: {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
                                 if n.text == 'G. Lembilia:':
@@ -1825,7 +1878,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'G. Lembilia: {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
                                 if n.text == 'Ova:':
@@ -1839,7 +1892,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'Ova: {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
                                 if n.text == 'Bacteria:':
@@ -1853,6 +1906,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'Bacteria:  {k}'
                                             run = n.runs
                                             font = run[0].font
+                                            font.bold = False
                                             font.name = 'Tahoma'
                                             font.size = Pt(14)
                                 if n.text == 'Monillia:':
@@ -1866,6 +1920,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'Monillia:  {k}'
                                             run = n.runs
                                             font = run[0].font
+                                            font.bold = False
                                             font.name = 'Tahoma'
                                             font.size = Pt(14)
                                 if n.text == 'Fatty drop:':
@@ -1879,6 +1934,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'Fatty drop: {k}'
                                             run = n.runs
                                             font = run[0].font
+                                            font.bold = False
                                             font.name = 'Tahoma'
                                             font.size = Pt(14)
                                 if n.text == 'Other:':
@@ -1892,7 +1948,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'Other: {k}'
                                             run = n.runs
                                             font = run[0].font
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
                                 if n.text == 'Date:    /     / 20':
@@ -1975,6 +2031,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
+                                            font.bold = False
                                             font.size = Pt(14)
                                 if n.text == 'Reaction      :':
                                     for row in range(0, len(analysts)):
@@ -1988,6 +2045,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
+                                            font.bold = False
                                             font.size = Pt(14)
                                 if n.text == 'Albumin       :':
                                     for row in range(0, len(analysts)):
@@ -2001,6 +2059,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
+                                            font.bold = False
                                             font.size = Pt(14)
                                 if n.text == 'Sugar          :':
                                     for row in range(0, len(analysts)):
@@ -2014,6 +2073,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
+                                            font.bold = False
                                             font.size = Pt(14)
                                 if n.text == 'RBCs         :':
                                     for row in range(0, len(analysts)):
@@ -2027,6 +2087,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
+                                            font.bold = False
                                             font.size = Pt(14)
                                 if n.text == 'Pus cells    :':
                                     for row in range(0, len(analysts)):
@@ -2040,6 +2101,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
+                                            font.bold = False
                                             font.size = Pt(14)
                                 if n.text == 'Epith .cells :':
                                     for row in range(0, len(analysts)):
@@ -2053,6 +2115,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
+                                            font.bold = False
                                             font.size = Pt(14)
                                 if n.text == 'Crystals     :':
                                     for row in range(0, len(analysts)):
@@ -2066,6 +2129,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
+                                            font.bold = False
                                             font.size = Pt(14)
                                 if n.text == 'Casts        :':
                                     for row in range(0, len(analysts)):
@@ -2079,6 +2143,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
+                                            font.bold = False
                                             font.size = Pt(14)
                                 if n.text == 'Bacteria    :':
                                     for row in range(0, len(analysts)):
@@ -2092,6 +2157,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
+                                            font.bold = False
                                             font.size = Pt(14)
                                 if n.text == 'Monillia     :':
                                     for row in range(0, len(analysts)):
@@ -2104,7 +2170,22 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             n.text = f'Monillia     : {k}'
                                             run = n.runs
                                             font = run[0].font
+                                            font.bold = False
                                             font.name = 'Tahoma'
+                                            font.size = Pt(14)
+                                if n.text == 'Mucuse        :':
+                                    for row in range(0, len(analysts)):
+                                        analyst_and_result = {
+                                            'analyst': analysts[row],
+                                            'result': results[row]
+                                        }
+                                        if analyst_and_result['analyst'] == 'Mucuse:GUE':
+                                            k = analyst_and_result['result']
+                                            n.text = f'Mucuse        :  {k}'
+                                            run = n.runs
+                                            font = run[0].font
+                                            font.name = 'Tahoma'
+                                            font.bold = False
                                             font.size = Pt(14)
                                 if n.text == 'Other        :':
                                     for row in range(0, len(analysts)):
@@ -2194,7 +2275,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(12)
                                 if n.text == 'PCV           :':
                                     for row in range(0, len(analysts)):
@@ -2208,7 +2289,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(12)
                                 if n.text == 'WBCs         :':
                                     for row in range(0, len(analysts)):
@@ -2222,7 +2303,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(12)
                                 if n.text == 'E.S.R          :':
                                     for row in range(0, len(analysts)):
@@ -2236,7 +2317,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(12)
                                 if n.text == 'Blood Group:':
                                     for row in range(0, len(analysts)):
@@ -2250,7 +2331,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(12)
                                 if n.text == 'Rh:':
                                     for row in range(0, len(analysts)):
@@ -2264,7 +2345,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(12)
                                 if n.text == 'Pregnancy test  in urine   :':
                                     for row in range(0, len(analysts)):
@@ -2278,7 +2359,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(12)
                                 if n.text == 'Pregnancy test  in serum  :':
                                     for row in range(0, len(analysts)):
@@ -2292,7 +2373,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(12)
                                 if n.text == 'R.B.Sugar                           :':
                                     for row in range(0, len(analysts)):
@@ -2306,7 +2387,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(12)
                                 if n.text == 'Bl. Urea                              :':
                                     for row in range(0, len(analysts)):
@@ -2320,7 +2401,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(12)
                                 if n.text == 'Salmonella typhi  IgG :':
                                     for row in range(0, len(analysts)):
@@ -2334,7 +2415,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(12)
                                 if n.text == 'Salmonella typhi  IgM :':
                                     for row in range(0, len(analysts)):
@@ -2348,7 +2429,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(12)
                                 if n.text == 'Rose-Bengal test   :':
                                     for row in range(0, len(analysts)):
@@ -2362,7 +2443,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(12)
                                 if n.text == 'HBS Ag                                :':
                                     for row in range(0, len(analysts)):
@@ -2376,7 +2457,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(12)
                                 if n.text == 'HCV Ab                                :':
                                     for row in range(0, len(analysts)):
@@ -2390,7 +2471,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(12)
                                 if n.text == 'HIV                                      :':
                                     for row in range(0, len(analysts)):
@@ -2404,7 +2485,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                             run = n.runs
                                             font = run[0].font
                                             font.name = 'Tahoma'
-                                            font.bold = True
+                                            font.bold = False
                                             font.size = Pt(12)
                                 if n.text == 'Date:    /     / 20':
                                     n.text = f'Date:   {year} /  {month} / {day}'
