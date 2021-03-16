@@ -2,7 +2,7 @@
 # from shutil import copyfile
 #
 # # def Bio_Word(word):
-# from docx.shared import Pt
+from docx.shared import Pt, Inches
 # # #
 # # # # # f = open('word/مختبر بغـداد.docx', 'rb')
 # # # # # f.read()
@@ -735,235 +735,19 @@
 # from win32com import client
 # # for i in range(0,2):
 # if word_type == 'SFA':
-#     f = open(r'%s/SFA latest.docx' % word_files, 'rb')
-#     f.read()
-#     document = Document(f)
-#     for i in document.tables:
-#         for k in i.rows:
-#             for j in k.cells:
+# f = open(r'%s/SFA latest.docx' % word_files, 'rb')
+# f.read()
+# document = Document(f)
+# for i in document.tables:
+#     for k in i.rows:
+#         for j in k.cells:
 #
-#                 for n in j.paragraphs:
-#                     if n.text == 'أسـم المريض :':
-#                         if genus == 0:
-#                             n.text = f'أسـم المريض :{name}'
-#                         else:
-#                             n.text = f'أسـم المريضة :{name}'
-#                         run = n.runs
-#                         font = run[0].font
-#                         font.name = 'Monotype Koufi'
-#                         font.bold = True
-#                         font.size = Pt(11)
-#                     if n.text == 'حضرة الدكتورة   :':
-#                         if doctor == 'عدوية شمس سعيد':
-#                             n.text = f'حضرة الدكتورة   : {doctor}'
-#                         else:
-#                             n.text = f'حضرة الدكتور   : {doctor}'
-#                         run = n.runs
-#                         font = run[0].font
-#                         font.name = 'Monotype Koufi'
-#                         font.bold = True
-#                         font.size = Pt(11)
-#                     if n.text == 'المحترم':
-#                         if genus == 0:
-#                             n.text = 'المحترم'
-#                         else:
-#                             n.text = 'المحترمة'
-#                         run = n.runs
+#             for n in j.paragraphs:
 #
-#                         font = run[0].font
-#                         font.name = 'Monotype Koufi'
-#                         font.bold = True
-#                         font.size = Pt(11)
-#                     if n.text == 'المحترمة2':
-#                         if doctor == 'عدوية شمس سعيد':
-#                             n.text = f'المحترمة'
-#                         else:
-#                             n.text = f'المحترم'
-#                         run = n.runs
-#                         font = run[0].font
-#                         font.name = 'Monotype Koufi'
-#                         font.bold = True
-#                         font.size = Pt(11)
-#                     if n.text == 'Volume       :':
-#                         for row in range(0, len(analysts)):
-#                             analyst_and_result = {
-#                                 'analyst': analysts[row],
-#                                 'result': results[row]
-#                             }
-#                             if analyst_and_result['analyst'] == 'Volume':
-#                                 k = analyst_and_result['result']
-#                                 n.text = f'Volume       : {k}'
-#                                 run = n.runs
-#                                 font = run[0].font
-#                                 font.name = 'Tahoma'
-#                                 font.bold = False
-#                                 font.size = Pt(14)
-#                     if n.text == 'Reaction      :':
-#                         for row in range(0, len(analysts)):
-#                             analyst_and_result = {
-#                                 'analyst': analysts[row],
-#                                 'result': results[row]
-#                             }
-#                             if analyst_and_result['analyst'] == 'Reaction':
-#                                 k = analyst_and_result['result']
-#                                 n.text = f'Reaction      : {k}'
-#                                 run = n.runs
-#                                 font = run[0].font
-#                                 font.name = 'Tahoma'
-#                                 font.bold = False
-#                                 font.size = Pt(14)
-#                     if n.text == 'Colour        :':
-#                         for row in range(0, len(analysts)):
-#                             analyst_and_result = {
-#                                 'analyst': analysts[row],
-#                                 'result': results[row]
-#                             }
-#                             if analyst_and_result['analyst'] == 'Colour:SFA':
-#                                 k = analyst_and_result['result']
-#                                 n.text = f'Colour        : {k}'
-#                                 run = n.runs
-#                                 font = run[0].font
-#                                 font.name = 'Tahoma'
-#                                 font.bold = False
-#                                 font.size = Pt(14)
-#                     if n.text == 'Liquefaction :':
-#                         for row in range(0, len(analysts)):
-#                             analyst_and_result = {
-#                                 'analyst': analysts[row],
-#                                 'result': results[row]
-#                             }
-#                             if analyst_and_result['analyst'] == 'Liquefaction':
-#                                 k = analyst_and_result['result']
-#                                 n.text = f'Liquefaction : {k}'
-#                                 run = n.runs
-#                                 font = run[0].font
-#                                 font.name = 'Tahoma'
-#                                 font.bold = False
-#                                 font.size = Pt(14)
-#                     if n.text == 'Count          :':
-#                         for row in range(0, len(analysts)):
-#                             analyst_and_result = {
-#                                 'analyst': analysts[row],
-#                                 'result': results[row]
-#                             }
-#                             if analyst_and_result['analyst'] == 'Count':
-#                                 k = analyst_and_result['result']
-#                                 n.text = f'Count          : {k}'
-#                                 run = n.runs
-#                                 font = run[0].font
-#                                 font.name = 'Tahoma'
-#                                 font.bold = False
-#                                 font.size = Pt(14)
-#                     if n.text == 'Active          :':
-#                         for row in range(0, len(analysts)):
-#                             analyst_and_result = {
-#                                 'analyst': analysts[row],
-#                                 'result': results[row]
-#                             }
-#                             if analyst_and_result['analyst'] == 'Motility:Active':
-#                                 k = analyst_and_result['result']
-#                                 n.text = f'Active          : {k}'
-#                                 run = n.runs
-#                                 font = run[0].font
-#                                 font.name = 'Tahoma'
-#                                 font.bold = False
-#                                 font.size = Pt(14)
-#                     if n.text == 'Sluggish       :':
-#                         for row in range(0, len(analysts)):
-#                             analyst_and_result = {
-#                                 'analyst': analysts[row],
-#                                 'result': results[row]
-#                             }
-#                             if analyst_and_result['analyst'] == 'Motility:Sluggish':
-#                                 k = analyst_and_result['result']
-#                                 n.text = f'Sluggish       : {k}'
-#                                 run = n.runs
-#                                 font = run[0].font
-#                                 font.name = 'Tahoma'
-#                                 font.bold = False
-#                                 font.size = Pt(14)
-#                     if n.text == 'Dead           :':
-#                         for row in range(0, len(analysts)):
-#                             analyst_and_result = {
-#                                 'analyst': analysts[row],
-#                                 'result': results[row]
-#                             }
-#                             if analyst_and_result['analyst'] == 'Motility:Dead':
-#                                 k = analyst_and_result['result']
-#                                 n.text = f'Dead           : {k}'
-#                                 run = n.runs
-#                                 font = run[0].font
-#                                 font.name = 'Tahoma'
-#                                 font.bold = False
-#                                 font.size = Pt(14)
-#                     if n.text == 'Normal        :':
-#                         for row in range(0, len(analysts)):
-#                             analyst_and_result = {
-#                                 'analyst': analysts[row],
-#                                 'result': results[row]
-#                             }
-#                             if analyst_and_result['analyst'] == 'Morphology:Normal':
-#                                 k = analyst_and_result['result']
-#                                 n.text = f'Normal        : {k}'
-#                                 run = n.runs
-#                                 font = run[0].font
-#                                 font.name = 'Tahoma'
-#                                 font.bold = False
-#                                 font.size = Pt(14)
-#                     if n.text == 'Abnormal     :':
-#                         for row in range(0, len(analysts)):
-#                             analyst_and_result = {
-#                                 'analyst': analysts[row],
-#                                 'result': results[row]
-#                             }
-#                             if analyst_and_result['analyst'] == 'Morphology:Abnormal':
-#                                 k = analyst_and_result['result']
-#                                 n.text = f'Abnormal     : {k}'
-#                                 run = n.runs
-#                                 font = run[0].font
-#                                 font.name = 'Tahoma'
-#                                 font.bold = False
-#                                 font.size = Pt(14)
-#                     if n.text == 'Pus cells       :':
-#                         for row in range(0, len(analysts)):
-#                             analyst_and_result = {
-#                                 'analyst': analysts[row],
-#                                 'result': results[row]
-#                             }
-#                             if analyst_and_result['analyst'] == 'Morphology:Pus cells':
-#                                 k = analyst_and_result['result']
-#                                 n.text = f'Pus cells       : {k}'
-#                                 run = n.runs
-#                                 font = run[0].font
-#                                 font.name = 'Tahoma'
-#                                 font.bold = False
-#                                 font.size = Pt(14)
-#                     if n.text == 'Other           :':
-#                         for row in range(0, len(analysts)):
-#                             analyst_and_result = {
-#                                 'analyst': analysts[row],
-#                                 'result': results[row]
-#                             }
-#                             if analyst_and_result['analyst'] == 'Other:SFA':
-#                                 k = analyst_and_result['result']
-#                                 n.text = f'Other           : {k}'
-#                                 run = n.runs
-#                                 font = run[0].font
-#                                 font.name = 'Tahoma'
-#                                 font.bold = False
-#                                 font.size = Pt(14)
-#                     if n.text == 'Date:    /     / 20':
-#                         n.text = f'Date:   {year} /  {month} / {day}'
-#                         run = n.runs
-#                         font = run[0].font
-#                         font.name = 'Tahoma'
-#                         font.bold = True
-#                         font.size = Pt(12)
-#                     # print('1'+n.text+'2')
-#     # for kd in document.paragraphs:
-#     #     print('1'+kd.text+'2'+'h')
-#     document.save(r'%s/SFA latest.docx' % save_word_files)
-#     f.close()
+#                 # print('1'+n.text+'2')
+#
+# document.save('gg.docx')
+# f.close()
 # # word = client.Dispatch("Word.Application")
 # # word.Documents.Open(r'F:\برنامج التحليلات\bio latest17.docx')
 #
@@ -1031,6 +815,49 @@
 # 1	بلد –  شارع بنت الحسن2
 #
 # '''
-a=5
-j=6
-print(r'%s\%s'% (a,j))
+# a=5
+# j=6
+# print(r'%s\%s'% (a,j))
+from docx import Document
+
+from docx.text.paragraph import Paragraph
+from docx.oxml.xmlchemy import OxmlElement
+from docx.enum.text import WD_TAB_ALIGNMENT
+
+def insert_paragraph_after(paragraph, text=None, style=None):
+    """Insert a new paragraph after the given paragraph."""
+    new_p = OxmlElement("w:p")
+    paragraph._p.addnext(new_p)
+    new_para = Paragraph(new_p, paragraph._parent)
+
+    if text:
+        new_para.add_run(text)
+
+    new_para.style.font.name = 'Tahoma'
+    new_para.style.font.size = Pt(9)
+
+    return new_para
+
+def main():
+    # Create a minimal document
+    f = open('احمد سعد.docx', 'rb')
+    f.read()
+    document = Document(f)
+    # p1 = document.add_paragraph("First Paragraph.")
+    # p2 = document.add_paragraph("Second Paragraph.")
+    # Insert a paragraph wedged between p1 and p2
+    for p in document.paragraphs:
+        if p.text=='علي:':
+            print('start')
+            n2=n.add_run()
+            new.font.bold=False
+            new.font.size=Pt(10)
+        # print('2'+p.text+'1')
+        # if p.text=='علي  قاسم':
+        #     print('d')
+        #     insert_paragraph_after(p, "Paragraph One And A Half.")
+
+
+    # Test if the function succeeded
+    document.save('gg.docx')
+main()

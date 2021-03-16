@@ -16,7 +16,7 @@ from docx.shared import Pt
 # from email.mime.text import MIMEText
 # from email.mime.multipart import MIMEMultipart
 from win32com import client
-from pydesign import Ui_MainWindow as main_wind
+# from pydesign import Ui_MainWindow as main_wind
 FORM_CLASS, _ = loadUiType("design.ui")
 user_id = 4
 client_id_glob = 0
@@ -28,7 +28,7 @@ clients_name_glo = []
 
 # GSE_row1=[]
 
-class mainapp(QMainWindow, main_wind):
+class mainapp(QMainWindow, FORM_CLASS):
     def __init__(self, parent=None):
         super(mainapp, self).__init__(parent)
         QMainWindow.__init__(self)
@@ -1294,7 +1294,7 @@ class mainapp(QMainWindow, main_wind):
     #     self.Show_all_analysts_in_combo()
 
     def Show_all_analysts_in_combo(self):
-        self.cur.execute(''' SELECT name FROM addanalyst ''')
+        self.cur.execute(''' SELECT name FROM addanalyst WHERE sub_category=%s OR sub_category=%s OR sub_category=%s ''',('bio','هرمونات مشترك','hematology'))
         data = self.cur.fetchall()
         self.comboBox_21.clear()
         self.comboBox_16.clear()
@@ -1567,9 +1567,9 @@ class mainapp(QMainWindow, main_wind):
                             for n in j.paragraphs:
                                 if n.text == 'أسـم المريض :':
                                     if genus == 0:
-                                        n.text = f'أسـم المريض :                                     {name}'
+                                        n.text = f'أسـم المريض                                      {name}'
                                     else:
-                                        n.text = f'أسـم المريضة :                                     {name}'
+                                        n.text = f'أسـم المريضة                                      {name}'
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
@@ -1577,9 +1577,9 @@ class mainapp(QMainWindow, main_wind):
                                     font.size = Pt(11)
                                 if n.text == 'حضرة الدكتورة   :':
                                     if doctor == 'عدوية شمس سعيد':
-                                        n.text = f'حضرة الدكتورة   :                                     {doctor}'
+                                        n.text = f'حضرة الدكتورة                                        {doctor}'
                                     else:
-                                        n.text = f'حضرة الدكتور   :                                     '
+                                        n.text = f'حضرة الدكتور                                        '
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
@@ -1613,9 +1613,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Random  blood sugar':
                                             k = analyst_and_result['result']
-                                            n.text = f'Random  blood sugar : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f' {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
@@ -1627,10 +1627,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Blood Urea':
                                             k = analyst_and_result['result']
-
-                                            n.text = f'Blood Urea               : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f' {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
@@ -1642,9 +1641,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'S. Creatinin':
                                             k = analyst_and_result['result']
-                                            n.text = f'S. Creatinin               : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
@@ -1656,9 +1655,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'S. Uric acid':
                                             k = analyst_and_result['result']
-                                            n.text = f'S. Uric acid                  : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
@@ -1670,9 +1669,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'S. Cholesterol':
                                             k = analyst_and_result['result']
-                                            n.text = f'S. Cholesterol            : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
@@ -1684,9 +1683,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'S. Triglycerid':
                                             k = analyst_and_result['result']
-                                            n.text = f'S. Triglycerid             : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
@@ -1698,9 +1697,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Total serum Bilirubin':
                                             k = analyst_and_result['result']
-                                            n.text = f'Total serum Bilirubin: {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
@@ -1712,9 +1711,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'S.Calcium':
                                             k = analyst_and_result['result']
-                                            n.text = f'S.Calcium : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
@@ -1726,9 +1725,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Vitamin D':
                                             k = analyst_and_result['result']
-                                            n.text = f'Vitamin D              : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(11)
                                             font.name = 'Tahoma'
@@ -1754,9 +1753,9 @@ class mainapp(QMainWindow, main_wind):
                             for n in j.paragraphs:
                                 if n.text == 'أسـم المريض :':
                                     if genus == 0:
-                                        n.text = f'أسـم المريض :                                     {name}'
+                                        n.text = f'أسـم المريض                                      {name}'
                                     else:
-                                        n.text = f'أسـم المريضة :                                     {name}'
+                                        n.text = f'أسـم المريضة                                      {name}'
 
                                     run = n.runs
 
@@ -1766,10 +1765,10 @@ class mainapp(QMainWindow, main_wind):
                                     font.size = Pt(11)
                                 if n.text == 'حضرة الدكتورة   :':
                                     if doctor == 'عدوية شمس سعيد':
-                                        n.text = f'حضرة الدكتورة   :                                     {doctor}'
+                                        n.text = f'حضرة الدكتورة                                        {doctor}'
 
                                     else:
-                                        n.text = f'حضرة الدكتور   :                                     '
+                                        n.text = f'حضرة الدكتور                                        '
                                     run = n.runs
 
                                     font = run[0].font
@@ -1805,9 +1804,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Color:GSE':
                                             k = analyst_and_result['result']
-                                            n.text = f'Color: {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2 = n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
@@ -1819,9 +1818,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Consistency':
                                             k = analyst_and_result['result']
-                                            n.text = f'Consistency: {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
@@ -1833,9 +1832,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'R.B.Cs:GSE':
                                             k = analyst_and_result['result']
-                                            n.text = f'R.B.Cs: {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
@@ -1847,9 +1846,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Pus cells:GSE':
                                             k = analyst_and_result['result']
-                                            n.text = f'Pus cells: {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
@@ -1861,9 +1860,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'E. Histolytica':
                                             k = analyst_and_result['result']
-                                            n.text = f'E. Histolytica: {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
@@ -1875,9 +1874,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'G. Lembilia':
                                             k = analyst_and_result['result']
-                                            n.text = f'G. Lembilia: {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
@@ -1889,9 +1888,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Ova':
                                             k = analyst_and_result['result']
-                                            n.text = f'Ova: {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
@@ -1903,9 +1902,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Bacteria:GSE':
                                             k = analyst_and_result['result']
-                                            n.text = f'Bacteria:  {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.name = 'Tahoma'
                                             font.size = Pt(14)
@@ -1917,9 +1916,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Monillia:GSE':
                                             k = analyst_and_result['result']
-                                            n.text = f'Monillia:  {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.name = 'Tahoma'
                                             font.size = Pt(14)
@@ -1931,9 +1930,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Fatty drop:GSE':
                                             k = analyst_and_result['result']
-                                            n.text = f'Fatty drop: {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.name = 'Tahoma'
                                             font.size = Pt(14)
@@ -1945,9 +1944,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Other:GSE':
                                             k = analyst_and_result['result']
-                                            n.text = f'Other: {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f' {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.size = Pt(14)
                                             font.name = 'Tahoma'
@@ -1978,11 +1977,11 @@ class mainapp(QMainWindow, main_wind):
                     for k in i.rows:
                         for j in k.cells:
                             for n in j.paragraphs:
-                                if n.text == 'أسـم المريض :':
+                                if n.text == 'أسـم المريض ':
                                     if genus == 0:
-                                        n.text = f'أسـم المريض :                                     {name}'
+                                        n.text = f'أسـم المريض                                      {name}'
                                     else:
-                                        n.text = f'أسـم المريضة :                                     {name}'
+                                        n.text = f'أسـم المريضة                                      {name}'
 
                                     run = n.runs
                                     font = run[0].font
@@ -1990,10 +1989,10 @@ class mainapp(QMainWindow, main_wind):
                                     font.size = Pt(11)
                                 if n.text == 'حضرة الدكتورة   :':
                                     if doctor == 'عدوية شمس سعيد':
-                                        n.text = f'حضرة الدكتورة   :                                     {doctor}'
+                                        n.text = f'حضرة الدكتورة                                        {doctor}'
 
                                     else:
-                                        n.text = f'حضرة الدكتور   :                                     '
+                                        n.text = f'حضرة الدكتور                                        '
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
@@ -2027,9 +2026,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Appearance':
                                             k = analyst_and_result['result']
-                                            n.text = f'Appearance : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2041,9 +2040,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Reaction:GUE':
                                             k = analyst_and_result['result']
-                                            n.text = f'Reaction      : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2055,9 +2054,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Albumin':
                                             k = analyst_and_result['result']
-                                            n.text = f'Albumin       : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2069,9 +2068,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Sugar':
                                             k = analyst_and_result['result']
-                                            n.text = f'Sugar          : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2083,9 +2082,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'RBCs:GUE':
                                             k = analyst_and_result['result']
-                                            n.text = f'RBCs         : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2097,9 +2096,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Pus cells:GUE':
                                             k = analyst_and_result['result']
-                                            n.text = f'Pus cells    : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2111,9 +2110,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Epith .cells':
                                             k = analyst_and_result['result']
-                                            n.text = f'Epith .cells : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2125,9 +2124,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Crystals':
                                             k = analyst_and_result['result']
-                                            n.text = f'Crystals     : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2139,9 +2138,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Casts':
                                             k = analyst_and_result['result']
-                                            n.text = f'Casts        : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2153,9 +2152,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Bacteria:GUE':
                                             k = analyst_and_result['result']
-                                            n.text = f'Bacteria    : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run( f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2167,9 +2166,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Monillia:GUE':
                                             k = analyst_and_result['result']
-                                            n.text = f'Monillia     : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.bold = False
                                             font.name = 'Tahoma'
                                             font.size = Pt(14)
@@ -2181,9 +2180,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Mucuse:GUE':
                                             k = analyst_and_result['result']
-                                            n.text = f'Mucuse        :  {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2195,9 +2194,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Other:GUE':
                                             k = analyst_and_result['result']
-                                            n.text = f'Other        : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.size = Pt(14)
                                 if n.text == 'Date:    /     / 20':
@@ -2221,9 +2220,9 @@ class mainapp(QMainWindow, main_wind):
                             for n in j.paragraphs:
                                 if n.text == 'أسـم المريض :':
                                     if genus == 0:
-                                        n.text = f'أسـم المريض :                                     {name}'
+                                        n.text = f'أسـم المريض                                      {name}'
                                     else:
-                                        n.text = f'أسـم المريضة :                                     {name}'
+                                        n.text = f'أسـم المريضة                                      {name}'
 
                                     run = n.runs
                                     font = run[0].font
@@ -2232,11 +2231,11 @@ class mainapp(QMainWindow, main_wind):
                                     font.size = Pt(11)
                                 if n.text == 'حضرة الدكتورة   :':
                                     if doctor == 'عدوية شمس سعيد':
-                                        n.text = f'حضرة الدكتورة   :                                     {doctor}'
+                                        n.text = f'حضرة الدكتورة                                        {doctor}'
 
                                     else:
 
-                                        n.text = f'حضرة الدكتور   :                                     '
+                                        n.text = f'حضرة الدكتور                                        '
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
@@ -2271,9 +2270,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Hb':
                                             k = analyst_and_result['result']
-                                            n.text = f'Hb             : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(12)
@@ -2285,9 +2284,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'PCV':
                                             k = analyst_and_result['result']
-                                            n.text = f'PCV           : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(12)
@@ -2299,9 +2298,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'WBCs':
                                             k = analyst_and_result['result']
-                                            n.text = f'WBCs         : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(12)
@@ -2313,9 +2312,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'E.S.R':
                                             k = analyst_and_result['result']
-                                            n.text = f'E.S.R          : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(12)
@@ -2327,9 +2326,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Blood Group':
                                             k = analyst_and_result['result']
-                                            n.text = f'Blood Group: {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(12)
@@ -2341,9 +2340,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Rh':
                                             k = analyst_and_result['result']
-                                            n.text = f'Rh: {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(12)
@@ -2355,9 +2354,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Pregnancy test  in urine':
                                             k = analyst_and_result['result']
-                                            n.text = f'Pregnancy test  in urine   : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(12)
@@ -2369,9 +2368,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Pregnancy test  in serum':
                                             k = analyst_and_result['result']
-                                            n.text = f'Pregnancy test  in serum  : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(12)
@@ -2383,9 +2382,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'R.B.Sugar':
                                             k = analyst_and_result['result']
-                                            n.text = f'R.B.Sugar                           : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(12)
@@ -2397,9 +2396,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Bl. Urea':
                                             k = analyst_and_result['result']
-                                            n.text = f'Bl. Urea                              : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(12)
@@ -2411,9 +2410,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Salmonella typhi  IgG':
                                             k = analyst_and_result['result']
-                                            n.text = f'Salmonella typhi  IgG : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(12)
@@ -2425,9 +2424,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Salmonella typhi  IgM':
                                             k = analyst_and_result['result']
-                                            n.text = f'Salmonella typhi  IgM : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(12)
@@ -2439,9 +2438,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Rose-Bengal test':
                                             k = analyst_and_result['result']
-                                            n.text = f'HBS Ag   : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(12)
@@ -2453,9 +2452,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'HBS Ag':
                                             k = analyst_and_result['result']
-                                            n.text = f'HBS Ag                                : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(12)
@@ -2467,9 +2466,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'HCV Ab':
                                             k = analyst_and_result['result']
-                                            n.text = f'HCV Ab                                : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(12)
@@ -2481,9 +2480,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'HIV':
                                             k = analyst_and_result['result']
-                                            n.text = f'HIV                                      : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(12)
@@ -2508,9 +2507,9 @@ class mainapp(QMainWindow, main_wind):
                             for n in j.paragraphs:
                                 if n.text == 'أسـم المريض :':
                                     if genus == 0:
-                                        n.text = f'أسـم المريض :                                     {name}'
+                                        n.text = f'أسـم المريض                                      {name}'
                                     else:
-                                        n.text = f'أسـم المريضة :                                     {name}'
+                                        n.text = f'أسـم المريضة                                      {name}'
 
                                     run = n.runs
                                     font = run[0].font
@@ -2519,10 +2518,10 @@ class mainapp(QMainWindow, main_wind):
                                     font.size = Pt(11)
                                 if n.text == 'حضرة الدكتورة   :':
                                     if doctor == 'عدوية شمس سعيد':
-                                        n.text = f'حضرة الدكتورة   :                                     {doctor}'
+                                        n.text = f'حضرة الدكتورة                                        {doctor}'
 
                                     else:
-                                        n.text = f'حضرة الدكتور   :                                     '
+                                        n.text = f'حضرة الدكتور                                        '
                                     run = n.runs
                                     font = run[0].font
                                     font.name = 'Monotype Koufi'
@@ -2557,9 +2556,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Volume':
                                             k = analyst_and_result['result']
-                                            n.text = f'Volume       : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2571,9 +2570,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Reaction:SFA':
                                             k = analyst_and_result['result']
-                                            n.text = f'Reaction      : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2585,9 +2584,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Colour:SFA':
                                             k = analyst_and_result['result']
-                                            n.text = f'Colour        : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2599,9 +2598,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Liquefaction':
                                             k = analyst_and_result['result']
-                                            n.text = f'Liquefaction : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2613,9 +2612,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Count':
                                             k = analyst_and_result['result']
-                                            n.text = f'Count          : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2627,9 +2626,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Motility:Active':
                                             k = analyst_and_result['result']
-                                            n.text = f'Active          : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2641,9 +2640,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Motility:Sluggish':
                                             k = analyst_and_result['result']
-                                            n.text = f'Sluggish       : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2655,9 +2654,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Motility:Dead':
                                             k = analyst_and_result['result']
-                                            n.text = f'Dead           : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2669,9 +2668,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Morphology:Normal':
                                             k = analyst_and_result['result']
-                                            n.text = f'Normal        : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2683,9 +2682,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Morphology:Abnormal':
                                             k = analyst_and_result['result']
-                                            n.text = f'Abnormal     : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2697,9 +2696,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Morphology:Pus cells':
                                             k = analyst_and_result['result']
-                                            n.text = f'Pus cells       : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2711,9 +2710,9 @@ class mainapp(QMainWindow, main_wind):
                                         }
                                         if analyst_and_result['analyst'] == 'Other:SFA':
                                             k = analyst_and_result['result']
-                                            n.text = f'Other           : {k}'
-                                            run = n.runs
-                                            font = run[0].font
+                                            n2=n.add_run(f'  {k}')
+                                            run = n2
+                                            font = run.font
                                             font.name = 'Tahoma'
                                             font.bold = False
                                             font.size = Pt(14)
@@ -2752,9 +2751,9 @@ class mainapp(QMainWindow, main_wind):
                                     font.name = 'Monotype Koufi'
                                 if n.text == 'حـضـرة الـدكتـورة    الـفاضـــلة :                                                                                            ':
                                     if doctor != 'عدوية شمس سعيد':
-                                        n.text = f'حـضـرة الـدكتـور    الـفاضـــل : {doctor}'
+                                        n.text = f'حـضـرة الـدكتـور    الـفاضـــل  {doctor}'
                                     else:
-                                        n.text = f'حـضـرة الـدكتـورة    الـفاضـــلة : {doctor}'
+                                        n.text = f'حـضـرة الـدكتـورة    الـفاضـــلة  {doctor}'
                                     run = n.runs
                                     font = run[0].font
                                     font.bold = True

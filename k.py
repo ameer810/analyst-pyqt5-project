@@ -67,7 +67,7 @@
 # sleep(2)
 # pyautogui.press('left')
 # pyautogui.press('enter')
-a=0
-for i in range(1,18):
-    a+=5
-    print(a,',',end='')
+# a=0
+# for i in range(1,18):
+#     a+=5
+#     print(a,',',end='')
