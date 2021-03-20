@@ -1025,9 +1025,9 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.Sales_Page()
             self.comboBox_16.setCurrentText('Casts')
             self.Sales_Page()
-            self.comboBox_16.setCurrentText('Bacteria:GSE')
+            self.comboBox_16.setCurrentText('Bacteria:GUE')
             self.Sales_Page()
-            self.comboBox_16.setCurrentText('Monillia:GSE')
+            self.comboBox_16.setCurrentText('Monillia:GUE')
             self.Sales_Page()
             self.comboBox_16.setCurrentText('Mucuse:GUE')
             self.Sales_Page()
@@ -1623,27 +1623,27 @@ class mainapp(QMainWindow, FORM_CLASS):
                         for j in k.cells:
                             for n in j.paragraphs:
                                 if n.text == 'أسـم المريض :':
-                                    if genus == 0:
-                                        n2 = n.add_run(f'                                {name}')
+                                    if genus == 1:
+                                        n.text = f'أسـم المريض                                {name}'
                                     else:
-                                        n2 = n.add_run(f'                                {name}')
-                                    run = n2
-                                    font = run.font
+                                        n.text = f'أسـم المريضة                                {name}'
+                                    run = n.runs
+                                    font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.bold = True
                                     font.size = Pt(11)
                                 if n.text == 'حضرة الدكتورة   :':
                                     if doctor == 'عدوية شمس سعيد':
-                                        n2=n.add_run(f'                                {doctor}')
+                                        n.text = f'حضرة الدكتورة                                {doctor}'
                                     else:
-                                        n2=n.add_run(f'                                {doctor}')
-                                    run = n2
-                                    font = run.font
+                                        n.text = f'حضرة الدكتور                                {doctor}'
+                                    run = n.runs
+                                    font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.bold = True
                                     font.size = Pt(11)
                                 if n.text == 'المحترم':
-                                    if genus == 0:
+                                    if genus == 1:
                                         n.text = 'المحترم'
                                     else:
                                         n.text = 'المحترمة'
@@ -1809,27 +1809,27 @@ class mainapp(QMainWindow, FORM_CLASS):
                         for j in k.cells:
                             for n in j.paragraphs:
                                 if n.text == 'أسـم المريض :':
-                                    if genus == 0:
-                                        n2 = n.add_run(f'                                {name}')
+                                    if genus == 1:
+                                        n.text = f'أسـم المريض                                {name}'
                                     else:
-                                        n2 = n.add_run(f'                                {name}')
-                                    run = n2
-                                    font = run.font
+                                        n.text = f'أسـم المريضة                                {name}'
+                                    run = n.runs
+                                    font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.bold = True
                                     font.size = Pt(11)
                                 if n.text == 'حضرة الدكتورة   :':
                                     if doctor == 'عدوية شمس سعيد':
-                                        n2 = n.add_run(f'                                {doctor}')
+                                        n.text = f'حضرة الدكتورة                                {doctor}'
                                     else:
-                                        n2 = n.add_run(f'                                {doctor}')
-                                    run = n2
-                                    font = run.font
+                                        n.text = f'حضرة الدكتور                                {doctor}'
+                                    run = n.runs
+                                    font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.bold = True
                                     font.size = Pt(11)
                                 if n.text == 'المحترم':
-                                    if genus == 0:
+                                    if genus == 1:
                                         n.text = 'المحترم'
                                     else:
                                         n.text = 'المحترمة'
@@ -2031,25 +2031,25 @@ class mainapp(QMainWindow, FORM_CLASS):
                         for j in k.cells:
                             for n in j.paragraphs:
                                 if n.text == 'أسـم المريض :':
-                                    if genus == 0:
-                                        n2 = n.add_run(f'                                {name}')
+                                    if genus == 1:
+                                        n.text = f'أسـم المريض                                {name}'
                                     else:
-                                        n2 = n.add_run(f'                                {name}')
-                                    run = n2
-                                    font = run.font
+                                        n.text = f'أسـم المريضة                                {name}'
+                                    run = n.runs
+                                    font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.size = Pt(11)
                                 if n.text == 'حضرة الدكتورة   :':
                                     if doctor == 'عدوية شمس سعيد':
-                                        n2 = n.add_run(f'                                {doctor}')
+                                        n.text = f'حضرة الدكتورة                                {doctor}'
                                     else:
-                                        n2 = n.add_run(f'                                {doctor}')
-                                    run = n2
-                                    font = run.font
+                                        n.text = f'حضرة الدكتور                                {doctor}'
+                                    run = n.runs
+                                    font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.size = Pt(11)
                                 if n.text == 'المحترم':
-                                    if genus == 0:
+                                    if genus == 1:
                                         n.text = 'المحترم'
                                     else:
                                         n.text = 'المحترمة'
@@ -2270,27 +2270,27 @@ class mainapp(QMainWindow, FORM_CLASS):
                         for j in k.cells:
                             for n in j.paragraphs:
                                 if n.text == 'أسـم المريض :':
-                                    if genus == 0:
-                                        n2 = n.add_run(f'                                {name}')
+                                    if genus == 1:
+                                        n.text = f'أسـم المريض                                {name}'
                                     else:
-                                        n2 = n.add_run(f'                                {name}')
-                                    run = n2
-                                    font = run.font
+                                        n.text = f'أسـم المريضة                                {name}'
+                                    run = n.runs
+                                    font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.bold = True
                                     font.size = Pt(11)
                                 if n.text == 'حضرة الدكتورة   :':
                                     if doctor == 'عدوية شمس سعيد':
-                                        n2 = n.add_run(f'                                {doctor}')
+                                        n.text = f'حضرة الدكتورة                                {doctor}'
                                     else:
-                                        n2 = n.add_run(f'                                {doctor}')
-                                    run = n2
-                                    font = run.font
+                                        n.text = f'حضرة الدكتور                                {doctor}'
+                                    run = n.runs
+                                    font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.bold = True
                                     font.size = Pt(11)
                                 if n.text == 'المحترم':
-                                    if genus == 0:
+                                    if genus == 1:
                                         n.text = 'المحترم'
                                     else:
                                         n.text = 'المحترمة'
@@ -2554,27 +2554,27 @@ class mainapp(QMainWindow, FORM_CLASS):
 
                             for n in j.paragraphs:
                                 if n.text == 'أسـم المريض :':
-                                    if genus == 0:
-                                        n2 = n.add_run(f'                                {name}')
+                                    if genus == 1:
+                                        n.text = f'أسـم المريض                                {name}'
                                     else:
-                                        n2 = n.add_run(f'                                {name}')
-                                    run = n2
-                                    font = run.font
+                                        n.text = f'أسـم المريضة                                {name}'
+                                    run = n.runs
+                                    font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.bold = True
                                     font.size = Pt(11)
                                 if n.text == 'حضرة الدكتورة   :':
                                     if doctor == 'عدوية شمس سعيد':
-                                        n2 = n.add_run(f'                                {doctor}')
+                                        n.text = f'حضرة الدكتورة                                {doctor}'
                                     else:
-                                        n2 = n.add_run(f'                                {doctor}')
-                                    run = n2
-                                    font = run.font
+                                        n.text = f'حضرة الدكتور                                {doctor}'
+                                    run = n.runs
+                                    font = run[0].font
                                     font.name = 'Monotype Koufi'
                                     font.bold = True
                                     font.size = Pt(11)
                                 if n.text == 'المحترم':
-                                    if genus == 0:
+                                    if genus == 1:
                                         n.text = 'المحترم'
                                     else:
                                         n.text = 'المحترمة'
@@ -2786,27 +2786,27 @@ class mainapp(QMainWindow, FORM_CLASS):
 
                             for n in j.paragraphs:
                                 if n.text == '     أســم الـمــريــض    :':
-                                    if genus == 0:
-                                        n2 = n.add_run(f'                                {name}')
+                                    if genus == 1:
+                                        n.text=f'أســم الـمــريــض                                {name}'
                                     else:
-                                        n2 = n.add_run(f'                                {name}')
-                                    run = n2
-                                    font = run.font
+                                        n.text=f'أســم الـمــريــضة                                {name}'
+                                    run = n.runs
+                                    font = run[0].font
                                     font.bold = True
                                     font.size = Pt(14)
                                     font.name = 'Monotype Koufi'
                                 if n.text == 'حـضـرة الـدكتـورة    الـفاضـــلة :                                                                                            ':
                                     if doctor != 'عدوية شمس سعيد':
-                                        n.text = f'حـضـرة الـدكتـور    الـفاضـــل  {doctor}'
+                                        n.text = f'حـضـرة الـدكتـورة    الـفاضـــل                                {doctor}'
                                     else:
-                                        n.text = f'حـضـرة الـدكتـورة    الـفاضـــلة  {doctor}'
+                                        n.text = f'حـضـرة الـدكتـورة    الـفاضـــلة                                {doctor}'
                                     run = n.runs
                                     font = run[0].font
                                     font.bold = True
                                     font.size = Pt(14)
                                     font.name = 'Monotype Koufi'
                                 if n.text == 'الـمـحـتـرم':
-                                    if genus == 0:
+                                    if genus == 1:
                                         n.text = 'المحترم'
                                     else:
                                         n.text = 'المحترمة'
