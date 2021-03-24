@@ -150,6 +150,9 @@ class mainapp(QMainWindow, FORM_CLASS):
             if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
                 os.remove(r'%s\هرمونات مشترك latest.docx' % save_word_files)
         except Exception as e:
+            word = client.Dispatch("Word.Application")
+            word.ActiveDocument.Close()
+            self.Delete_Files()
             print(e)
 
     def Show_paths(self):
@@ -226,10 +229,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                       "هل قمت بطباعة جميع الملفات التي تمت معاينتها؟\n لا تضغط نعم الا لو قمت بطباعتها",
                                       QMessageBox.Yes | QMessageBox.No)
         if warning == QMessageBox.Yes:
-            warning2 = QMessageBox.warning(self, '',
-                                           "قم باغلاق جميع نوافذ تطبيق microsoft word. هل قمت باغلاقها؟",
-                                           QMessageBox.Yes | QMessageBox.No)
-            if warning2 == QMessageBox.Yes:
+            try:
                 print('now delete')
                 if_print = True
                 print('its start')
@@ -250,7 +250,10 @@ class mainapp(QMainWindow, FORM_CLASS):
 
                 if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
                     os.remove(r'%s\هرمونات مشترك latest.docx' % save_word_files)
-
+            except:
+                word = client.Dispatch("Word.Application")
+                word.ActiveDocument.Close()
+                self.Delete_Files()
     # def Reset_password(self):
     #     user_name = self.lineEdit_7.text()
     #     self.cur.execute(''' SELECT * FROM adduser ''')
