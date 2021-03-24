@@ -478,6 +478,9 @@ class mainapp(QMainWindow, FORM_CLASS):
                 print('exept')
     def get_total_price(self):
         total_price = 0
+        GSE=['Color:GSE','Consistency','Pus cells:GSE', 'R.B.Cs:GSE','E. Histolytica','Ova','Other:GSE','Bacteria:GSE','Monillia:GSE','Fatty drop:GSE']
+        GUE=['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells','Crystals','Casts', 'Other:GUE', 'Bacteria:GUE', 'Monillia:GUE','Mucuse:GUE']
+        SFA=['Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active','Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal','Morphology:Pus cells','Other:SFA','Count']
         My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
                   'Crystals',
                   'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active',
@@ -485,16 +488,24 @@ class mainapp(QMainWindow, FORM_CLASS):
                   'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
                   'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE', 'Bacteria:GSE', 'Bacteria:GUE', 'Monillia:GSE', 'Monillia:GUE',
                   'Fatty drop:GSE', 'Fatty drop:GUE', 'Mucuse:GUE']
+        c_GSE=False
+        c_GUE=False
+        c_SFA=False
         rMy_num = 0
         for row in range(0, self.tableWidget_5.rowCount() - 1):
             try:
                 analyst_name = self.tableWidget_5.item(row, 1).text()
             except:
                 analyst_name=''
-            for kg in My_num:
+            for kg in GSE:
                 if kg == analyst_name:
-                    total_price += 3
-                    rMy_num += 1
+                    c_GSE=True
+            for kg1 in GUE:
+                if kg1 == analyst_name:
+                    c_GUE=True
+            for kg2 in SFA:
+                if kg2 == analyst_name:
+                    c_SFA=True
             try:
                 a = self.tableWidget_5.item(row, 4).text()
             except:
@@ -503,8 +514,13 @@ class mainapp(QMainWindow, FORM_CLASS):
                 total_price += int(a)
             except ValueError:
                 a = 0
-        for num in range(1, rMy_num):
-            total_price -= 3
+        print(a,'jjkim')
+        if c_SFA == True:
+            total_price += 3
+        if c_GSE == True:
+            total_price +=3
+        if c_GUE == True:
+            total_price +=3
         self.lineEdit_24.setText(str(total_price))
 
     def Sales_Page(self):
@@ -1376,6 +1392,13 @@ class mainapp(QMainWindow, FORM_CLASS):
         all_client_analyst = []
         total = 0
         rMy_num = 0
+        GSE=['Color:GSE','Consistency','Pus cells:GSE', 'R.B.Cs:GSE','E. Histolytica','Ova','Other:GSE','Bacteria:GSE','Monillia:GSE','Fatty drop:GSE']
+        GUE=['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells','Crystals','Casts', 'Other:GUE', 'Bacteria:GUE', 'Monillia:GUE','Mucuse:GUE']
+        SFA=['Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active','Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal','Morphology:Pus cells','Other:SFA','Count']
+        
+        c_GSE=False
+        c_GUE=False
+        c_SFA=False
         My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
                   'Crystals',
                   'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active',
@@ -1386,17 +1409,23 @@ class mainapp(QMainWindow, FORM_CLASS):
         for i in client_analyst_data:
             num += 1
         for k in range(0, num):
-            for kds in My_num:
-                if client_analyst_data[k][1] == kds:
-                    total += 3
-                    rMy_num += 1
-            total += int(client_analyst_data[k][0])
+            for kg in GSE:
+                if kg == client_analyst_data[k][1]:
+                    c_GSE=True
+            for kg1 in GUE:
+                if kg1 == client_analyst_data[k][1]:
+                    c_GUE=True
+            for kg2 in SFA:
+                if kg2 == client_analyst_data[k][1]:
+                    c_SFA=True
         for j in range(0, num):
             all_client_analyst.append(str(client_analyst_data[j][1]))
-
-        for num8 in range(0, rMy_num - 1):
-            total -= 3
-            print('lkjljiojiouo')
+        if c_SFA == True:
+            total += 3
+        if c_GSE == True:
+            total += 3
+        if c_GUE == True:
+            total += 3
         self.tableWidget_4.setRowCount(0)
         self.tableWidget_4.insertRow(0)
         for row, form in enumerate(client_data):
