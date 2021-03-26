@@ -95,7 +95,8 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.cur.execute(''' SELECT name FROM addanalyst ''')
         data = self.cur.fetchall()
         for i in data:
-            analysts_name_glo.append(i[0])
+            if i[0] not in analysts_name_glo:
+                analysts_name_glo.append(i[0])
 
     def Auto_Complete(self, model):
         model.setStringList(analysts_name_glo)
@@ -112,7 +113,8 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.cur.execute(''' SELECT client_name FROM addclient ''')
         data = self.cur.fetchall()
         for i in data:
-            clients_name_glo.append(i[0])
+            if i[0] not in clients_name_glo:
+                clients_name_glo.append(i[0])
 
     def Auto_Complete2(self, model):
         model.setStringList(clients_name_glo)
@@ -203,7 +205,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             file = 'هرمونات مشترك الاصلي.docx'
         QMessageBox.information(self, 'info', 'تتم الطباعة الان')
         word.Documents.Open(r'%s\%s' % (word_files, file))
-        word.ActiveDocument.PrintOut(Copies=copyes_num)
+        word.ActiveDocument.PrintOut(Background=False,Copies=copyes_num)
         # time.sleep(2)
         # pyautogui.press('enter')
         # time.sleep(1.5)
@@ -306,7 +308,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.spinBox_7.setEnabled(True)
         self.comboBox_14.setEnabled(True)
         self.textEdit.setEnabled(True)
-
+        self.spinBox.setValue(0)
     def Show_All_Clients(self):
         client_name = self.lineEdit_27.text()
         if client_name != '0':
@@ -517,7 +519,6 @@ class mainapp(QMainWindow, FORM_CLASS):
                 total_price += int(a)
             except ValueError:
                 a = 0
-        print(a,'jjkim')
         if c_SFA == True:
             total_price += 3
         if c_GSE == True:
@@ -614,6 +615,7 @@ class mainapp(QMainWindow, FORM_CLASS):
 
         self.tableWidget_5.setRowCount(0)
         self.tableWidget_5.insertRow(0)
+        print(analyst_data)
         for row, form in enumerate(analyst_data):
             for col, item in enumerate(form):
                 # if col==4:
@@ -626,7 +628,18 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.tableWidget_5.insertRow(row_pos)
         print('first')
         chick_if_add_new = True
-
+        try:
+            axd1 = self.tableWidget_5.findItems('Fatty drop:GSE', Qt.MatchContains)
+            axd2 = self.tableWidget_5.findItems('Mucuse:GUE', Qt.MatchContains)
+            axd3 = self.tableWidget_5.findItems('Morphology:Pus cells', Qt.MatchContains)
+            self.tableWidget_5.insertRow(axd1[0].row() + 1)
+            self.tableWidget_5.insertRow(axd1[0].row() + 2)
+            self.tableWidget_5.insertRow(axd2[0].row() + 1)
+            self.tableWidget_5.insertRow(axd2[0].row() + 2)
+            self.tableWidget_5.insertRow(axd3[0].row() + 1)
+            self.tableWidget_5.insertRow(axd3[0].row() + 2)
+        except:
+            pass
         for rowd in range(0, self.tableWidget_5.rowCount() - 1):
             all_name_items = []
             the_name = ''
@@ -750,6 +763,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                     self.tableWidget_5.setCellWidget(rowd, 2, mycobmbo)
                     if mycobmbo.currentText() =='' or mycobmbo.currentText() ==' ':
                         mycobmbo.setCurrentIndex(0)
+        self.tableWidget_5.scrollToBottom()
+        self.get_total_price()
         self.Show_All_The_Sales()
         # mycobmbo = QComboBox(self)
 
@@ -837,11 +852,26 @@ class mainapp(QMainWindow, FORM_CLASS):
                 chick_if_add_new = False
                 self.Show_All_The_Sales()
 
-
+                print('mystart')
+                try:
+                    axd1 = self.tableWidget_5.findItems('Fatty drop:GSE', Qt.MatchContains)
+                    axd2 = self.tableWidget_5.findItems('Mucuse:GUE', Qt.MatchContains)
+                    axd3 = self.tableWidget_5.findItems('Morphology:Pus cells', Qt.MatchContains)
+                    self.tableWidget_5.insertRow(axd1[0].row() + 1)
+                    self.tableWidget_5.insertRow(axd1[0].row() + 2)
+                    self.tableWidget_5.insertRow(axd2[0].row() + 1)
+                    self.tableWidget_5.insertRow(axd2[0].row() + 2)
+                    self.tableWidget_5.insertRow(axd3[0].row() + 1)
+                    self.tableWidget_5.insertRow(axd3[0].row() + 2)
+                except:
+                    pass
                 for rowd in range(0, self.tableWidget_5.rowCount() - 1):
-                    all_name_items=[]
-                    the_name=''
-                    name=self.tableWidget_5.item(rowd, 0).text()
+                    all_name_items = []
+                    the_name = ''
+                    try:
+                        name = self.tableWidget_5.item(rowd, 0).text()
+                    except:
+                        name=''
                     for i in name:
                         all_name_items.append(i)
                         try:
@@ -851,12 +881,11 @@ class mainapp(QMainWindow, FORM_CLASS):
                             pass
                     for jikl in all_name_items:
                         the_name += jikl
-                    self.tableWidget_5.setItem(rowd,0,QTableWidgetItem(the_name))
+                    self.tableWidget_5.setItem(rowd, 0, QTableWidgetItem(the_name))
                     try:
                         rs_name = self.tableWidget_5.item(rowd, 1).text()
                     except:
-                        rs_name=''
-
+                        rs_name = ''
                     mycobmbo = QComboBox(self)
 
                     if rs_name == 'Color:GSE' or rs_name == 'Colour:SFA':
@@ -895,7 +924,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                         mycobmbo = QComboBox(self)
                         mycobmbo.addItems(['Granular cast +', 'Granular cast ++', 'Granular cast +++'])
 
-                    if rs_name == 'Bacteria:GSE' or rs_name == 'Monillia:GSE' or rs_name == 'Fatty drop:GSE' or rs_name == 'Monillia:GUE' or rs_name == 'Fatty drop:GUE' or rs_name == 'Bacteria:GUE':
+                    if rs_name == 'Bacteria:GSE' or rs_name == 'Monillia:GSE' or rs_name == 'Fatty drop:GSE' or rs_name == 'Monillia:GUE' or rs_name == 'Fatty drop:GUE' or rs_name == 'Bacteria:GUE' or rs_name == 'Mucuse:GUE':
                         mycobmbo = QComboBox(self)
                         print('whyyyyyyyy')
                         mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
@@ -903,7 +932,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                         mycobmbo = QComboBox(self)
                         mycobmbo.addItems(
                             ['5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75',
-                             '80', '85'])
+                             '80',
+                             '85'])
                     if rs_name == 'Volume':
                         mycobmbo = QComboBox(self)
                         mycobmbo.addItems(['0.5', '0.6', '0.7'])
@@ -949,13 +979,15 @@ class mainapp(QMainWindow, FORM_CLASS):
                     for jjk in My_num:
                         try:
                             if rs_name == jjk:
+                                # print('mystatrt')
                                 r2_analyst_name = self.tableWidget_5.item(rowd, 1).text()
                                 r2_client_name = self.lineEdit_20.text()
                                 self.cur.execute(
                                     ''' SELECT  analyst_result  FROM addnewitem WHERE client_name=%s AND analyst_name=%s ''',
                                     (r2_client_name, r2_analyst_name))
-                                myrs=self.cur.fetchall()
-                                if myrs!='' or myrs!=None:
+                                myrs = self.cur.fetchall()
+
+                                if myrs != '' or myrs != None:
                                     index = mycobmbo.findText(myrs[0][0], Qt.MatchFixedString)
                                     mycobmbo.setCurrentIndex(index)
                                 self.tableWidget_5.setItem(rowd, 2, QTableWidgetItem(str('')))
@@ -968,6 +1000,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             except IndexError:
                 QMessageBox.information(self, 'Error',
                                         'الرقم الذي ادخلته غير صحيح يرجى ادخال رقم صحيح او مراجعة صفحة "كل المبيعات" للتأكد من الرقم')
+            self.get_total_price()
 
     def Chick_analyst_category(self):
         pationt_name = self.lineEdit_20.text()
@@ -3222,7 +3255,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                         # word.ActiveDocument()
 
                         # word.ActiveDocument.ActiveWindow.View()
-                        word.ActiveDocument.PrintOut()
+                        word.ActiveDocument.PrintOut(Background=False)
                         # time.sleep(2)
                         # pyautogui.press('enter')
                         # time.sleep(1.5)
@@ -3242,7 +3275,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                 if move == 1:
                     if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
                         word.Documents.Open(r'%s\GSE latest.docx' % save_word_files)
-                        word.ActiveDocument.PrintOut()
+                        word.ActiveDocument.PrintOut(Background=False)
                         # time.sleep(2)
                         # pyautogui.press('enter')
                         # time.sleep(1.5)
@@ -3263,7 +3296,7 @@ class mainapp(QMainWindow, FORM_CLASS):
 
                     if os.path.exists(r'%s\SFA latest.docx' % save_word_files):
                         word.Documents.Open(r'%s\SFA latest.docx' % save_word_files)
-                        word.ActiveDocument.PrintOut()
+                        word.ActiveDocument.PrintOut(Background=False)
                         # time.sleep(2)
                         # pyautogui.press('enter')
                         # time.sleep(1.5)
@@ -3285,7 +3318,7 @@ class mainapp(QMainWindow, FORM_CLASS):
 
                     if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
                         word.Documents.Open(r'%s\GUE latest.docx' % save_word_files)
-                        word.ActiveDocument.PrintOut()
+                        word.ActiveDocument.PrintOut(Background=False)
                         # time.sleep(2)
                         # pyautogui.press('enter')
                         # time.sleep(1.5)
@@ -3307,7 +3340,7 @@ class mainapp(QMainWindow, FORM_CLASS):
 
                     if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
                         word.Documents.Open(r'%s\hematology latest.docx' % save_word_files)
-                        word.ActiveDocument.PrintOut()
+                        word.ActiveDocument.PrintOut(Background=False)
                         # time.sleep(2)
                         # pyautogui.press('enter')
                         # time.sleep(1.5)
@@ -3329,7 +3362,7 @@ class mainapp(QMainWindow, FORM_CLASS):
 
                     if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
                         word.Documents.Open(r'%s\هرمونات مشترك latest.docx' % save_word_files)
-                        word.ActiveDocument.PrintOut()
+                        word.ActiveDocument.PrintOut(Background=False)
                         # time.sleep(2)
                         # pyautogui.press('enter')
                         # time.sleep(1.5)
@@ -3355,6 +3388,7 @@ class mainapp(QMainWindow, FORM_CLASS):
 
 def main():
     app = QApplication(sys.argv)
+    app.processEvents()
     window = mainapp()
     window.show()
     app.exec_()
