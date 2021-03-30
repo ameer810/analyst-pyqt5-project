@@ -1,14 +1,13 @@
 import datetime
 import os
-import sys
 import time
 import MySQLdb
 # import pyautogui
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-# from PyQt5.uic import loadUiType
-
+from PyQt5.uic import loadUiType
+import sys
 from PyQt5.uic.properties import QtCore
 from docx import *
 # from shutil import copyfile
@@ -17,18 +16,19 @@ from docx.shared import Pt
 # from email.mime.text import MIMEText
 # from email.mime.multipart import MIMEMultipart
 from win32com import client
-from mymain import Ui_MainWindow as main_wind
-# FORM_CLASS, _ = loadUiType("design.ui")
+# from pydesign import Ui_MainWindow as main_wind
+FORM_CLASS, _ = loadUiType("design.ui")
 user_id = 4
 client_id_glob = 0
 chick_if_add_new = False
 if_print = False
 analysts_name_glo = []
 clients_name_glo = []
-clients_name_glo_clients_page = []
+
+
 # GSE_row1=[]
 
-class mainapp(QMainWindow, main_wind):
+class mainapp(QMainWindow, FORM_CLASS):
     def __init__(self, parent=None):
         super(mainapp, self).__init__(parent)
         QMainWindow.__init__(self)
@@ -48,8 +48,6 @@ class mainapp(QMainWindow, main_wind):
         self.Auto_complete_combo()
         self.add_client_to_list()
         self.Auto_complete_combo2()
-        self.add_client_to_list4()
-        self.Auto_complete_combo4()
 
     def DB_Connect(self):
         self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel', charset="utf8",
@@ -92,44 +90,7 @@ class mainapp(QMainWindow, main_wind):
         self.pushButton_23.clicked.connect(self.Print_empty_papers)
         self.pushButton_24.clicked.connect(self.Add_Path)
         self.pushButton_36.clicked.connect(self.Show_All_Clients)
-        self.my_def()
-    def my_def(self):
-        print('sdge')
-        self.cur.execute(''' SELECT client_name FROM addclient ORDER BY -date ''')
-        data=self.cur.fetchall()
-        all_names = {}
-        all_data = []
-        id = 0
 
-        for item in data:
-            if item[0] not in all_names:
-                all_names[item[0]] = 0
-
-        for s in all_names.keys():
-            self.cur.execute(''' SELECT id FROM addclient WHERE client_name=%s ORDER BY id ''', (s,))
-            analyst_data2 = self.cur.fetchall()
-            all_names[s] = analyst_data2[0][0]
-            id = analyst_data2[0][0]
-            self.cur.execute(''' SELECT * FROM addclient WHERE id=%s ORDER BY -date ''', (id,))
-            latest_data = self.cur.fetchall()
-            data = [{'name': s, 'value': latest_data}]
-            all_data.append(data)
-        # self.tableWidget_2.setRowCount(0)
-        # self.tableWidget_2.insertRow(0)
-        l_data = ()
-        for ih in all_data:
-            hs_data = ih[0]['value']
-            l_data += tuple(hs_data)
-        # print(l_data, 'k')
-        for row, form in enumerate(l_data):
-            for col, item in enumerate(form):
-                if col == 3:
-                    self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(l_data[row][4])))
-                else:
-                    self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(item)))
-                col += 1
-            row_pos = self.tableWidget_2.rowCount()
-            self.tableWidget_2.insertRow(row_pos)
     def add_Analyst_to_list(self):
         self.cur.execute(''' SELECT name FROM addanalyst ''')
         data = self.cur.fetchall()
@@ -149,7 +110,7 @@ class mainapp(QMainWindow, main_wind):
         self.Auto_Complete(model)
 
     def add_client_to_list(self):
-        self.cur.execute(''' SELECT client_name FROM addclient WHERE DATE(date)=%s ''',(datetime.date.today(),))
+        self.cur.execute(''' SELECT client_name FROM addclient ''')
         data = self.cur.fetchall()
         for i in data:
             if i[0] not in clients_name_glo:
@@ -166,23 +127,6 @@ class mainapp(QMainWindow, main_wind):
             model = QStringListModel()
             completer.setModel(model)
             self.Auto_Complete2(model)
-    def add_client_to_list4(self):
-        self.cur.execute(''' SELECT client_name FROM addclient''')
-        data = self.cur.fetchall()
-        for i in data:
-            if i[0] not in clients_name_glo_clients_page:
-                clients_name_glo_clients_page.append(i[0])
-
-    def Auto_Complete4(self, model):
-        model.setStringList(clients_name_glo_clients_page)
-
-    def Auto_complete_combo4(self):
-        combo = self.lineEdit_27
-        completer = QCompleter()
-        combo.setCompleter(completer)
-        model = QStringListModel()
-        completer.setModel(model)
-        self.Auto_Complete4(model)
 
     def Delete_Files(self):
         self.cur.execute(''' SELECT * FROM paths WHERE id=1 ''')
@@ -352,7 +296,7 @@ class mainapp(QMainWindow, main_wind):
         self.tableWidget_5.insertRow(0)
         self.lineEdit_20.setText('')
         self.lineEdit_21.setText('')
-        self.spinBox_7.setValue(20)
+        self.spinBox_7.setValue(0)
         self.doubleSpinBox_7.setValue(0)
         self.comboBox_14.setCurrentIndex(0)
         self.comboBox_16.setCurrentIndex(0)
@@ -372,8 +316,8 @@ class mainapp(QMainWindow, main_wind):
         else:
             self.cur.execute(''' SELECT * FROM addclient ORDER BY -date''')
         analyst_data = self.cur.fetchall()
-        # self.tableWidget_2.setRowCount(0)
-        # self.tableWidget_2.insertRow(0)
+        self.tableWidget_2.setRowCount(0)
+        self.tableWidget_2.insertRow(0)
         try:
             if client_name != '0' and client_name != '':
                 for i, k in enumerate(analyst_data[0]):
@@ -385,9 +329,8 @@ class mainapp(QMainWindow, main_wind):
             else:
                 self.Show_All_The_Sales()
         except:
-            pass
-            # self.tableWidget_2.setRowCount(0)
-            # self.tableWidget_2.insertRow(0)
+            self.tableWidget_2.setRowCount(0)
+            self.tableWidget_2.insertRow(0)
 
     def Search_In_History(self):
         actionsd = self.comboBox_24.currentIndex()
@@ -469,9 +412,9 @@ class mainapp(QMainWindow, main_wind):
     def Search_In_All_Sales(self):
         client_name = self.lineEdit_25.text()
         if client_name != '0':
-            self.cur.execute(''' SELECT * FROM addclient WHERE client_name=%s AND DATE(date)=%s ORDER BY id''', (client_name,datetime.date.today(),))
+            self.cur.execute(''' SELECT * FROM addclient WHERE client_name=%s ORDER BY id''', (client_name,))
         else:
-            self.cur.execute(''' SELECT * FROM addclient WHERE DATE(date)=%s ORDER BY -date''',(datetime.date.today(),))
+            self.cur.execute(''' SELECT * FROM addclient ORDER BY -date''')
         analyst_data = self.cur.fetchall()
         self.tableWidget_6.setRowCount(0)
         self.tableWidget_6.insertRow(0)
@@ -588,7 +531,6 @@ class mainapp(QMainWindow, main_wind):
         self.lineEdit_20.setEnabled(False)
         global client_id_glob
         global chick_if_add_new
-        global clients_name_glo
         My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
                   'Crystals',
                   'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active',
@@ -643,7 +585,6 @@ class mainapp(QMainWindow, main_wind):
             latest_result,
             total_price, total_price, datetime.datetime.now()))
         self.db.commit()
-        clients_name_glo.append(str(client_name))
         for rowj in range(0, self.tableWidget_5.rowCount() - 1):
             try:
                 r2_doctor=self.tableWidget_5.item(rowj, 3).text()
@@ -702,10 +643,7 @@ class mainapp(QMainWindow, main_wind):
         for rowd in range(0, self.tableWidget_5.rowCount() - 1):
             all_name_items = []
             the_name = ''
-            try:
-                name = self.tableWidget_5.item(rowd, 0).text()
-            except:
-                pass
+            name = self.tableWidget_5.item(rowd, 0).text()
             for i in name:
                 all_name_items.append(i)
                 try:
@@ -926,7 +864,6 @@ class mainapp(QMainWindow, main_wind):
                     self.tableWidget_5.insertRow(axd3[0].row() + 1)
                     self.tableWidget_5.insertRow(axd3[0].row() + 2)
                 except:
-                    print('ecxehue')
                     pass
                 for rowd in range(0, self.tableWidget_5.rowCount() - 1):
                     all_name_items = []
@@ -1254,7 +1191,7 @@ class mainapp(QMainWindow, main_wind):
         # self.History()
 
     def Show_All_The_Sales(self):
-        self.cur.execute(''' SELECT client_name FROM addclient WHERE DATE(date)=%s ORDER BY -date ''',(datetime.date.today(),))
+        self.cur.execute(''' SELECT client_name FROM addclient ORDER BY -date ''')
         analyst_data = self.cur.fetchall()
         all_names = {}
         all_data = []
@@ -1275,8 +1212,8 @@ class mainapp(QMainWindow, main_wind):
             all_data.append(data)
         self.tableWidget_6.setRowCount(0)
         self.tableWidget_6.insertRow(0)
-        # self.tableWidget_2.setRowCount(0)
-        # self.tableWidget_2.insertRow(0)
+        self.tableWidget_2.setRowCount(0)
+        self.tableWidget_2.insertRow(0)
         l_data = ()
         for ih in all_data:
             hs_data = ih[0]['value']
@@ -1284,17 +1221,24 @@ class mainapp(QMainWindow, main_wind):
         # print(l_data, 'k')
         for row, form in enumerate(l_data):
             for col, item in enumerate(form):
+                # print(index)
+                # if col ==0:
+                #     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
+                # if col == 1:
+                #     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
+                # if col == 2:
+                #     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
                 if col == 3:
                     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(l_data[row][4])))
-                    # self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(l_data[row][4])))
+                    self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(l_data[row][4])))
                 else:
                     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
-                    # self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(item)))
+                    self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
             row_pos = self.tableWidget_6.rowCount()
             self.tableWidget_6.insertRow(row_pos)
-            # row_pos = self.tableWidget_2.rowCount()
-            # self.tableWidget_2.insertRow(row_pos)
+            row_pos = self.tableWidget_2.rowCount()
+            self.tableWidget_2.insertRow(row_pos)
         # print(all_data)
 
     # def Show_All_The_Analysts(self):
@@ -1472,10 +1416,6 @@ class mainapp(QMainWindow, main_wind):
             self.comboBox_16.addItem(str(item[0]))
 
     def Clients_Page(self):
-        self.tableWidget_4.setRowCount(0)
-        self.tableWidget_4.insertRow(0)
-        self.tableWidget_9.setRowCount(0)
-        self.tableWidget_9.insertRow(0)
         id = self.spinBox_2.value()
         self.cur.execute(''' SELECT client_name,client_age,client_genus,client_doctor FROM addclient WHERE id=%s''',
                          (str(id),))
@@ -1491,7 +1431,7 @@ class mainapp(QMainWindow, main_wind):
         GSE=['Color:GSE','Consistency','Pus cells:GSE', 'R.B.Cs:GSE','E. Histolytica','Ova','Other:GSE','Bacteria:GSE','Monillia:GSE','Fatty drop:GSE']
         GUE=['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells','Crystals','Casts', 'Other:GUE', 'Bacteria:GUE', 'Monillia:GUE','Mucuse:GUE']
         SFA=['Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active','Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal','Morphology:Pus cells','Other:SFA','Count']
-        
+
         c_GSE=False
         c_GUE=False
         c_SFA=False
