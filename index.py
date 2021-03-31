@@ -258,10 +258,11 @@ class mainapp(QMainWindow, main_wind):
         if paper_type == 4:
             category = 'هرمونات مشترك'
             file = 'هرمونات مشترك الاصلي.docx'
-        QMessageBox.information(self, 'info', 'تتم الطباعة الان')
         word.Documents.Open(r'%s\%s' % (word_files, file))
         for ihjk in range(1,copyes_num+1):
             word.ActiveDocument.PrintOut(Background=False)
+        QMessageBox.information(self, 'info', 'تمت الطباعة بنجاح')
+
         # time.sleep(2)
         # pyautogui.press('enter')
         # time.sleep(1.5)
@@ -383,8 +384,7 @@ class mainapp(QMainWindow, main_wind):
                         self.tableWidget_2.setItem(0, i, QTableWidgetItem(str(k)))
                     print('ok')
             else:
-                self.my_def()
-
+                self.Show_All_The_Sales()
         except:
             pass
             # self.tableWidget_2.setRowCount(0)
@@ -501,10 +501,14 @@ class mainapp(QMainWindow, main_wind):
         year = date.day
         word_type = []
         for row in range(0, self.tableWidget_5.rowCount() - 1):
-            real_name = self.tableWidget_5.item(row, 0).text()
-            analyst = self.tableWidget_5.item(row, 1).text()
+            try:
+                real_name = self.tableWidget_5.item(row, 0).text()
+                analyst = self.tableWidget_5.item(row, 1).text()
+            except:
+                pass
             self.cur.execute(''' SELECT sub_category FROM addanalyst WHERE name=%s ''', (analyst,))
-            all_analyst.append(str(analyst))
+            if analyst not in all_analyst:
+                all_analyst.append(str(analyst))
             data = self.cur.fetchone()
             if data != None:
                 for item in data:
@@ -512,9 +516,15 @@ class mainapp(QMainWindow, main_wind):
             try:
                 result = self.tableWidget_5.cellWidget(row, 2).currentText()
             except:
-                result = self.tableWidget_5.item(row, 2).text()
+                try:
+                    result = self.tableWidget_5.item(row, 2).text()
+                except:
+                    pass
             all_result.append(str(result))
-            real_doctor = self.tableWidget_5.item(row, 3).text()
+            try:
+                real_doctor = self.tableWidget_5.item(row, 3).text()
+            except:
+                pass
         try:
             self.Bio_Word(real_name, real_doctor, all_analyst, all_result, year, month, day, word_type, prev, genuses)
 
@@ -525,13 +535,19 @@ class mainapp(QMainWindow, main_wind):
         if prev != 'T':
             self.Delete_Files()
         for rowj in range(0, self.tableWidget_5.rowCount() - 1):
-            r2_doctor=self.tableWidget_5.item(rowj, 3).text()
-            r2_analyst_name=self.tableWidget_5.item(rowj, 1).text()
-            r2_client_name = self.lineEdit_20.text()
+            try:
+                r2_doctor=self.tableWidget_5.item(rowj, 3).text()
+                r2_analyst_name=self.tableWidget_5.item(rowj, 1).text()
+                r2_client_name = self.lineEdit_20.text()
+            except:
+                pass
             try:
                 r2_result = self.tableWidget_5.cellWidget(rowj, 2).currentText()
             except:
-                r2_result = self.tableWidget_5.item(rowj, 2).text()
+                try:
+                    r2_result = self.tableWidget_5.item(rowj, 2).text()
+                except:
+                    pass
             try:
                 print(r2_result)
                 self.cur.execute(''' UPDATE addnewitem SET doctor_name=%s ,analyst_name=%s ,analyst_result=%s WHERE client_name=%s AND analyst_name=%s''',(r2_doctor,r2_analyst_name,r2_result,r2_client_name,r2_analyst_name))
@@ -1188,6 +1204,7 @@ class mainapp(QMainWindow, main_wind):
         Blood_Group = ['A (+ve)', 'B (+ve)', 'AB (+ve)', 'O (+ve)', 'O (-ve)', 'A (-ve)', 'B (-ve)', 'AB (-ve)']
         Pregnancy_test_in_urine_serum = ['Positive (+ve)', 'Negative (-ve)', 'Weak Positive']
         Pregnancy_test_in_urine_serum2 = ['Positive (+ve)', 'Negative (-ve)']
+        Blood_Group= ['A(+ve)', 'B(+ve)', 'AB(+ve)', 'O(+ve)', 'O(-ve)', 'A(-ve)', 'B(-ve)', 'AB(-ve)']
         test = ['Toxoplasma IgG', 'Toxoplasma IgM', 'Cytomegalo Virus IgG', 'Cytomegalo Virus IgM', 'Rubella IgG',
                 'Rubella IgM', 'Anti - Phspholipin IgG', 'Anti - Phspholipin  IgM', 'Anti - Cardiolipin  IgG',
                 'Anti - Cardiolipin  IgM', 'Herps   IgG', 'Herpes  IgM']
@@ -1198,6 +1215,9 @@ class mainapp(QMainWindow, main_wind):
         self.comboBox_17.clear()
         if analyst_name == 'Colour:SFA' or analyst_name == 'Color:GSE':
             for item in colors:
+                self.comboBox_17.addItem(str(item))
+        if analyst_name == 'Blood Group':
+            for itemg in Blood_Group:
                 self.comboBox_17.addItem(str(item))
         if analyst_name == 'Motility:Active' or analyst_name == 'Motility:Sluggish' or analyst_name == 'Motility:Dead' or analyst_name == 'Morphology:Normal' or analyst_name == 'Morphology:Abnormal' or analyst_name == 'Morphology:Pus cells':
             for item101 in motility:
@@ -1236,10 +1256,10 @@ class mainapp(QMainWindow, main_wind):
             for item100 in Hb:
                 self.comboBox_17.setEditable(True)
                 self.comboBox_17.addItem(str(item100))
-        if analyst_name == 'Pregnancy test  in serum' or analyst_name == 'Pregnancy test  in urine' or analyst_name == 'Salmonella typhi  IgG' or analyst_name == 'Salmonella typhi  ImG' or analyst_name == 'Rose-Bengal test' or analyst_name == 'Rh' or analyst_name == 'HBS Ag' or analyst_name == 'HCV Ab' or analyst_name == 'HIV':
+        if analyst_name == 'Pregnancy test  in serum' or analyst_name == 'Pregnancy test  in urine' or analyst_name == 'Salmonella typhi  IgG' or analyst_name == 'Salmonella typhi  IgM' or analyst_name == 'Rose-Bengal test' or analyst_name == 'Rh' or analyst_name == 'HBS Ag' or analyst_name == 'HCV Ab' or analyst_name == 'HIV':
             for item11 in Pregnancy_test_in_urine_serum2:
                 self.comboBox_17.addItem(str(item11))
-        if analyst_name == 'Pregnancy test  in serum' or analyst_name == 'Pregnancy test  in urine' or analyst_name == 'HBS Ag' or analyst_name == 'HCV Ab' or analyst_name == 'HIV':
+        if analyst_name == 'HBS Ag' or analyst_name == 'HCV Ab' or analyst_name == 'HIV':
             for item11 in Pregnancy_test_in_urine_serum:
                 self.comboBox_17.addItem(str(item11))
         for fitem in test:
@@ -1503,8 +1523,14 @@ class mainapp(QMainWindow, main_wind):
                   'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
                   'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE', 'Bacteria:GSE', 'Bacteria:GUE', 'Monillia:GSE', 'Monillia:GUE',
                   'Fatty drop:GSE', 'Fatty drop:GUE', 'Mucuse:GUE']
+
         for i in client_analyst_data:
             num += 1
+        for price in range(0,num):
+            print(client_analyst_data[price][1])
+            if client_analyst_data[price][1] not in GSE and client_analyst_data[price][1] not in GUE and client_analyst_data[price][1] not in SFA:
+                print('somthing')
+                total +=client_analyst_data[price][0]
         for k in range(0, num):
             for kg in GSE:
                 if kg == client_analyst_data[k][1]:
@@ -2102,19 +2128,22 @@ class mainapp(QMainWindow, main_wind):
                                             font.name = 'Tahoma'
                                             font.size = Pt(14)
                                 if n.text == 'Fatty drop:':
+                                    numdks=0
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {
                                             'analyst': analysts[row],
                                             'result': results[row]
                                         }
                                         if analyst_and_result['analyst'] == 'Fatty drop:GSE':
-                                            k = analyst_and_result['result']
-                                            n2=n.add_run(f'  {k}')
-                                            run = n2
-                                            font = run.font
-                                            font.bold = False
-                                            font.name = 'Tahoma'
-                                            font.size = Pt(14)
+                                            if numdks == 0:
+                                                k = analyst_and_result['result']
+                                                n2=n.add_run(f'  {k}')
+                                                run = n2
+                                                font = run.font
+                                                font.bold = False
+                                                font.name = 'Tahoma'
+                                                font.size = Pt(14)
+                                                numdks=1
                                 if n.text == 'Other:':
                                     for row in range(0, len(analysts)):
                                         analyst_and_result = {

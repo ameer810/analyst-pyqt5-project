@@ -4,7 +4,7 @@
     --Rh:[Positive (+ve),Negative (-ve)]
     --Rose-Bengal test:[Positive (+ve),Negative (-ve)]
     --Salmonella typhi  IgG:[Positive (+ve),Negative (-ve)]
-    --Salmonella typhi  ImG:[Positive (+ve),Negative (-ve)]
+    --Salmonella typhi  IgM:[Positive (+ve),Negative (-ve)]
     --Pregnancy test  in serum:[Positive (+ve),Negative (-ve)]
     --Pregnancy test  in urine:[Positive (+ve),Negative (-ve)]
     ---Blood Group:[A (+ve),B (+ve),AB (+ve),O (+ve),O (-ve),A (-ve),B (-ve),AB (-ve)]
