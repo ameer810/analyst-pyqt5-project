@@ -41,7 +41,6 @@ class mainapp(QMainWindow, main_wind):
         self.Show_all_analysts_in_combo()
         # self.Show_all_buys()
         # self.History()
-        self.Show_All_Clients()
         # self.groupBox.setEnabled(False)
         self.Show_paths()
         self.add_Analyst_to_list()
@@ -261,7 +260,8 @@ class mainapp(QMainWindow, main_wind):
             file = 'هرمونات مشترك الاصلي.docx'
         QMessageBox.information(self, 'info', 'تتم الطباعة الان')
         word.Documents.Open(r'%s\%s' % (word_files, file))
-        word.ActiveDocument.PrintOut(Background=False,Copies=copyes_num)
+        for ihjk in range(1,copyes_num+1):
+            word.ActiveDocument.PrintOut(Background=False)
         # time.sleep(2)
         # pyautogui.press('enter')
         # time.sleep(1.5)
@@ -372,8 +372,8 @@ class mainapp(QMainWindow, main_wind):
         else:
             self.cur.execute(''' SELECT * FROM addclient ORDER BY -date''')
         analyst_data = self.cur.fetchall()
-        # self.tableWidget_2.setRowCount(0)
-        # self.tableWidget_2.insertRow(0)
+        self.tableWidget_2.setRowCount(0)
+        self.tableWidget_2.insertRow(0)
         try:
             if client_name != '0' and client_name != '':
                 for i, k in enumerate(analyst_data[0]):
@@ -383,7 +383,8 @@ class mainapp(QMainWindow, main_wind):
                         self.tableWidget_2.setItem(0, i, QTableWidgetItem(str(k)))
                     print('ok')
             else:
-                self.Show_All_The_Sales()
+                self.my_def()
+
         except:
             pass
             # self.tableWidget_2.setRowCount(0)
@@ -889,10 +890,10 @@ class mainapp(QMainWindow, main_wind):
                 self.spinBox_7.setValue(int(analyst_data[0][6]))
                 self.spinBox_7.setEnabled(False)
                 if analyst_data[0][6] == 'ذكر':
-                    self.comboBox_14.setCurrentIndex(0)
+                    self.comboBox_14.setCurrentIndex(1)
                     self.comboBox_14.setEnabled(False)
                 if analyst_data[0][6] == 'انثى':
-                    self.comboBox_14.setCurrentIndex(1)
+                    self.comboBox_14.setCurrentIndex(0)
                     self.comboBox_14.setEnabled(False)
                 self.textEdit.setPlainText(str(analyst_data[0][8]))
                 self.textEdit.setEnabled(False)
