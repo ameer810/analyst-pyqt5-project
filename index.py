@@ -19,6 +19,7 @@ from docx.shared import Pt
 from win32com import client
 from mymain import Ui_MainWindow as main_wind
 # FORM_CLASS, _ = loadUiType("design.ui")
+show_all_sales_in_clients_page = False
 user_id = 4
 client_id_glob = 0
 chick_if_add_new = False
@@ -367,6 +368,7 @@ class mainapp(QMainWindow, main_wind):
         self.textEdit.setEnabled(True)
         self.spinBox.setValue(0)
     def Show_All_Clients(self):
+        global show_all_sales_in_clients_page
         client_name = self.lineEdit_27.text()
         if client_name != '0':
             self.cur.execute(''' SELECT * FROM addclient WHERE client_name=%s ORDER BY id''', (client_name,))
@@ -384,6 +386,7 @@ class mainapp(QMainWindow, main_wind):
                         self.tableWidget_2.setItem(0, i, QTableWidgetItem(str(k)))
                     print('ok')
             else:
+                show_all_sales_in_clients_page = True
                 self.Show_All_The_Sales()
         except:
             pass
@@ -1275,7 +1278,9 @@ class mainapp(QMainWindow, main_wind):
         # self.History()
 
     def Show_All_The_Sales(self):
-        self.cur.execute(''' SELECT client_name FROM addclient WHERE DATE(date)=%s ORDER BY -date ''',(datetime.date.today(),))
+        global show_all_sales_in_clients_page
+        print(show_all_sales_in_clients_page,'here')
+        self.cur.execute(''' SELECT client_name FROM addclient ORDER BY -date ''')
         analyst_data = self.cur.fetchall()
         all_names = {}
         all_data = []
@@ -1296,26 +1301,36 @@ class mainapp(QMainWindow, main_wind):
             all_data.append(data)
         self.tableWidget_6.setRowCount(0)
         self.tableWidget_6.insertRow(0)
-        # self.tableWidget_2.setRowCount(0)
-        # self.tableWidget_2.insertRow(0)
+        if show_all_sales_in_clients_page:
+            print('1')
+            self.tableWidget_2.setRowCount(0)
+            self.tableWidget_2.insertRow(0)
         l_data = ()
         for ih in all_data:
             hs_data = ih[0]['value']
             l_data += tuple(hs_data)
-        # print(l_data, 'k')
+        print(l_data, 'k')
         for row, form in enumerate(l_data):
             for col, item in enumerate(form):
+                print('staaaaryu')
                 if col == 3:
+                    print('dom')
                     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(l_data[row][4])))
-                    # self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(l_data[row][4])))
+                    if show_all_sales_in_clients_page:
+
+                        self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(l_data[row][4])))
                 else:
+                    print('d')
                     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
-                    # self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(item)))
+                    if show_all_sales_in_clients_page:
+                        self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
             row_pos = self.tableWidget_6.rowCount()
             self.tableWidget_6.insertRow(row_pos)
-            # row_pos = self.tableWidget_2.rowCount()
-            # self.tableWidget_2.insertRow(row_pos)
+            if show_all_sales_in_clients_page:
+                row_pos2 = self.tableWidget_2.rowCount()
+                self.tableWidget_2.insertRow(row_pos2)
+        print('2')
         # print(all_data)
 
     # def Show_All_The_Analysts(self):
