@@ -241,49 +241,49 @@ from PyQt5.QtWidgets import *
 #             self.table_widget.setItem(i, 1, m)
 
 #         self.show()
-# from PyQt5.QtCore import *
-# from PyQt5.QtGui import *
-# from PyQt5.QtWidgets import *
-# from PyQt5 import QtWidgets
-# class My_app(QtWidgets):
-#     def __init__(self):
-#         super(My_app, self).__init__()
-#         self.my()
-#     def my(self):
-#         mylineEdit=QtWidgets.QTableWidget()
-#         num=0
-#         mylineEdit.setObjectName("tableWidget_5")
-#         mylineEdit.setColumnCount(5)
-#         mylineEdit.setRowCount(1)
-#         item = QtWidgets.QTableWidgetItem()
-#         mylineEdit.setVerticalHeaderItem(0, item)
-#         item = QtWidgets.QTableWidgetItem()
-#         mylineEdit.setHorizontalHeaderItem(0, item)
-#         item = QtWidgets.QTableWidgetItem()
-#         mylineEdit.setHorizontalHeaderItem(1, item)
-#         item = QtWidgets.QTableWidgetItem()
-#         mylineEdit.setHorizontalHeaderItem(2, item)
-#         item = QtWidgets.QTableWidgetItem()
-#         mylineEdit.setHorizontalHeaderItem(3, item)
-#         item = QtWidgets.QTableWidgetItem()
-#         mylineEdit.setHorizontalHeaderItem(4, item)        # while True:
-#         analyst_data=(('hhu9o', 'Random  blood sugar', '1', 'عدوية شمس سعيد', '2'),)
-#         for row, form in enumerate(analyst_data):
-#             for col, item in enumerate(form):
-#                 # if col==4:
-#                 #     print(total_price,'here')
-#                 # self.tableWidget_5.setItem(row, col, QTableWidgetItem(str(total_price)))
-#                 # else:
-#                 mylineEdit.setItem(row, col, QTableWidgetItem(str(item)))
-#                 col += 1
-#             row_pos = mylineEdit.rowCount()
-#             mylineEdit.insertRow(row_pos)
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5 import QtWidgets
+class My_app(QtWidgets):
+    def __init__(self):
+        super(My_app, self).__init__()
+        self.my()
+    def my(self):
+        mylineEdit=QtWidgets.QTableWidget()
+        num=0
+        mylineEdit.setObjectName("tableWidget_5")
+        mylineEdit.setColumnCount(5)
+        mylineEdit.setRowCount(1)
+        item = QtWidgets.QTableWidgetItem()
+        mylineEdit.setVerticalHeaderItem(0, item)
+        item = QtWidgets.QTableWidgetItem()
+        mylineEdit.setHorizontalHeaderItem(0, item)
+        item = QtWidgets.QTableWidgetItem()
+        mylineEdit.setHorizontalHeaderItem(1, item)
+        item = QtWidgets.QTableWidgetItem()
+        mylineEdit.setHorizontalHeaderItem(2, item)
+        item = QtWidgets.QTableWidgetItem()
+        mylineEdit.setHorizontalHeaderItem(3, item)
+        item = QtWidgets.QTableWidgetItem()
+        mylineEdit.setHorizontalHeaderItem(4, item)        # while True:
+        analyst_data=(('hhu9o', 'Random  blood sugar', '1', 'عدوية شمس سعيد', '2'),)
+        for row, form in enumerate(analyst_data):
+            for col, item in enumerate(form):
+                # if col==4:
+                #     print(total_price,'here')
+                # self.tableWidget_5.setItem(row, col, QTableWidgetItem(str(total_price)))
+                # else:
+                mylineEdit.setItem(row, col, QTableWidgetItem(str(item)))
+                col += 1
+            row_pos = mylineEdit.rowCount()
+            mylineEdit.insertRow(row_pos)
 #
 #
-# app = QApplication(sys.argv)
-# window = My_app()
-# window.show()
-# sys.exit(app.exec_())
+app = QApplication(sys.argv)
+window = My_app()
+window.show()
+sys.exit(app.exec_())
 # import win32api,win32print
 # from win32com import client
 # # fs= open(r'F:\برنامج التحليلات\word\GUE org.docx','rb')
