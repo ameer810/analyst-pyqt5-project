@@ -7,7 +7,6 @@ import MySQLdb
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from PyQt5 import QtWidgets
 from PyQt5.uic import loadUiType
 from PyQt5.uic.properties import QtCore
 from docx import *
@@ -18,7 +17,7 @@ from email.mime.multipart import MIMEMultipart
 from win32com import client
 import searchDialog
 import searchWidget
-
+import multyclass
 from mymain import Ui_MainWindow as main_wind
 
 FORM_CLASS, _ = loadUiType("design.ui")
@@ -119,20 +118,68 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_40.clicked.connect(self.ADD_one_REsult_to_ANalyst_results_IN_EDITMODE)
         self.pushButton_41.clicked.connect(self.Remove_one_REsult_to_ANalyst_results_IN_EDITMODE)
         self.pushButton_43.clicked.connect(self.Show_search_Widget)
-        self.comboBox_16.view().pressed.connect(self.setCheckItemTrue)
+        self.pushButton_43.clicked.connect(self.Show_multy_Dialog)
         self.my_def()
-        # self.handel_widget_buttons()
 
-    # def handel_widget_buttons(self):
-    #     print('jjnm')
-    #     self.searchWidget = searchDialog.Dialog()
-    # def setItemChecked(self, index, checked=False):
-    #     item = self.comboBox_16.model().item(index, self.modelColumn())
-    def get_combo_value(self):
-        for row in range(0,self.comboBox_16.count()):
-            item = self.comboBox_16.model().item(row, self.comboBox_16.modelColumn())
-            if item.checkState()==Qt.Checked:
-                print(item.text())
+    def Show_multy_Dialog(self):
+        self.Dialog = multyclass.MultyDialog()
+        self.cur.execute(''' SELECT name,sub_category FROM addanalyst''')
+        data=self.cur.fetchall()
+        my_list=[]
+        for index1,i in enumerate(data):
+            if data[index1][1] not in my_list:
+                my_list.append(data[index1][1])
+        all_listWidget=[]
+        all_pushButton=[]
+        for index,ii in enumerate(my_list):
+            tab=QWidget()
+            self.Dialog.tabWidget.addTab(tab,str(ii))
+            self.Dialog.my_listWidget=QListWidget(tab)
+            self.Dialog.my_listWidget.setObjectName("listWidget_+"+str(index+1))
+            all_listWidget.append(str("listWidget_+"+str(index+1)))
+            self.Dialog.my_listWidget.setGeometry(QRect(0, 10, 641, 431))
+            font = QFont()
+            font.setPointSize(11)
+            self.Dialog.my_listWidget.setFont(font)
+            item=QListWidgetItem()
+            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+            item.setCheckState(Qt.Checked)
+            # item.setText(str())
+            # self.Dialog.my_listWidget.addItem(item)
+            ######################################
+            ######################################
+            self.Dialog.pushButton = QPushButton(tab)
+            self.Dialog.pushButton.setObjectName("pushButton_"+str(index+1))
+            all_pushButton.append(str("pushButton_"+str(index+1)))
+            self.Dialog.pushButton.setGeometry(QRect(120, 450, 401, 71))
+            font = QFont()
+            font.setFamily("Segoe UI")
+            font.setPointSize(16)
+            self.Dialog.pushButton.setFont(font)
+        for index2 in range(0,self.Dialog.tabWidget.count()):
+            if index2 <self.Dialog.tabWidget.count():
+                listWidget_object=self.Dialog.findChild(QListWidget,f"listWidget_+{index2+1}")
+                for iy in range(0,len(data)):
+                    if self.Dialog.tabWidget.tabText(index2)==str(data[iy][1]):
+                        item = QListWidgetItem()
+                        item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+                        item.setCheckState(Qt.Unchecked)
+                        item.setText(str(data[iy][0]))
+                        listWidget_object.addItem(item)
+            else:
+                print('else')
+                break
+        self.Dialog.pushButton.clicked.connect(self.Handel_multy_Dialog)
+        self.Dialog.show()
+
+    def Handel_multy_Dialog(self):
+        for i in range(0,self.Dialog.tabWidget.count()):
+            listWidget_object = self.Dialog.findChild(QListWidget, f"listWidget_+{i + 1}")
+            for row in range(0,listWidget_object.count()):
+                if listWidget_object.item(row).checkState() ==Qt.Checked:
+                    self.comboBox_16.setCurrentText(str(listWidget_object.item(row).text()))
+                    self.Sales_Page()
+        self.Dialog.close()
     def Show_search_Widget(self):
         print('yesf')
         self.searchWidget = searchDialog.Dialog()
@@ -145,6 +192,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         global select_by_date
         select_by_date = True
         self.Show_All_one_client_analyst()
+        self.searchWidget.close()
 
     def add_data_to_my_num(self):
         global My_num
@@ -759,6 +807,10 @@ class mainapp(QMainWindow, FORM_CLASS):
 
     def Sales_Page(self):
         self.comboBox_4.setEnabled(False)
+        self.spinBox_7.setEnabled(False)
+        self.comboBox_14.setEnabled(False)
+        self.comboBox_15.setEnabled(False)
+        self.textEdit.setEnabled(False)
         global client_id_glob
         global chick_if_add_new
         global clients_name_glo
@@ -986,8 +1038,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.comboBox_14.setEnabled(True)
             self.textEdit.setEnabled(True)
         if self.spinBox.value() != 0:
-
-            try:
+            if True:
                 if select_by_date:
                     id = self.searchWidget.spinBox.value()
                     print(id, 'jjj')
@@ -997,9 +1048,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                         '''SELECT client_name,analyst_name,analyst_result,doctor_name,total_price,client_id,client_age,genus,notes FROM addnewitem WHERE client_id = %s AND DATE(date)>=%s AND DATE(date)<=%s''',
                         (id, str(from_date.toPyDate()), str(to_date.toPyDate()),))
                 else:
+                    print('else3')
                     self.cur.execute(
-                        '''SELECT client_name,analyst_name,analyst_result,doctor_name,total_price FROM addnewitem WHERE client_name = %s AND DATE(date)=%s''',
-                        (self.comboBox_4.currentText(), datetime.date.today(),))
+                        '''SELECT client_name,analyst_name,analyst_result,doctor_name,total_price,client_age,genus,notes FROM addnewitem WHERE client_id = %s AND DATE(date)=%s''',
+                        (self.spinBox.value(), datetime.date.today(),))
                 analyst_data = self.cur.fetchall()
                 print(analyst_data)
                 self.comboBox_15.setCurrentText(str(analyst_data[0][3]))
@@ -1007,7 +1059,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                 self.comboBox_14.setEnabled(False)
                 self.comboBox_4.setCurrentText(analyst_data[0][0])
                 self.comboBox_4.setEnabled(False)
-                self.spinBox_7.setValue(int(analyst_data[0][6]))
+                self.spinBox_7.setValue(int(analyst_data[0][5]))
                 self.spinBox_7.setEnabled(False)
                 if analyst_data[0][6] == 'ذكر':
                     self.comboBox_14.setCurrentIndex(1)
@@ -1015,7 +1067,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                 if analyst_data[0][6] == 'انثى':
                     self.comboBox_14.setCurrentIndex(0)
                     self.comboBox_14.setEnabled(False)
-                self.textEdit.setPlainText(str(analyst_data[0][8]))
+                self.textEdit.setPlainText(str(analyst_data[0][7]))
                 self.textEdit.setEnabled(False)
 
                 self.tableWidget_5.setRowCount(0)
@@ -1165,9 +1217,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                         except:
                             pass
 
-            except IndexError:
-                QMessageBox.information(self, 'Error',
-                                        'الرقم الذي ادخلته غير صحيح يرجى ادخال رقم صحيح او مراجعة صفحة "كل المبيعات" للتأكد من الرقم')
+            # except Exception as e:
+            #     print(e)
+            #     QMessageBox.information(self, 'Error',
+            #                             'الرقم الذي ادخلته غير صحيح يرجى ادخال رقم صحيح او مراجعة صفحة "كل المبيعات" للتأكد من الرقم')
             self.get_total_price()
             select_by_date = False
 
@@ -1504,26 +1557,13 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.comboBox_16.addItem('Full GUE')
         self.comboBox_16.addItem('Full SFA')
         self.comboBox_3.addItems(listh)
-        self.comboBox_16._changed=False
+
         for item in data:
             self.comboBox_21.addItem(str(item[0]))
             self.comboBox_16.addItem(str(item[0]))
             self.comboBox_3.addItem(str(item[0]))
-        for i in range(0,self.comboBox_16.count()):
-            comboitem = self.comboBox_16.model().item(i, self.comboBox_16.modelColumn())
-            comboitem.setCheckState(Qt.Unchecked)
-    def setCheckItemTrue(self,index):
-        item=self.comboBox_16.model().itemFromIndex(index)
-        if item.checkState() ==Qt.Checked:
-            print('un')
-            item.setCheckState(Qt.Unchecked)
-            self.comboBox_16.showPopup()
-            # self.comboBox_16.setCurrentIndex()
-        else:
-            item.setCheckState(Qt.Checked)
-            self.comboBox_16.showPopup()
-        self.comboBox_16._changed=True
-        self.get_combo_value()
+
+
 
 
     def Clients_Page(self):
