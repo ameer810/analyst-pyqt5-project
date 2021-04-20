@@ -33,6 +33,9 @@ from_start = False
 first_text = ''
 first_text2 = ''
 first_text3 = ''
+addTrue=True
+
+mylist = ['Full GSE', 'Full GUE', 'Full SFA']
 My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
           'Crystals',
           'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active',
@@ -42,7 +45,7 @@ My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cel
           'Fatty drop:GSE', 'Fatty drop:GUE', 'Mucuse:GUE']
 
 select_by_date = False
-
+sd=None
 
 # GSE_row1=[]
 
@@ -79,6 +82,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.cur = self.db.cursor()
 
     def handel_buttons(self):
+        global addTrue
         self.pushButton_15.clicked.connect(self.Light_Blue_Theme)
         self.pushButton_9.clicked.connect(self.Dark_Orange_Theme)
         self.pushButton_13.clicked.connect(self.Dark_Blue_Theme)
@@ -94,9 +98,13 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_8.clicked.connect(self.Open_ResetPassword_Page)
         self.pushButton_17.clicked.connect(self.Sales_Page)
         self.pushButton_30.clicked.connect(self.get_client_id)
-        self.pushButton_31.clicked.connect(self.Chick_analyst_category)
+        # if not addTrue:
+        self.comboBox_16.currentIndexChanged.connect(self.Chick_analyst_category)
+        # QListView.currentChanged()
+        # self.pushButton_31.clicked.connect(self.Chick_analyst_category)
         self.pushButton_32.clicked.connect(self.get_total_price)
-        self.pushButton_33.clicked.connect(self.Show_analyst_in_Edit_Or_Delete)
+        # self.pushButton_33.clicked.connect(self.Show_analyst_in_Edit_Or_Delete)
+        self.comboBox_21.currentIndexChanged.connect(self.Show_analyst_in_Edit_Or_Delete)
         self.pushButton_29.clicked.connect(self.Clients_Page)
         self.pushButton_16.clicked.connect(self.Add_Buys)
         self.pushButton_20.clicked.connect(self.Show_All_The_Analysts)
@@ -106,7 +114,9 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_22.clicked.connect(self.Delete_All_History_Data)
         self.pushButton_18.clicked.connect(self.Print_Sale_Data)
         self.pushButton_19.clicked.connect(self.Search_In_All_Sales)
-        self.pushButton_21.clicked.connect(self.Search_In_History)
+        self.comboBox_20.currentIndexChanged.connect(self.Search_In_History)
+        self.comboBox_24.currentIndexChanged.connect(self.Search_In_History)
+        # self.pushButton_21.clicked.connect(self.Search_In_History)
         self.pushButton_35.clicked.connect(self.clear_data_in_sales)
         self.pushButton_10.clicked.connect(self.Reset_password)
         self.pushButton_26.clicked.connect(self.Add_Analyst)
@@ -118,72 +128,102 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_40.clicked.connect(self.ADD_one_REsult_to_ANalyst_results_IN_EDITMODE)
         self.pushButton_41.clicked.connect(self.Remove_one_REsult_to_ANalyst_results_IN_EDITMODE)
         self.pushButton_43.clicked.connect(self.Show_search_Widget)
-        self.pushButton_43.clicked.connect(self.Show_multy_Dialog)
+        self.pushButton_44.clicked.connect(self.Show_multy_Dialog)
+        self.comboBox_16.view().pressed.connect(self.Set_Chick_State2)
         self.my_def()
+        self.add_all_subCategory_toList()
+
+    def add_all_subCategory_toList(self):
+        global mylist
+        mylist.clear()
+        self.cur.execute(''' SELECT sub_category FROM addanalyst ''')
+        data = self.cur.fetchall()
+        for i in data:
+            if i[0] not in mylist:
+                mylist.append(i[0])
+
+    def Set_Chick_State2(self, item):
+        global sd
+        nitem=self.comboBox_16.model().itemFromIndex(item)
+        sd=item
+        # if nitem.checkState() == Qt.Checked:
+        #     nitem.setCheckState(Qt.Unchecked)
+        # else:
+        #     # print('ggggggg')
+        #     nitem.setCheckState(Qt.Checked)
+
+
+    def Set_Chick_State(self, item):
+        if item.checkState() == Qt.Checked:
+            item.setCheckState(Qt.Unchecked)
+        else:
+            item.setCheckState(Qt.Checked)
 
     def Show_multy_Dialog(self):
         self.Dialog = multyclass.MultyDialog()
+        # if self.Dialog.pushButton.key==Qt.Key_Enter:
+        #     print('jj')
         self.cur.execute(''' SELECT name,sub_category FROM addanalyst''')
-        data=self.cur.fetchall()
-        my_list=[]
-        for index1,i in enumerate(data):
+        data = self.cur.fetchall()
+        my_list = []
+        for index1, i in enumerate(data):
             if data[index1][1] not in my_list:
                 my_list.append(data[index1][1])
-        all_listWidget=[]
-        all_pushButton=[]
-        for index,ii in enumerate(my_list):
-            tab=QWidget()
-            self.Dialog.tabWidget.addTab(tab,str(ii))
-            self.Dialog.my_listWidget=QListWidget(tab)
-            self.Dialog.my_listWidget.setObjectName("listWidget_+"+str(index+1))
-            all_listWidget.append(str("listWidget_+"+str(index+1)))
-            self.Dialog.my_listWidget.setGeometry(QRect(0, 10, 641, 431))
+        all_listWidget = []
+        all_pushButton = []
+        for index, ii in enumerate(my_list):
+            tab = QWidget()
+            self.Dialog.tabWidget.addTab(tab, str(ii))
+            self.Dialog.my_listWidget = QListWidget(tab)
+            self.Dialog.my_listWidget.setObjectName("listWidget_+" + str(index + 1))
+            all_listWidget.append(str("listWidget_+" + str(index + 1)))
+            self.Dialog.my_listWidget.setGeometry(QRect(0, 10, 641, 491))
             font = QFont()
             font.setPointSize(11)
             self.Dialog.my_listWidget.setFont(font)
-            item=QListWidgetItem()
+            item = QListWidgetItem()
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Checked)
+
             # item.setText(str())
             # self.Dialog.my_listWidget.addItem(item)
             ######################################
             ######################################
-            self.Dialog.pushButton = QPushButton(tab)
-            self.Dialog.pushButton.setObjectName("pushButton_"+str(index+1))
-            all_pushButton.append(str("pushButton_"+str(index+1)))
-            self.Dialog.pushButton.setGeometry(QRect(120, 450, 401, 71))
-            font = QFont()
-            font.setFamily("Segoe UI")
-            font.setPointSize(16)
-            self.Dialog.pushButton.setFont(font)
-        for index2 in range(0,self.Dialog.tabWidget.count()):
-            if index2 <self.Dialog.tabWidget.count():
-                listWidget_object=self.Dialog.findChild(QListWidget,f"listWidget_+{index2+1}")
-                for iy in range(0,len(data)):
-                    if self.Dialog.tabWidget.tabText(index2)==str(data[iy][1]):
+        for index2 in range(0, self.Dialog.tabWidget.count()):
+            if index2 < self.Dialog.tabWidget.count():
+                listWidget_object = self.Dialog.findChild(QListWidget, f"listWidget_+{index2 + 1}")
+                listWidget_object.itemClicked.connect(self.Set_Chick_State)
+                # QListWidget.keyPressEvent()
+                # if listWidget_object.key()==Qt.Key_Enter:
+                # print(listWidget_object.currentItem().text())
+                for iy in range(0, len(data)):
+                    if self.Dialog.tabWidget.tabText(index2) == str(data[iy][1]):
                         item = QListWidgetItem()
                         item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
                         item.setCheckState(Qt.Unchecked)
                         item.setText(str(data[iy][0]))
                         listWidget_object.addItem(item)
             else:
-                print('else')
+                # print('else')
                 break
         self.Dialog.pushButton.clicked.connect(self.Handel_multy_Dialog)
-        self.Dialog.show()
+        self.Dialog.exec_()
 
     def Handel_multy_Dialog(self):
-        for i in range(0,self.Dialog.tabWidget.count()):
+        print('yeah my boy')
+        for i in range(0, self.Dialog.tabWidget.count()):
             listWidget_object = self.Dialog.findChild(QListWidget, f"listWidget_+{i + 1}")
-            for row in range(0,listWidget_object.count()):
-                if listWidget_object.item(row).checkState() ==Qt.Checked:
+            for row in range(0, listWidget_object.count()):
+                if listWidget_object.item(row).checkState() == Qt.Checked:
                     self.comboBox_16.setCurrentText(str(listWidget_object.item(row).text()))
                     self.Sales_Page()
+                    print('1')
         self.Dialog.close()
+
     def Show_search_Widget(self):
         print('yesf')
         self.searchWidget = searchDialog.Dialog()
-        print(self.searchWidget.spinBox.value())
+        # print(self.searchWidget.spinBox.value())
         self.searchWidget.show()
         self.searchWidget.pushButton_20.clicked.connect(self.Search_by_date)
 
@@ -540,6 +580,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         print('ok')
 
     def clear_data_in_sales(self):
+        self.comboBox_17.clear()
         self.tableWidget_5.setRowCount(0)
         self.tableWidget_5.insertRow(0)
         self.comboBox_4.clear()
@@ -588,25 +629,25 @@ class mainapp(QMainWindow, FORM_CLASS):
         tabley = self.comboBox_20.currentIndex()
         if actionsd != 0 and tabley == 0:
             try:
-                self.cur.execute(f'SELECT action,tabled,id,dates FROM his WHERE action = {actionsd}')
+                self.cur.execute(f'SELECT action,tabled,id,dates FROM his WHERE action = {actionsd} ORDER BY -dates')
             except Exception as e:
                 print(e)
         elif tabley != 0 and actionsd == 0:
             try:
-                self.cur.execute(f'SELECT action,tabled,id,dates FROM his WHERE tabled={tabley}')
+                self.cur.execute(f'SELECT action,tabled,id,dates FROM his WHERE tabled={tabley} ORDER BY -dates')
             except Exception as e:
                 print(e)
         elif actionsd != 0 and tabley != 0:
             try:
                 self.cur.execute(
-                    f' SELECT action,tabled,id,dates FROM his WHERE action={actionsd} AND tabled={tabley} ')
+                    f' SELECT action,tabled,id,dates FROM his WHERE action={actionsd} AND tabled={tabley} ORDER BY -dates')
 
             except Exception as e:
                 print(e)
         else:
             try:
                 self.cur.execute(
-                    f' SELECT action,tabled,id,dates FROM his')
+                    f' SELECT action,tabled,id,dates FROM his ORDER BY -dates')
 
             except Exception as e:
                 print(e)
@@ -806,6 +847,9 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.lineEdit_24.setText(str(total_price))
 
     def Sales_Page(self):
+        print('iam run')
+        # if self.comboBox_4.currentText()=='':
+        #     QMessageBox.information(self,'تحذير','يرجى ادخال اسم المراجع')
         self.comboBox_4.setEnabled(False)
         self.spinBox_7.setEnabled(False)
         self.comboBox_14.setEnabled(False)
@@ -930,73 +974,101 @@ class mainapp(QMainWindow, FORM_CLASS):
                 rs_name = self.tableWidget_5.item(rowd, 1).text()
             except:
                 rs_name = ''
-            mycobmbo = QComboBox(self)
-            # self.tableWidget_5.setItem(rowd, 0, QTableWidgetItem(the_name))
-            if rs_name == 'Color:GSE' or rs_name == 'Colour:SFA':
-                mycobmbo = QComboBox(self)
-                mycobmbo.addItems(['yallow', 'brown', 'green', 'milk'])
-            if rs_name == 'Consistency':
-                mycobmbo = QComboBox(self)
-                mycobmbo.addItems(['Solid', 'Liquid', 'Semi solid', 'Semi liquid', 'Mucoid'])
-            if rs_name == 'R.B.Cs:GSE' or rs_name == 'Pus cells:GSE' or rs_name == 'RBCs:GUE' or rs_name == 'Pus cells:GUE':
-                mycobmbo = QComboBox(self)
-                mycobmbo.addItems(['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
-                                   '5 - 7', '6 - 8', '6 - 7', '+', '++', '+++', '++++', 'Full Field'])
-            if rs_name == 'E. Histolytica' or rs_name == 'G. Lembilia':
-                mycobmbo = QComboBox(self)
-                mycobmbo.addItems(['Cyst', 'Trophozoite'])
-            if rs_name == 'Ova':
-                mycobmbo = QComboBox(self)
-                mycobmbo.addItems(['Nill'])
-            if rs_name == 'Appearance':
-                mycobmbo = QComboBox(self)
-                mycobmbo.addItems(['Turbid', 'Clear'])
-            if rs_name == 'Reaction:GUE' or rs_name == 'Reaction:SFA':
-                mycobmbo = QComboBox(self)
-                mycobmbo.addItems(['Acidic', 'Alkaline'])
-            if rs_name == 'Albumin' or rs_name == 'Sugar':
-                mycobmbo = QComboBox(self)
-                mycobmbo.addItems(['Nil', '+', '++', '+++', 'Trace'])
-            if rs_name == 'Epith .cells':
-                mycobmbo = QComboBox(self)
-                mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
-            if rs_name == 'Crystals':
-                mycobmbo = QComboBox(self)
-                mycobmbo.addItems(['Am.Urate', 'Am.Phosphatase', 'Uric Acid', 'Ca.Oxalate'])
-            if rs_name == 'Casts':
-                mycobmbo = QComboBox(self)
-                mycobmbo.addItems(['Granular cast +', 'Granular cast ++', 'Granular cast +++'])
-
-            if rs_name == 'Bacteria:GSE' or rs_name == 'Monillia:GSE' or rs_name == 'Fatty drop:GSE' or rs_name == 'Monillia:GUE' or rs_name == 'Fatty drop:GUE' or rs_name == 'Bacteria:GUE' or rs_name == 'Mucuse:GUE':
-                mycobmbo = QComboBox(self)
-                mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
-            if rs_name == 'Motility:Active' or rs_name == 'Motility:Sluggish' or rs_name == 'Motility:Dead' or rs_name == 'Morphology:Normal' or rs_name == 'Morphology:Abnormal' or rs_name == 'Morphology:Pus cells':
-                mycobmbo = QComboBox(self)
-                mycobmbo.addItems(
-                    ['5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80',
-                     '85'])
-            if rs_name == 'Volume':
-                mycobmbo = QComboBox(self)
-                mycobmbo.addItems(['0.5', '0.6', '0.7'])
-            if rs_name == 'Liquefaction':
-                mycobmbo = QComboBox(self)
-                mycobmbo.addItems(['5', '10', '15', '20', '25', '30', '35', '40', '45'])
-
-            if rs_name in My_num:
+            self.cur.execute('''SELECT results,category FROM addanalyst WHERE name=%s''', (rs_name,))
+            results_data = self.cur.fetchall()
+            mycobmbo = None
+            object_type = ''
+            if results_data:
+                if results_data[0][1] == 'خيارات':
+                    mycobmbo = QComboBox(self)
+                    list_data = str(results_data[0][0]).replace("'", "")
+                    list_data = list_data.split(',')
+                    mycobmbo.addItems(list_data)
+                    object_type = 'خيارات'
+                if results_data[0][1] == 'عدد':
+                    mycobmbo = QDoubleSpinBox(self)
+                    object_type = 'عدد'
+                if results_data[0][1] == 'خيارات مع تعديل':
+                    mycobmbo = QComboBox(self)
+                    mycobmbo.setEditable(True)
+                    mycobmbo.addItems(results_data[0][0])
+                    object_type = 'خيارات مع تعديل'
+                if results_data[0][1] == 'حقل كتابة':
+                    mycobmbo = QLineEdit(self)
+                    object_type = 'حقل كتابة'
+                # self.tableWidget_5.setItem(rowd, 0, QTableWidgetItem(the_name))
+                # if rs_name == 'Color:GSE' or rs_name == 'Colour:SFA':
+                #     mycobmbo = QComboBox(self)
+                #     mycobmbo.addItems(['yallow', 'brown', 'green', 'milk'])
+                # if rs_name == 'Consistency':
+                #     mycobmbo = QComboBox(self)
+                #     mycobmbo.addItems(['Solid', 'Liquid', 'Semi solid', 'Semi liquid', 'Mucoid'])
+                # if rs_name == 'R.B.Cs:GSE' or rs_name == 'Pus cells:GSE' or rs_name == 'RBCs:GUE' or rs_name == 'Pus cells:GUE':
+                #     mycobmbo = QComboBox(self)
+                #     mycobmbo.addItems(['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
+                #                        '5 - 7', '6 - 8', '6 - 7', '+', '++', '+++', '++++', 'Full Field'])
+                # if rs_name == 'E. Histolytica' or rs_name == 'G. Lembilia':
+                #     mycobmbo = QComboBox(self)
+                #     mycobmbo.addItems(['Cyst', 'Trophozoite'])
+                # if rs_name == 'Ova':
+                #     mycobmbo = QComboBox(self)
+                #     mycobmbo.addItems(['Nill'])
+                # if rs_name == 'Appearance':
+                #     mycobmbo = QComboBox(self)
+                #     mycobmbo.addItems(['Turbid', 'Clear'])
+                # if rs_name == 'Reaction:GUE' or rs_name == 'Reaction:SFA':
+                #     mycobmbo = QComboBox(self)
+                #     mycobmbo.addItems(['Acidic', 'Alkaline'])
+                # if rs_name == 'Albumin' or rs_name == 'Sugar':
+                #     mycobmbo = QComboBox(self)
+                #     mycobmbo.addItems(['Nil', '+', '++', '+++', 'Trace'])
+                # if rs_name == 'Epith .cells':
+                #     mycobmbo = QComboBox(self)
+                #     mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
+                # if rs_name == 'Crystals':
+                #     mycobmbo = QComboBox(self)
+                #     mycobmbo.addItems(['Am.Urate', 'Am.Phosphatase', 'Uric Acid', 'Ca.Oxalate'])
+                # if rs_name == 'Casts':
+                #     mycobmbo = QComboBox(self)
+                #     mycobmbo.addItems(['Granular cast +', 'Granular cast ++', 'Granular cast +++'])
+                #
+                # if rs_name == 'Bacteria:GSE' or rs_name == 'Monillia:GSE' or rs_name == 'Fatty drop:GSE' or rs_name == 'Monillia:GUE' or rs_name == 'Fatty drop:GUE' or rs_name == 'Bacteria:GUE' or rs_name == 'Mucuse:GUE':
+                #     mycobmbo = QComboBox(self)
+                #     mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
+                # if rs_name == 'Motility:Active' or rs_name == 'Motility:Sluggish' or rs_name == 'Motility:Dead' or rs_name == 'Morphology:Normal' or rs_name == 'Morphology:Abnormal' or rs_name == 'Morphology:Pus cells':
+                #     mycobmbo = QComboBox(self)
+                #     mycobmbo.addItems(
+                #         ['5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80',
+                #          '85'])
+                # if rs_name == 'Volume':
+                #     mycobmbo = QComboBox(self)
+                #     mycobmbo.addItems(['0.5', '0.6', '0.7'])
+                # if rs_name == 'Liquefaction':
+                #     mycobmbo = QComboBox(self)
+                #     mycobmbo.addItems(['5', '10', '15', '20', '25', '30', '35', '40', '45'])
                 # print('mystatrt')
+
                 r2_analyst_name = self.tableWidget_5.item(rowd, 1).text()
                 r2_client_name = self.comboBox_4.currentText()
                 self.cur.execute(
                     ''' SELECT  analyst_result  FROM addnewitem WHERE client_name=%s AND analyst_name=%s ''',
                     (r2_client_name, r2_analyst_name))
                 myrs = self.cur.fetchall()
-                if myrs != '' or myrs != None:
-                    index = mycobmbo.findText(myrs[0][0], Qt.MatchFixedString)
-                    mycobmbo.setCurrentIndex(index)
+                if myrs != None:
+                    if object_type == 'خيارات' or object_type == 'خيارات مع تعديل':
+                        index = mycobmbo.findText(myrs[0][0], Qt.MatchFixedString)
+                        mycobmbo.setCurrentIndex(index)
+                    if object_type == 'عدد':
+                        print('Tru')
+                        if myrs[0][0] and myrs[0][0] != '':
+                            mycobmbo.setValue(float(int(myrs[0][0])))
+                    if object_type == 'حقل كتابة':
+                        mycobmbo.setText(str(myrs[0][0]))
                 self.tableWidget_5.setItem(rowd, 2, QTableWidgetItem(str('')))
                 self.tableWidget_5.setCellWidget(rowd, 2, mycobmbo)
-                if mycobmbo.currentText() == '' or mycobmbo.currentText() == ' ':
-                    mycobmbo.setCurrentIndex(0)
+                if object_type == 'خيارات' or object_type == 'خيارات مع تعديل':
+                    if mycobmbo.currentText() == '' or mycobmbo.currentText() == ' ':
+                        mycobmbo.setCurrentIndex(0)
         self.tableWidget_5.scrollToBottom()
         self.get_total_price()
         self.Show_All_The_Sales()
@@ -1009,7 +1081,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         global client_id_glob
         global chick_if_add_new
         global select_by_date
-        print(select_by_date)
+        # print(select_by_date)
         My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
                   'Crystals',
                   'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active',
@@ -1041,7 +1113,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             if True:
                 if select_by_date:
                     id = self.searchWidget.spinBox.value()
-                    print(id, 'jjj')
+                    # print(id, 'jjj')
                     from_date = self.searchWidget.dateEdit_6.date()
                     to_date = self.searchWidget.dateEdit_5.date()
                     self.cur.execute(
@@ -1053,7 +1125,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                         '''SELECT client_name,analyst_name,analyst_result,doctor_name,total_price,client_age,genus,notes FROM addnewitem WHERE client_id = %s AND DATE(date)=%s''',
                         (self.spinBox.value(), datetime.date.today(),))
                 analyst_data = self.cur.fetchall()
-                print(analyst_data)
+                # print(analyst_data)
                 self.comboBox_15.setCurrentText(str(analyst_data[0][3]))
                 self.comboBox_15.setEnabled(False)
                 self.comboBox_14.setEnabled(False)
@@ -1107,115 +1179,105 @@ class mainapp(QMainWindow, FORM_CLASS):
                         rs_name = self.tableWidget_5.item(rowd, 1).text()
                     except:
                         rs_name = ''
-                    mycobmbo = QComboBox(self)
+                    self.cur.execute('''SELECT results,category FROM addanalyst WHERE name=%s''', (rs_name,))
+                    results_data = self.cur.fetchall()
+                    mycobmbo = None
+                    object_type = ''
+                    if results_data:
+                        if results_data[0][1] == 'خيارات':
+                            mycobmbo = QComboBox(self)
+                            list_data = str(results_data[0][0]).replace("'", "")
+                            list_data = list_data.split(',')
+                            mycobmbo.addItems(list_data)
+                            object_type = 'خيارات'
+                        if results_data[0][1] == 'عدد':
+                            mycobmbo = QDoubleSpinBox(self)
+                            object_type = 'عدد'
+                        if results_data[0][1] == 'خيارات مع تعديل':
+                            mycobmbo = QComboBox(self)
+                            mycobmbo.setEditable(True)
+                            mycobmbo.addItems(results_data[0][0])
+                            object_type = 'خيارات مع تعديل'
+                        if results_data[0][1] == 'حقل كتابة':
+                            mycobmbo = QLineEdit(self)
+                            object_type = 'حقل كتابة'
+                        # self.tableWidget_5.setItem(rowd, 0, QTableWidgetItem(the_name))
+                        # if rs_name == 'Color:GSE' or rs_name == 'Colour:SFA':
+                        #     mycobmbo = QComboBox(self)
+                        #     mycobmbo.addItems(['yallow', 'brown', 'green', 'milk'])
+                        # if rs_name == 'Consistency':
+                        #     mycobmbo = QComboBox(self)
+                        #     mycobmbo.addItems(['Solid', 'Liquid', 'Semi solid', 'Semi liquid', 'Mucoid'])
+                        # if rs_name == 'R.B.Cs:GSE' or rs_name == 'Pus cells:GSE' or rs_name == 'RBCs:GUE' or rs_name == 'Pus cells:GUE':
+                        #     mycobmbo = QComboBox(self)
+                        #     mycobmbo.addItems(['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
+                        #                        '5 - 7', '6 - 8', '6 - 7', '+', '++', '+++', '++++', 'Full Field'])
+                        # if rs_name == 'E. Histolytica' or rs_name == 'G. Lembilia':
+                        #     mycobmbo = QComboBox(self)
+                        #     mycobmbo.addItems(['Cyst', 'Trophozoite'])
+                        # if rs_name == 'Ova':
+                        #     mycobmbo = QComboBox(self)
+                        #     mycobmbo.addItems(['Nill'])
+                        # if rs_name == 'Appearance':
+                        #     mycobmbo = QComboBox(self)
+                        #     mycobmbo.addItems(['Turbid', 'Clear'])
+                        # if rs_name == 'Reaction:GUE' or rs_name == 'Reaction:SFA':
+                        #     mycobmbo = QComboBox(self)
+                        #     mycobmbo.addItems(['Acidic', 'Alkaline'])
+                        # if rs_name == 'Albumin' or rs_name == 'Sugar':
+                        #     mycobmbo = QComboBox(self)
+                        #     mycobmbo.addItems(['Nil', '+', '++', '+++', 'Trace'])
+                        # if rs_name == 'Epith .cells':
+                        #     mycobmbo = QComboBox(self)
+                        #     mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
+                        # if rs_name == 'Crystals':
+                        #     mycobmbo = QComboBox(self)
+                        #     mycobmbo.addItems(['Am.Urate', 'Am.Phosphatase', 'Uric Acid', 'Ca.Oxalate'])
+                        # if rs_name == 'Casts':
+                        #     mycobmbo = QComboBox(self)
+                        #     mycobmbo.addItems(['Granular cast +', 'Granular cast ++', 'Granular cast +++'])
+                        #
+                        # if rs_name == 'Bacteria:GSE' or rs_name == 'Monillia:GSE' or rs_name == 'Fatty drop:GSE' or rs_name == 'Monillia:GUE' or rs_name == 'Fatty drop:GUE' or rs_name == 'Bacteria:GUE' or rs_name == 'Mucuse:GUE':
+                        #     mycobmbo = QComboBox(self)
+                        #     mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
+                        # if rs_name == 'Motility:Active' or rs_name == 'Motility:Sluggish' or rs_name == 'Motility:Dead' or rs_name == 'Morphology:Normal' or rs_name == 'Morphology:Abnormal' or rs_name == 'Morphology:Pus cells':
+                        #     mycobmbo = QComboBox(self)
+                        #     mycobmbo.addItems(
+                        #         ['5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80',
+                        #          '85'])
+                        # if rs_name == 'Volume':
+                        #     mycobmbo = QComboBox(self)
+                        #     mycobmbo.addItems(['0.5', '0.6', '0.7'])
+                        # if rs_name == 'Liquefaction':
+                        #     mycobmbo = QComboBox(self)
+                        #     mycobmbo.addItems(['5', '10', '15', '20', '25', '30', '35', '40', '45'])
+                        # print('mystatrt')
 
-                    if rs_name == 'Color:GSE' or rs_name == 'Colour:SFA':
-                        mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['yallow', 'brown', 'green', 'milk'])
-                    if rs_name == 'Consistency':
-                        mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['Solid', 'Liquid', 'Semi solid', 'Semi liquid', 'Mucoid'])
-                    if rs_name == 'R.B.Cs:GSE' or rs_name == 'Pus cells:GSE' or rs_name == 'RBCs:GUE' or rs_name == 'Pus cells:GUE':
-                        mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(
-                            ['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
-                             '5 - 7', '6 - 8', '6 - 7', '+', '++', '+++', '++++', 'Full Field'])
-                    if rs_name == 'E. Histolytica' or rs_name == 'G. Lembilia':
-                        mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['Cyst', 'Trophozoite'])
-                    if rs_name == 'Ova':
-                        mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['Nill'])
-                    if rs_name == 'Appearance':
-                        mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['Turbid', 'Clear'])
-                    if rs_name == 'Reaction:GUE' or rs_name == 'Reaction:SFA':
-                        mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['Acidic', 'Alkaline'])
-                    if rs_name == 'Albumin' or rs_name == 'Sugar':
-                        mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['Nil', '+', '++', '+++', 'Trace'])
-                    if rs_name == 'Epith .cells':
-                        mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
-                    if rs_name == 'Crystals':
-                        mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['Am.Urate', 'Am.Phosphatase', 'Uric Acid', 'Ca.Oxalate'])
-                    if rs_name == 'Casts':
-                        mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['Granular cast +', 'Granular cast ++', 'Granular cast +++'])
+                        r2_analyst_name = self.tableWidget_5.item(rowd, 1).text()
+                        r2_client_name = self.comboBox_4.currentText()
+                        self.cur.execute(
+                            ''' SELECT  analyst_result  FROM addnewitem WHERE client_name=%s AND analyst_name=%s ''',
+                            (r2_client_name, r2_analyst_name))
+                        myrs = self.cur.fetchall()
+                        if myrs != None:
+                            if object_type == 'خيارات' or object_type == 'خيارات مع تعديل':
+                                print('ssm,lskwow')
+                                index = mycobmbo.findText(myrs[0][0], Qt.MatchFixedString)
+                                mycobmbo.setCurrentIndex(index)
+                            if object_type == 'عدد':
+                                print('Tru')
+                                if myrs[0][0] and myrs[0][0]!='':
+                                    mycobmbo.setValue(float(int(myrs[0][0])))
+                            if object_type == 'حقل كتابة':
+                                mycobmbo.setText(str(myrs[0][0]))
+                        self.tableWidget_5.setItem(rowd, 2, QTableWidgetItem(str('')))
+                        self.tableWidget_5.setCellWidget(rowd, 2, mycobmbo)
+                        if object_type == 'خيارات' or object_type == 'خيارات مع تعديل':
+                            if mycobmbo.currentText() == '' or mycobmbo.currentText() == ' ':
+                                mycobmbo.setCurrentIndex(0)
 
-                    if rs_name == 'Bacteria:GSE' or rs_name == 'Monillia:GSE' or rs_name == 'Fatty drop:GSE' or rs_name == 'Monillia:GUE' or rs_name == 'Fatty drop:GUE' or rs_name == 'Bacteria:GUE' or rs_name == 'Mucuse:GUE':
-                        mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
-                    if rs_name == 'Motility:Active' or rs_name == 'Motility:Sluggish' or rs_name == 'Motility:Dead' or rs_name == 'Morphology:Normal' or rs_name == 'Morphology:Abnormal' or rs_name == 'Morphology:Pus cells':
-                        mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(
-                            ['5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75',
-                             '80',
-                             '85'])
-                    if rs_name == 'Volume':
-                        mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['0.5', '0.6', '0.7'])
-                    if rs_name == 'Liquefaction':
-                        mycobmbo = QComboBox(self)
-                        mycobmbo.addItems(['5', '10', '15', '20', '25', '30', '35', '40', '45'])
-                    # if rs_name=='':
-                    #     mycobmbo = QComboBox(self)
-                    #     mycobmbo.addItems([])
-                    # if rs_name=='':
-                    #     mycobmbo = QComboBox(self)
-                    #     mycobmbo.addItems([])
-                    # if rs_name=='':
-                    #     mycobmbo = QComboBox(self)
-                    #     mycobmbo.addItems([])
-                    # if rs_name=='':
-                    #     mycobmbo = QComboBox(self)
-                    #     mycobmbo.addItems([])
-                    # if rs_name=='':
-                    #     mycobmbo = QComboBox(self)
-                    #     mycobmbo.addItems([])
-                    # if rs_name=='':
-                    #     mycobmbo = QComboBox(self)
-                    #     mycobmbo.addItems([])
-                    # if rs_name=='':
-                    #     mycobmbo = QComboBox(self)
-                    #     mycobmbo.addItems([])
-                    # if rs_name=='':
-                    #     mycobmbo = QComboBox(self)
-                    #     mycobmbo.addItems([])
-                    # if rs_name=='':
-                    #     mycobmbo = QComboBox(self)
-                    #     mycobmbo.addItems([])
-                    # if rs_name=='':
-                    #     mycobmbo = QComboBox(self)
-                    #     mycobmbo.addItems([])
-                    # if rs_name=='':
-                    #     mycobmbo = QComboBox(self)
-                    #     mycobmbo.addItems([])
-                    # if rs_name=='':
-                    #     mycobmbo = QComboBox(self)
-                    #     mycobmbo.addItems([])
-                    for jjk in My_num:
-                        try:
-                            if rs_name == jjk:
-                                # print('mystatrt')
-                                r2_analyst_name = self.tableWidget_5.item(rowd, 1).text()
-                                r2_client_name = self.comboBox_4.currentText()
-                                self.cur.execute(
-                                    ''' SELECT  analyst_result  FROM addnewitem WHERE client_name=%s AND analyst_name=%s ''',
-                                    (r2_client_name, r2_analyst_name))
-                                myrs = self.cur.fetchall()
 
-                                if myrs != '' or myrs != None:
-                                    index = mycobmbo.findText(myrs[0][0], Qt.MatchFixedString)
-                                    mycobmbo.setCurrentIndex(index)
-                                self.tableWidget_5.setItem(rowd, 2, QTableWidgetItem(str('')))
-                                self.tableWidget_5.setCellWidget(rowd, 2, mycobmbo)
-                                if mycobmbo.currentText() == '' or mycobmbo.currentText() == ' ':
-                                    mycobmbo.setCurrentIndex(0)
-                        except:
-                            pass
+
 
             # except Exception as e:
             #     print(e)
@@ -1223,63 +1285,72 @@ class mainapp(QMainWindow, FORM_CLASS):
             #                             'الرقم الذي ادخلته غير صحيح يرجى ادخال رقم صحيح او مراجعة صفحة "كل المبيعات" للتأكد من الرقم')
             self.get_total_price()
             select_by_date = False
-
-    def Chick_analyst_category(self):
-        pationt_name = self.comboBox_4.currentText()
-        doctor_name = self.comboBox_15.currentText()
-
+    def analyst_category_function(self,name):
+        global addTrue
+        print('starthh')
+        # pationt_name = self.comboBox_4.currentText()
+        # doctor_name = self.comboBox_15.currentText()
         analyst_name = self.comboBox_16.currentText()
         self.cur.execute('''SELECT category,results FROM addanalyst WHERE name = %s''', (analyst_name,))
         analyst_category = self.cur.fetchone()
         try:
-            if analyst_category[0] == 'عدد':
-                self.comboBox_17.hide()
-                self.lineEdit_21.hide()
-                self.doubleSpinBox_7.show()
-            if analyst_category[0] == 'خيارات':
-                self.lineEdit_21.hide()
-                self.doubleSpinBox_7.hide()
-                self.comboBox_17.show()
-                self.comboBox_17.setEditable(False)
-            if analyst_category[0] == 'حقل كتابة':
-                self.lineEdit_21.show()
-                self.doubleSpinBox_7.hide()
-                self.comboBox_17.hide()
-            if analyst_category[0] == 'خيارات مع تعديل':
-                self.lineEdit_21.hide()
-                self.doubleSpinBox_7.hide()
-                # self.comboBox_17.clear()
-                self.comboBox_17.show()
-                self.comboBox_17.setEditable(True)
-        except:
-            if analyst_name != 'Full GSE' and analyst_name != 'Full GUE' and analyst_name != 'Full SFA':
-                QMessageBox.information(self, 'تحذير', "يرجى اختيار تحليل صحيح")
+            if analyst_category:
+                if analyst_category[0] == 'عدد':
+                    self.comboBox_17.hide()
+                    self.lineEdit_21.hide()
+                    self.doubleSpinBox_7.show()
+                if analyst_category[0] == 'خيارات':
+                    self.lineEdit_21.hide()
+                    self.doubleSpinBox_7.hide()
+                    self.comboBox_17.show()
+                    self.comboBox_17.setEditable(False)
+                if analyst_category[0] == 'حقل كتابة':
+                    self.lineEdit_21.show()
+                    self.doubleSpinBox_7.hide()
+                    self.comboBox_17.hide()
+                if analyst_category[0] == 'خيارات مع تعديل':
+                    self.lineEdit_21.hide()
+                    self.doubleSpinBox_7.hide()
+                    # self.comboBox_17.clear()
+                    self.comboBox_17.show()
+                    self.comboBox_17.setEditable(True)
+        except Exception as e:
+            print(e)
+            if name not in mylist:
+                if not addTrue:
+                    QMessageBox.information(self, 'تحذير', "يرجى اختيار تحليل صحيح")
         row_count = self.tableWidget_5.rowCount()
-        if analyst_name == 'Full GSE':
+        print(name, 'here name')
+        if name in mylist:
             # QStatusBar.showMessage(self,'يرجى الانتظار سيتم تنفيذ طلبك خلال ثواني')
-            self.cur.execute(''' SELECT name FROM addanalyst WHERE sub_category='GSE' ''')
-            GSE_DATA = self.cur.fetchall()
-            print(GSE_DATA)
-            for new in GSE_DATA:
+
+            self.cur.execute('''SELECT name FROM addanalyst WHERE sub_category=%s ''',(str(name),))
+            my_DATA = self.cur.fetchall()
+            # print(GSE_DATA)
+            for new in my_DATA:
+                print(new[0])
                 self.comboBox_16.setCurrentText(str(new[0]))
                 self.Sales_Page()
+                print('2')
             self.comboBox_16.setCurrentIndex(0)
-        if analyst_name == 'Full GUE':
-            # QStatusBar.showMessage(self,'يرجى الانتظار سيتم تنفيذ طلبك خلال ثواني')
-            self.cur.execute(''' SELECT name FROM addanalyst WHERE sub_category='GUE' ''')
-            GUE_DATA = self.cur.fetchall()
-            for new2 in GUE_DATA:
-                self.comboBox_16.setCurrentText(str(new2[0]))
-                self.Sales_Page()
-            self.comboBox_16.setCurrentIndex(0)
-        if analyst_name == 'Full SFA':
-            # QStatusBar.showMessage(self,'يرجى الانتظار سيتم تنفيذ طلبك خلال ثواني')
-            self.cur.execute(''' SELECT name FROM addanalyst WHERE sub_category='SFA' ''')
-            SFA_DATA = self.cur.fetchall()
-            for new3 in SFA_DATA:
-                self.comboBox_16.setCurrentText(str(new3[0]))
-                self.Sales_Page()
-            self.comboBox_16.setCurrentIndex(0)
+        else:
+            print('error here2')
+        # if analyst_name == 'Full GUE':
+        #     # QStatusBar.showMessage(self,'يرجى الانتظار سيتم تنفيذ طلبك خلال ثواني')
+        #     self.cur.execute(''' SELECT name FROM addanalyst WHERE sub_category='GUE' ''')
+        #     GUE_DATA = self.cur.fetchall()
+        #     for new2 in GUE_DATA:
+        #         self.comboBox_16.setCurrentText(str(new2[0]))
+        #         self.Sales_Page()
+        #     self.comboBox_16.setCurrentIndex(0)
+        # if analyst_name == 'Full SFA':
+        #     # QStatusBar.showMessage(self,'يرجى الانتظار سيتم تنفيذ طلبك خلال ثواني')
+        #     self.cur.execute(''' SELECT name FROM addanalyst WHERE sub_category='SFA' ''')
+        #     SFA_DATA = self.cur.fetchall()
+        #     for new3 in SFA_DATA:
+        #         self.comboBox_16.setCurrentText(str(new3[0]))
+        #         self.Sales_Page()
+        #     self.comboBox_16.setCurrentIndex(0)
 
         # colors = ['yallow', 'brown', 'green', 'milk']
         # RBCs_Pus_cells_GUE_GSE = ['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
@@ -1309,11 +1380,32 @@ class mainapp(QMainWindow, FORM_CLASS):
                 self.comboBox_17.clear()
                 list_data = str(analyst_category[1]).replace("'", "")
                 list_data = list_data.split(',')
-                print(list_data[1])
+                # print(list_data[1])
                 for rr in range(0, len(list_data)):
                     self.comboBox_17.addItem(list_data[rr])
             except:
-                pass
+                print('erorr here')
+    def Chick_analyst_category(self,item=None):
+        # print(item,'here')
+        global mylist
+        global sd
+
+        if self.comboBox_16.currentText() not in mylist and self.comboBox_16.currentIndex() != 0:
+            # self.analyst_category_function(self.comboBox_16.currentText())
+            pass
+        if self.comboBox_16.currentText() in mylist:
+            if self.comboBox_16.currentIndex() != 0:
+                try:
+                    ritem=self.comboBox_16.model().itemFromIndex(sd)
+                    if ritem.checkState()==Qt.Unchecked:
+                        ritem.setCheckState(Qt.Checked)
+                        self.analyst_category_function(ritem.text())
+                    else:
+                        ritem.setCheckState(Qt.Unchecked)
+                    # ritem.setCheckState(Qt.Unchecked)
+                except Exception as e:
+                    print(e)
+                    print('erorr 404')
 
     def get_client_id(self):
         global client_id_glob
@@ -1451,7 +1543,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         for i in range(0, results_number):
             self.comboBox_30.setCurrentIndex(i)
             results.append(str(self.comboBox_30.currentText()))
-        print(str(results))
+        # print(str(results))
         self.cur.execute(
             ''' INSERT INTO addanalyst (name,price,category,sub_category,date,defult,unit,results) VALUES(%s,%s,%s,%s,%s,%s,%s,%s) ''',
             (
@@ -1472,28 +1564,37 @@ class mainapp(QMainWindow, FORM_CLASS):
         analyst_current_name = self.comboBox_21.currentText()
         analyst_current_index = self.comboBox_21.currentIndex()
         if not analyst_current_index:
-            QMessageBox.information(self, 'تحذير', "يرجى اختيار تحليل صحيح")
+            # QMessageBox.information(self, 'تحذير', "يرجى اختيار تحليل صحيح")
+            self.comboBox_26.setCurrentText('')  # sub_category =
+            self.comboBox_26.setCurrentIndex(0)  # sub_category =
+            self.comboBox_25.setCurrentIndex(0)  # sub_category =
+            self.lineEdit_29.setText('')  # analyst_name =
+            self.comboBox_25.setCurrentText('')  # analyst_result_category =
+            self.textEdit_5.setPlainText('')  # defult =
+            self.textEdit_4.setPlainText('')  # unit =
+            self.spinBox_6.setValue(0)  # analyst_price =
         else:
             self.cur.execute(
                 ''' SELECT name,defult,unit,price,category,sub_category,results FROM addanalyst WHERE name=%s ''',
                 (analyst_current_name,))
             data = self.cur.fetchall()
-            if data[0][6]:
-                list_data = str(data[0][6]).replace("'", "")
-                list_data = list_data.split(',')
-                # print(list(list_data))
-                # print(list_data)
-                print(list_data[1])
-                for rr in range(0, len(list_data)):
-                    self.comboBox_31.addItem(list_data[rr])  # results =
-            self.comboBox_26.setCurrentText(str(data[0][5]))  # sub_category =
-            self.lineEdit_29.setText(str(data[0][0]))  # analyst_name =
-            self.comboBox_25.setCurrentText(str(data[0][4]))  # analyst_result_category =
-            self.textEdit_5.setPlainText(data[0][1])  # defult =
-            self.textEdit_4.setPlainText(data[0][2])  # unit =
-            self.spinBox_6.setValue(data[0][3])  # analyst_price =
-            self.Add_Data_To_history(6, 2)
-            self.History()
+            if data:
+                if data[0][6]:
+                    list_data = str(data[0][6]).replace("'", "")
+                    list_data = list_data.split(',')
+                    # print(list(list_data))
+                    # print(list_data)
+                    # print(list_data[1])
+                    for rr in range(0, len(list_data)):
+                        self.comboBox_31.addItem(list_data[rr])  # results =
+                self.comboBox_26.setCurrentText(str(data[0][5]))  # sub_category =
+                self.lineEdit_29.setText(str(data[0][0]))  # analyst_name =
+                self.comboBox_25.setCurrentText(str(data[0][4]))  # analyst_result_category =
+                self.textEdit_5.setPlainText(data[0][1])  # defult =
+                self.textEdit_4.setPlainText(data[0][2])  # unit =
+                self.spinBox_6.setValue(data[0][3])  # analyst_price =
+            # self.Add_Data_To_history(6, 2)
+            # self.History()
 
     def Edit_Analyst(self):
         analyst_current_name = self.comboBox_21.currentText()
@@ -1542,29 +1643,41 @@ class mainapp(QMainWindow, FORM_CLASS):
             self.Show_all_analysts_in_combo()
 
     def Show_all_analysts_in_combo(self):
+        global mylist
+        global addTrue
+        addTrue=True
         self.cur.execute(
             ''' SELECT name FROM addanalyst WHERE sub_category=%s OR sub_category=%s OR sub_category=%s ORDER BY sub_category''',
             ('bio', 'هرمونات مشترك', 'hematology'))
         data = self.cur.fetchall()
         self.comboBox_21.clear()
         self.comboBox_16.clear()
+        self.comboBox_26.clear()
+        self.comboBox_22.clear()
+        self.comboBox_26.addItem('----------------')
+        self.comboBox_22.addItem('----------------')
         self.comboBox_21.addItem('----------------')
         self.comboBox_16.addItem('----------------')
         self.comboBox_3.addItem('----------------')
         self.comboBox_3.addItem('كل الاصناف')
-        listh = ['Full GSE', 'Full GUE', 'Full SFA', 'Full bio', 'Full Hormones']
-        self.comboBox_16.addItem('Full GSE')
-        self.comboBox_16.addItem('Full GUE')
-        self.comboBox_16.addItem('Full SFA')
-        self.comboBox_3.addItems(listh)
 
+        self.comboBox_16.addItems(mylist)
+        self.comboBox_26.addItems(mylist)
+        self.comboBox_22.addItems(mylist)
+        self.comboBox_3.addItems(mylist)
         for item in data:
             self.comboBox_21.addItem(str(item[0]))
             self.comboBox_16.addItem(str(item[0]))
             self.comboBox_3.addItem(str(item[0]))
-
-
-
+        for ii in range(0, self.comboBox_16.count()):
+            self.comboBox_16.setCurrentIndex(ii)
+            if self.comboBox_16.currentText() in mylist:
+                # self.comboBox_16.setItemChecked(self.comboBox_16.currentIndex(),False)
+                myitem = self.comboBox_16.model().item(self.comboBox_16.currentIndex(), self.comboBox_16.modelColumn())
+                myitem.setCheckState(Qt.Unchecked)
+        self.comboBox_16.setCurrentIndex(0)
+        addTrue=False
+        # self.handel_buttons()
 
     def Clients_Page(self):
         self.tableWidget_4.setRowCount(0)

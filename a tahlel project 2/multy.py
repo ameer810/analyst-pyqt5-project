@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(646, 590)
+        Dialog.resize(646, 650)
         Dialog.setStyleSheet("\n"
 "/*\n"
 "ABOUT\n"
@@ -2119,7 +2119,7 @@ class Ui_Dialog(object):
 "    border-color: #3874f2;\n"
 "}")
         self.tabWidget = QtWidgets.QTabWidget(Dialog)
-        self.tabWidget.setGeometry(QtCore.QRect(1, 10, 651, 621))
+        self.tabWidget.setGeometry(QtCore.QRect(1, 10, 651, 541))
         self.tabWidget.setObjectName("tabWidget")
         # self.tab = QtWidgets.QWidget()
         # self.tab.setObjectName("tab")
@@ -2133,13 +2133,14 @@ class Ui_Dialog(object):
         # self.listWidget.addItem(item)
         # item = QtWidgets.QListWidgetItem()
         # self.listWidget.addItem(item)
-        # self.pushButton = QtWidgets.QPushButton(self.tab)
-        # self.pushButton.setGeometry(QtCore.QRect(120, 450, 401, 71))
-        # font = QtGui.QFont()
-        # font.setFamily("Segoe UI")
-        # font.setPointSize(16)
-        # self.pushButton.setFont(font)
-        # self.pushButton.setObjectName("pushButton")
+        self.pushButton = QtWidgets.QPushButton(Dialog)
+        self.pushButton.setGeometry(QtCore.QRect(110, 550, 401, 71))
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(16)
+        self.pushButton.setFont(font)
+        self.pushButton.setObjectName("pushButton")
+        self.pushButton.setText('اضافة')
         # self.tabWidget.addTab(self.tab, "")
         # self.tab_2 = QtWidgets.QWidget()
         # self.tab_2.setObjectName("tab_2")
@@ -2159,7 +2160,7 @@ class Ui_Dialog(object):
         # item = self.listWidget.item(1)
         # item.setText(_translate("Dialog", "New Item"))
         # self.listWidget.setSortingEnabled(__sortingEnabled)
-        # self.pushButton.setText(_translate("Dialog", "تطبيق"))
+        self.pushButton.setText(_translate("Dialog", "تطبيق"))
         # self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Dialog", "Tab 1"))
         # self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("Dialog", "Tab 2"))
 

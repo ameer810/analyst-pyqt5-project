@@ -2469,7 +2469,7 @@ QPushButton:pressed{
      <string notr="true"/>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -3970,8 +3970,8 @@ font: 14pt &quot;Segoe UI&quot;;
          </property>
          <property name="geometry">
           <rect>
-           <x>200</x>
-           <y>81</y>
+           <x>242</x>
+           <y>80</y>
            <width>361</width>
            <height>41</height>
           </rect>
@@ -4034,9 +4034,15 @@ font: 11pt &quot;Segoe UI&quot;;
           <rect>
            <x>60</x>
            <y>150</y>
-           <width>501</width>
+           <width>541</width>
            <height>41</height>
           </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>12</pointsize>
+          </font>
          </property>
          <property name="styleSheet">
           <string notr="true">border-radius: 20px;
@@ -4266,34 +4272,6 @@ font: 14pt &quot;Segoe UI&quot;;
           <string>المراجع</string>
          </property>
         </widget>
-        <widget class="QPushButton" name="pushButton_31">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
-         <property name="geometry">
-          <rect>
-           <x>55</x>
-           <y>74</y>
-           <width>141</width>
-           <height>51</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <family>Segoe UI</family>
-           <pointsize>13</pointsize>
-          </font>
-         </property>
-         <property name="cursor">
-          <cursorShape>PointingHandCursor</cursorShape>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string>تطبيق</string>
-         </property>
-        </widget>
         <widget class="QPushButton" name="pushButton_32">
          <property name="enabled">
           <bool>true</bool>
@@ -4389,8 +4367,8 @@ font: 14pt &quot;Segoe UI&quot;;
          <property name="geometry">
           <rect>
            <x>60</x>
-           <y>140</y>
-           <width>501</width>
+           <y>150</y>
+           <width>541</width>
            <height>51</height>
           </rect>
          </property>
@@ -4409,8 +4387,8 @@ font: 10pt &quot;Segoe UI&quot;;</string>
          <property name="geometry">
           <rect>
            <x>60</x>
-           <y>140</y>
-           <width>501</width>
+           <y>150</y>
+           <width>541</width>
            <height>51</height>
           </rect>
          </property>
@@ -4522,6 +4500,25 @@ font: 14pt &quot;Segoe UI&quot;;
          </property>
          <property name="text">
           <string>بحث بالتاريخ</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_44">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>73</y>
+           <width>181</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>اكثر من تحليل</string>
          </property>
         </widget>
        </widget>
@@ -4690,7 +4687,7 @@ font: 14pt &quot;Segoe UI&quot;;
        <enum>Qt::RightToLeft</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_8">
        <attribute name="title">
@@ -5115,31 +5112,6 @@ font: 14pt &quot;Segoe UI&quot;;
            <string>----------------------</string>
           </property>
          </item>
-         <item>
-          <property name="text">
-           <string>bio</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>GSE</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>GUE</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>hematology</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>هرمونات مشترك</string>
-          </property>
-         </item>
         </widget>
         <widget class="QTextEdit" name="textEdit_2">
          <property name="geometry">
@@ -5319,9 +5291,9 @@ font: 14pt &quot;Segoe UI&quot;;
         <widget class="QComboBox" name="comboBox_21">
          <property name="geometry">
           <rect>
-           <x>140</x>
+           <x>20</x>
            <y>50</y>
-           <width>341</width>
+           <width>381</width>
            <height>41</height>
           </rect>
          </property>
@@ -5394,41 +5366,6 @@ font: 14pt &quot;Segoe UI&quot;;
           <size>
            <width>53</width>
            <height>53</height>
-          </size>
-         </property>
-        </widget>
-        <widget class="QPushButton" name="pushButton_33">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>45</y>
-           <width>111</width>
-           <height>51</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <family>Segoe UI</family>
-           <pointsize>14</pointsize>
-          </font>
-         </property>
-         <property name="cursor">
-          <cursorShape>PointingHandCursor</cursorShape>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="text">
-          <string>بحث  </string>
-         </property>
-         <property name="icon">
-          <iconset resource="icons.qrc">
-           <normaloff>:/icons8-search-512.png</normaloff>:/icons8-search-512.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>25</height>
           </size>
          </property>
         </widget>
@@ -5512,9 +5449,9 @@ font: 14pt &quot;Segoe UI&quot;;
         <widget class="QLabel" name="label_57">
          <property name="geometry">
           <rect>
-           <x>386</x>
+           <x>406</x>
            <y>226</y>
-           <width>111</width>
+           <width>91</width>
            <height>51</height>
           </rect>
          </property>
@@ -5573,9 +5510,9 @@ font: 14pt &quot;Segoe UI&quot;;
         <widget class="QLabel" name="label_59">
          <property name="geometry">
           <rect>
-           <x>389</x>
+           <x>409</x>
            <y>166</y>
-           <width>111</width>
+           <width>91</width>
            <height>51</height>
           </rect>
          </property>
@@ -5594,9 +5531,9 @@ font: 14pt &quot;Segoe UI&quot;;
         <widget class="QLabel" name="label_52">
          <property name="geometry">
           <rect>
-           <x>377</x>
+           <x>397</x>
            <y>106</y>
-           <width>121</width>
+           <width>101</width>
            <height>51</height>
           </rect>
          </property>
@@ -5729,31 +5666,6 @@ font: 14pt &quot;Segoe UI&quot;;
            <string>----------------------</string>
           </property>
          </item>
-         <item>
-          <property name="text">
-           <string>bio</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>GSE</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>GUE</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>hematology</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>هرمونات مشترك</string>
-          </property>
-         </item>
         </widget>
         <widget class="QPushButton" name="pushButton_40">
          <property name="enabled">
@@ -5831,6 +5743,27 @@ font: 14pt &quot;Segoe UI&quot;;
           </size>
          </property>
         </widget>
+        <widget class="QLabel" name="label_71">
+         <property name="geometry">
+          <rect>
+           <x>420</x>
+           <y>45</y>
+           <width>71</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>12</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>التحليل</string>
+         </property>
+        </widget>
        </widget>
       </widget>
      </widget>
@@ -5875,9 +5808,9 @@ font: 14pt &quot;Segoe UI&quot;;
      <widget class="QComboBox" name="comboBox_20">
       <property name="geometry">
        <rect>
-        <x>380</x>
+        <x>230</x>
         <y>46</y>
-        <width>241</width>
+        <width>261</width>
         <height>41</height>
        </rect>
       </property>
@@ -5924,48 +5857,12 @@ font: 14pt &quot;Segoe UI&quot;;
        </property>
       </item>
      </widget>
-     <widget class="QPushButton" name="pushButton_21">
-      <property name="geometry">
-       <rect>
-        <x>180</x>
-        <y>40</y>
-        <width>171</width>
-        <height>51</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Segoe UI</family>
-        <pointsize>14</pointsize>
-       </font>
-      </property>
-      <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">border-radius: 20px;
-</string>
-      </property>
-      <property name="text">
-       <string>بحث</string>
-      </property>
-      <property name="icon">
-       <iconset resource="icons.qrc">
-        <normaloff>:/icons8-search-512.png</normaloff>:/icons8-search-512.png</iconset>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>31</width>
-        <height>31</height>
-       </size>
-      </property>
-     </widget>
      <widget class="QComboBox" name="comboBox_24">
       <property name="geometry">
        <rect>
-        <x>708</x>
+        <x>585</x>
         <y>47</y>
-        <width>231</width>
+        <width>281</width>
         <height>41</height>
        </rect>
       </property>
@@ -6022,7 +5919,7 @@ font: 14pt &quot;Segoe UI&quot;;
      <widget class="QLabel" name="label_15">
       <property name="geometry">
        <rect>
-        <x>943</x>
+        <x>880</x>
         <y>40</y>
         <width>61</width>
         <height>51</height>
@@ -6043,7 +5940,7 @@ font: 14pt &quot;Segoe UI&quot;;
      <widget class="QLabel" name="label_16">
       <property name="geometry">
        <rect>
-        <x>620</x>
+        <x>497</x>
         <y>40</y>
         <width>61</width>
         <height>51</height>
