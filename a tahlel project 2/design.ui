@@ -2701,9 +2701,9 @@ QPushButton:pressed{
      <widget class="QPushButton" name="pushButton_10">
       <property name="geometry">
        <rect>
-        <x>170</x>
-        <y>360</y>
-        <width>531</width>
+        <x>330</x>
+        <y>340</y>
+        <width>431</width>
         <height>71</height>
        </rect>
       </property>
@@ -2716,7 +2716,29 @@ QPushButton:pressed{
        <cursorShape>PointingHandCursor</cursorShape>
       </property>
       <property name="text">
-       <string>استعادة الرمز</string>
+       <string>استعادة كلمة المرور</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_21">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>340</y>
+        <width>221</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
+      <property name="text">
+       <string>عودة لتسجيل الدخول</string>
       </property>
      </widget>
     </widget>
@@ -2743,7 +2765,7 @@ QPushButton:pressed{
        <enum>Qt::RightToLeft</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_17">
        <attribute name="title">
@@ -4099,6 +4121,11 @@ font: 11pt &quot;Segoe UI&quot;;
            <string>السعر</string>
           </property>
          </column>
+         <column>
+          <property name="text">
+           <string>حذف</string>
+          </property>
+         </column>
         </widget>
         <widget class="QPushButton" name="pushButton_17">
          <property name="enabled">
@@ -4959,7 +4986,7 @@ font: 14pt &quot;Segoe UI&quot;;
          <property name="geometry">
           <rect>
            <x>360</x>
-           <y>520</y>
+           <y>463</y>
            <width>111</width>
            <height>51</height>
           </rect>
@@ -5096,9 +5123,9 @@ font: 14pt &quot;Segoe UI&quot;;
         <widget class="QComboBox" name="comboBox_23">
          <property name="geometry">
           <rect>
-           <x>11</x>
+           <x>51</x>
            <y>120</y>
-           <width>321</width>
+           <width>281</width>
            <height>41</height>
           </rect>
          </property>
@@ -5107,11 +5134,9 @@ font: 14pt &quot;Segoe UI&quot;;
            <pointsize>11</pointsize>
           </font>
          </property>
-         <item>
-          <property name="text">
-           <string>----------------------</string>
-          </property>
-         </item>
+         <property name="editable">
+          <bool>true</bool>
+         </property>
         </widget>
         <widget class="QTextEdit" name="textEdit_2">
          <property name="geometry">
@@ -5173,7 +5198,7 @@ font: 14pt &quot;Segoe UI&quot;;
          <property name="geometry">
           <rect>
            <x>13</x>
-           <y>530</y>
+           <y>470</y>
            <width>321</width>
            <height>41</height>
           </rect>
@@ -5212,9 +5237,9 @@ font: 14pt &quot;Segoe UI&quot;;
         <widget class="QComboBox" name="comboBox_30">
          <property name="geometry">
           <rect>
-           <x>70</x>
+           <x>50</x>
            <y>240</y>
-           <width>261</width>
+           <width>281</width>
            <height>41</height>
           </rect>
          </property>
@@ -5234,9 +5259,47 @@ font: 14pt &quot;Segoe UI&quot;;
          </property>
          <property name="geometry">
           <rect>
-           <x>3</x>
+           <x>1</x>
            <y>235</y>
-           <width>61</width>
+           <width>51</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>13</pointsize>
+          </font>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/icons8-add-new-100.png</normaloff>:/icons8-add-new-100.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_46">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>113</y>
+           <width>51</width>
            <height>51</height>
           </rect>
          </property>
@@ -5388,9 +5451,9 @@ font: 14pt &quot;Segoe UI&quot;;
         <widget class="QLabel" name="label_49">
          <property name="geometry">
           <rect>
-           <x>379</x>
+           <x>399</x>
            <y>452</y>
-           <width>101</width>
+           <width>81</width>
            <height>51</height>
           </rect>
          </property>
@@ -5409,9 +5472,9 @@ font: 14pt &quot;Segoe UI&quot;;
         <widget class="QLabel" name="label_50">
          <property name="geometry">
           <rect>
-           <x>369</x>
+           <x>409</x>
            <y>516</y>
-           <width>111</width>
+           <width>71</width>
            <height>51</height>
           </rect>
          </property>
@@ -5510,7 +5573,7 @@ font: 14pt &quot;Segoe UI&quot;;
         <widget class="QLabel" name="label_59">
          <property name="geometry">
           <rect>
-           <x>409</x>
+           <x>408</x>
            <y>166</y>
            <width>91</width>
            <height>51</height>
@@ -5568,9 +5631,9 @@ font: 14pt &quot;Segoe UI&quot;;
         <widget class="QLabel" name="label_62">
          <property name="geometry">
           <rect>
-           <x>428</x>
+           <x>418</x>
            <y>286</y>
-           <width>71</width>
+           <width>81</width>
            <height>51</height>
           </rect>
          </property>
@@ -5649,9 +5712,9 @@ font: 14pt &quot;Segoe UI&quot;;
         <widget class="QComboBox" name="comboBox_26">
          <property name="geometry">
           <rect>
-           <x>20</x>
+           <x>70</x>
            <y>176</y>
-           <width>381</width>
+           <width>331</width>
            <height>41</height>
           </rect>
          </property>
@@ -5661,11 +5724,9 @@ font: 14pt &quot;Segoe UI&quot;;
            <pointsize>11</pointsize>
           </font>
          </property>
-         <item>
-          <property name="text">
-           <string>----------------------</string>
-          </property>
-         </item>
+         <property name="editable">
+          <bool>true</bool>
+         </property>
         </widget>
         <widget class="QPushButton" name="pushButton_40">
          <property name="enabled">
@@ -5762,6 +5823,44 @@ font: 14pt &quot;Segoe UI&quot;;
          </property>
          <property name="text">
           <string>التحليل</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_45">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>13</x>
+           <y>170</y>
+           <width>51</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>13</pointsize>
+          </font>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/icons8-add-new-100.png</normaloff>:/icons8-add-new-100.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
          </property>
         </widget>
        </widget>
