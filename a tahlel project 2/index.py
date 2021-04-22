@@ -1766,7 +1766,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         client_data = self.cur.fetchall()
         self.cur.execute(
             ''' SELECT price,analyst_name,analyst_result,client_name,date FROM addnewitem WHERE client_id=%s AND DATE(date=%s)''',
-            (str(id), str('2021-04-21')),)
+            (str(id), str(date.toPyDate)),)
         client_analyst_data = self.cur.fetchall()
         print()
         num = 0
@@ -2043,8 +2043,22 @@ class mainapp(QMainWindow, FORM_CLASS):
         GUE_analysts = 0
         SFA_analysts = 0
         HRMON_analysts = 0
-        for tahlel in analysts:
-            number_of_analysts += 1
+        num_of_one_sub_category_analysts=0
+        all_sub_category=[]
+        all_sub_category_len=[]
+        for index,iii in enumerate(analysts):
+            self.cur.execute(''' SELECT sub_category FROM addanalyst WHERE name=%s ''',(str(iii)))
+            data=self.cur.fetchall()
+            if data:
+                all_sub_category.append(data[index][0])
+        for iiii in all_sub_category:
+            num_of_one_sub_category_analysts=0
+            self.cur.execute(''' SELECT name FROM addanalyst WHERE sub_category=%s ''',(str(iiii)))
+            data2=self.cur.fetchall()
+            for item5 in data2:
+                num_of_one_sub_category_analysts+=1
+            all_sub_category_len.append(num_of_one_sub_category_analysts)
+        number_of_analysts = len(analysts)
         if number_of_analysts < 23:
             f = open(r'%s\test-mydocx.docx' % word_files, 'rb')
             f.read()
@@ -2070,7 +2084,10 @@ class mainapp(QMainWindow, FORM_CLASS):
             document3 = Document(f3)
         row_num = False
         row_num2 = False
+        my_ss_num=0
+        my_ss_num2=0
         number_of_analysts_in_que2 = 0
+        number_of_analysts_in_que3 = 0
         for i in document.tables:
             for k in i.rows:
                 for j in k.cells:
@@ -2149,20 +2166,28 @@ class mainapp(QMainWindow, FORM_CLASS):
                                 font1.bold = True
                                 font1.size = Pt(12)
                                 font1.name = 'Times New Roman'
-
                             number_of_analysts_in_que = 23
-                            if bio_analysts != 0:
-                                number_of_analysts_in_que -= 1
-                            if hemo_analysts != 0:
-                                number_of_analysts_in_que -= 1
-                            if GSE_analysts != 0:
-                                number_of_analysts_in_que -= 1
-                            if GUE_analysts != 0:
-                                number_of_analysts_in_que -= 1
-                            if SFA_analysts != 0:
-                                number_of_analysts_in_que -= 1
-                            if HRMON_analysts != 0:
-                                number_of_analysts_in_que -= 1
+                            for igh in all_sub_category_len:
+                                if igh !=0:
+                                    number_of_analysts_in_que -= 1
+                                    my_ss_num+=1
+                            for indexr, igh2 in enumerate(all_sub_category_len):
+                                if igh2 != 0:
+                                    if row == (all_sub_category_len[index] + 1):
+                                        if n.text == str(row+1):
+                                            n.text = str(word_types[all_sub_category[index]])
+                           # if bio_analysts != 0:
+                            #     number_of_analysts_in_que -= 1
+                            # if hemo_analysts != 0:
+                            #     number_of_analysts_in_que -= 1
+                            # if GSE_analysts != 0:
+                            #     number_of_analysts_in_que -= 1
+                            # if GUE_analysts != 0:
+                            #     number_of_analysts_in_que -= 1
+                            # if SFA_analysts != 0:
+                            #     number_of_analysts_in_que -= 1
+                            # if HRMON_analysts != 0:
+                            #     number_of_analysts_in_que -= 1
                             if row > number_of_analysts:
                                 number_of_analysts_in_que2 = number_of_analysts_in_que
                                 row_num = True
@@ -2220,38 +2245,46 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     'unit': units[row],
                                     'defult': defults[row]
                                 }
-                                if hemo_analysts != 0:
-                                    if row == (bio_analysts + 1 + number_of_analysts_in_que2):
-                                        if n.text == str(row - number_of_analysts_in_que2):
-                                            n.text = str(word_types[bio_analysts])
-                                if bio_analysts != 0:
-                                    if row == 0 + 1 + number_of_analysts_in_que2:
-                                        if n.text == str(row - number_of_analysts_in_que2):
-                                            n.text = str(word_types[0])
-                                if GSE_analysts != 0:
-                                    if row == (hemo_analysts + bio_analysts + 1 + number_of_analysts_in_que2):
-                                        if n.text == str(row - number_of_analysts_in_que2):
-                                            n.text = str(word_types[hemo_analysts + bio_analysts])
-                                if GUE_analysts != 0:
-                                    if row == (
-                                            hemo_analysts + bio_analysts + GSE_analysts + 1 + number_of_analysts_in_que2):
-                                        if n.text == str(row - number_of_analysts_in_que2):
-                                            n.text = str(word_types[hemo_analysts + bio_analysts + GSE_analysts])
+                                for indexr3,igh3 in enumerate(all_sub_category_len[my_ss_num:]):
+                                    if igh3!=0:
+                                        number_of_analysts_in_que2 -= 1
+                                        my_ss_num2 += 1
+                                        if row ==(all_sub_category_len[index]+1+number_of_analysts_in_que2):
+                                            if n.text == str((row - number_of_analysts_in_que2)+1):
 
-                                if SFA_analysts != 0:
-                                    if row == (
-                                            hemo_analysts + bio_analysts + GSE_analysts + GUE_analysts + 1 + number_of_analysts_in_que2):
-                                        if n.text == str(row - number_of_analysts_in_que2):
-                                            n.text = str(
-                                                word_types[hemo_analysts + bio_analysts + GSE_analysts + GUE_analysts])
-
-                                if HRMON_analysts != 0:
-                                    if row == (
-                                            hemo_analysts + bio_analysts + GSE_analysts + GUE_analysts + SFA_analysts + 1 + number_of_analysts_in_que2):
-                                        if n.text == str(row - number_of_analysts_in_que2):
-                                            n.text = str(word_types[
-                                                             hemo_analysts + bio_analysts + GSE_analysts + GUE_analysts + SFA_analysts])
-                                if n2.text == str(row - number_of_analysts_in_que2 - 12):
+                                                n.text = str(word_types[all_sub_category[index]])
+                                # if hemo_analysts != 0:
+                                #     if row == (bio_analysts + 1 + number_of_analysts_in_que2):
+                                #         if n.text == str(row - number_of_analysts_in_que2):
+                                #             n.text = str(word_types[bio_analysts])
+                                # if bio_analysts != 0:
+                                #     if row == 0 + 1 + number_of_analysts_in_que2:
+                                #         if n.text == str(row - number_of_analysts_in_que2):
+                                #             n.text = str(word_types[0])
+                                # if GSE_analysts != 0:
+                                #     if row == (hemo_analysts + bio_analysts + 1 + number_of_analysts_in_que2):
+                                #         if n.text == str(row - number_of_analysts_in_que2):
+                                #             n.text = str(word_types[hemo_analysts + bio_analysts])
+                                # if GUE_analysts != 0:
+                                #     if row == (
+                                #             hemo_analysts + bio_analysts + GSE_analysts + 1 + number_of_analysts_in_que2):
+                                #         if n.text == str(row - number_of_analysts_in_que2):
+                                #             n.text = str(word_types[hemo_analysts + bio_analysts + GSE_analysts])
+                                #
+                                # if SFA_analysts != 0:
+                                #     if row == (
+                                #             hemo_analysts + bio_analysts + GSE_analysts + GUE_analysts + 1 + number_of_analysts_in_que2):
+                                #         if n.text == str(row - number_of_analysts_in_que2):
+                                #             n.text = str(
+                                #                 word_types[hemo_analysts + bio_analysts + GSE_analysts + GUE_analysts])
+                                #
+                                # if HRMON_analysts != 0:
+                                #     if row == (
+                                #             hemo_analysts + bio_analysts + GSE_analysts + GUE_analysts + SFA_analysts + 1 + number_of_analysts_in_que2):
+                                #         if n.text == str(row - number_of_analysts_in_que2):
+                                #             n.text = str(word_types[
+                                #                              hemo_analysts + bio_analysts + GSE_analysts + GUE_analysts + SFA_analysts])
+                                if n2.text == str((row - number_of_analysts_in_que2)+1):
                                     n2.text = str(analyst_and_result['analyst']) + ' :'
                                     run = n2.runs
                                     font = run[0].font
@@ -2264,14 +2297,14 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.bold = False
                                     font.size = Pt(11)
                                     font.name = 'Tahoma'
-                                if n2.text == str(row - number_of_analysts_in_que2 - 12) + 'unit':
+                                if n2.text == str((row - number_of_analysts_in_que2)+1) + 'unit':
                                     n2.text = analyst_and_result['unit']
                                     run1 = n2
                                     font1 = run1.runs[0].font
                                     font1.bold = True
                                     font1.size = Pt(12)
                                     font1.name = 'Times New Roman'
-                                if n2.text == str(row - number_of_analysts_in_que2 - 12) + 'defult':
+                                if n2.text == str((row - number_of_analysts_in_que2)+1) + 'defult':
                                     n2.text = analyst_and_result['defult']
                                     run1 = n2
                                     font1 = run1.runs[0].font
@@ -2279,6 +2312,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font1.size = Pt(12)
                                     font1.name = 'Times New Roman'
                                 if row > 46:
+                                    number_of_analysts_in_que3=number_of_analysts_in_que2
                                     row_num2 = True
                                     break
         if row_num2:
@@ -2326,7 +2360,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                 font.name = 'Monotype Koufi'
                                 font.bold = True
                                 font.size = Pt(11)
-                            for row in range(46, len(analysts)):
+                            for row in range(number_of_analysts_in_que3, len(analysts)):
                                 analyst_and_result = {
                                     'analyst': analysts[row],
                                     'result': results[row],
