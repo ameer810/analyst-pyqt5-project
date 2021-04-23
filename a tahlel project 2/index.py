@@ -18,6 +18,7 @@ from win32com import client
 import searchDialog
 import searchWidget
 import multyclass
+from collections import Counter
 from mymain import Ui_MainWindow as main_wind
 from SimpleLoadingScreen import LoadingDialog
 FORM_CLASS, _ = loadUiType("design.ui")
@@ -77,7 +78,6 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.Auto_complete_combo2()
         self.add_client_to_list4()
         self.Auto_complete_combo4()
-        self.dateEdit_3.setDate(datetime.date.today())
 
     def DB_Connect(self):
         self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel2', charset="utf8",
@@ -785,10 +785,9 @@ class mainapp(QMainWindow, FORM_CLASS):
                 all_analyst.append(str(analyst))
             data = self.cur.fetchone()
             if data != None:
-                for item in data:
-                    word_type.append(data[0])
-                    all_units.append(data[1])
-                    all_defults.append(data[2])
+                word_type.append(data[0])
+                all_units.append(data[1])
+                all_defults.append(data[2])
             try:
                 result = self.tableWidget_5.cellWidget(row, 2).currentText()
             except:
@@ -801,13 +800,13 @@ class mainapp(QMainWindow, FORM_CLASS):
                 real_doctor = self.tableWidget_5.item(row, 3).text()
             except:
                 pass
-        try:
-            self.Bio_Word(real_name, real_doctor, all_analyst, all_result, all_units, all_defults, year, month, day,
+        # try:
+        self.Bio_Word(real_name, real_doctor, all_analyst, all_result, all_units, all_defults, year, month, day,
                           word_type, prev, genuses)
 
-        except Exception as e:
-            print(e)
-            QMessageBox.information(self, 'خطأ', 'هنالك خطأ يرجى مراجعة العملية')
+        # except Exception as e:
+        #     print(e)
+        #     QMessageBox.information(self, 'خطأ', 'هنالك خطأ يرجى مراجعة العملية')
 
         if prev != 'T':
             self.Delete_Files()
@@ -1122,28 +1121,30 @@ class mainapp(QMainWindow, FORM_CLASS):
                 #     mycobmbo = QComboBox(self)
                 #     mycobmbo.addItems(['5', '10', '15', '20', '25', '30', '35', '40', '45'])
                 # print('mystatrt')
-
-                r2_analyst_name = self.tableWidget_5.item(rowd, 1).text()
-                r2_client_name = self.comboBox_4.currentText()
-                self.cur.execute(
-                    ''' SELECT  analyst_result  FROM addnewitem WHERE client_name=%s AND analyst_name=%s ''',
-                    (r2_client_name, r2_analyst_name))
-                myrs = self.cur.fetchall()
-                if myrs != None:
+                try:
+                    r2_analyst_name = self.tableWidget_5.item(rowd, 1).text()
+                    r2_client_name = self.comboBox_4.currentText()
+                    self.cur.execute(
+                        ''' SELECT  analyst_result  FROM addnewitem WHERE client_name=%s AND analyst_name=%s ''',
+                        (r2_client_name, r2_analyst_name))
+                    myrs = self.cur.fetchall()
+                    if myrs != None:
+                        if object_type == 'خيارات' or object_type == 'خيارات مع تعديل':
+                            index = mycobmbo.findText(myrs[0][0], Qt.MatchFixedString)
+                            mycobmbo.setCurrentIndex(index)
+                        if object_type == 'عدد':
+                            # print('Tru')
+                            if myrs[0][0] and myrs[0][0] != '':
+                                mycobmbo.setValue(float(int(myrs[0][0])))
+                        if object_type == 'حقل كتابة':
+                            mycobmbo.setText(str(myrs[0][0]))
+                    self.tableWidget_5.setItem(rowd, 2, QTableWidgetItem(str('')))
+                    self.tableWidget_5.setCellWidget(rowd, 2, mycobmbo)
                     if object_type == 'خيارات' or object_type == 'خيارات مع تعديل':
-                        index = mycobmbo.findText(myrs[0][0], Qt.MatchFixedString)
-                        mycobmbo.setCurrentIndex(index)
-                    if object_type == 'عدد':
-                        # print('Tru')
-                        if myrs[0][0] and myrs[0][0] != '':
-                            mycobmbo.setValue(float(int(myrs[0][0])))
-                    if object_type == 'حقل كتابة':
-                        mycobmbo.setText(str(myrs[0][0]))
-                self.tableWidget_5.setItem(rowd, 2, QTableWidgetItem(str('')))
-                self.tableWidget_5.setCellWidget(rowd, 2, mycobmbo)
-                if object_type == 'خيارات' or object_type == 'خيارات مع تعديل':
-                    if mycobmbo.currentText() == '' or mycobmbo.currentText() == ' ':
-                        mycobmbo.setCurrentIndex(0)
+                        if mycobmbo.currentText() == '' or mycobmbo.currentText() == ' ':
+                            mycobmbo.setCurrentIndex(0)
+                except:
+                    pass
         self.tableWidget_5.scrollToBottom()
         self.get_total_price()
         self.Show_All_The_Sales()
@@ -1760,13 +1761,13 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.tableWidget_9.setRowCount(0)
         self.tableWidget_9.insertRow(0)
         id = self.spinBox_2.value()
-        date = self.dateEdit_3.date()
+        # date = self.dateEdit_3.date()
         self.cur.execute(''' SELECT client_name,client_age,client_genus,client_doctor FROM addclient WHERE id=%s''',
                          (str(id),))
         client_data = self.cur.fetchall()
         self.cur.execute(
             ''' SELECT price,analyst_name,analyst_result,client_name,date FROM addnewitem WHERE client_id=%s AND DATE(date=%s)''',
-            (str(id), str(date.toPyDate)),)
+            (str(id),'2021-04-23'))
         client_analyst_data = self.cur.fetchall()
         print()
         num = 0
@@ -2031,34 +2032,29 @@ class mainapp(QMainWindow, FORM_CLASS):
 
     def Bio_Word(self, name, doctor, analysts, results, units, defults, year, month, day, word_types, prev, genus):
         global if_print
+        # analysts=['Random  blood sugar','Blood Urea','S. Creatinin','new2','S.Calcium','Total serum Bilirubin','Vitamin D','S. Uric acid','Blood Group','Hb','PCV','Rh','Color:GSE']
+        categorys=[]
         self.cur.execute(''' SELECT * FROM paths WHERE id=1 ''')
         mydata = self.cur.fetchone()
         word_files = mydata[1]
         save_word_files = mydata[2]
         number_of_analysts = 0
         files = 0
-        bio_analysts = 0
-        hemo_analysts = 0
-        GSE_analysts = 0
-        GUE_analysts = 0
-        SFA_analysts = 0
-        HRMON_analysts = 0
-        num_of_one_sub_category_analysts=0
         all_sub_category=[]
         all_sub_category_len=[]
-        for index,iii in enumerate(analysts):
-            self.cur.execute(''' SELECT sub_category FROM addanalyst WHERE name=%s ''',(str(iii)))
-            data=self.cur.fetchall()
-            if data:
-                all_sub_category.append(data[index][0])
-        for iiii in all_sub_category:
-            num_of_one_sub_category_analysts=0
-            self.cur.execute(''' SELECT name FROM addanalyst WHERE sub_category=%s ''',(str(iiii)))
-            data2=self.cur.fetchall()
-            for item5 in data2:
-                num_of_one_sub_category_analysts+=1
-            all_sub_category_len.append(num_of_one_sub_category_analysts)
+        num_of_category_analysts=[]
         number_of_analysts = len(analysts)
+        gg6_num=1
+        for ii in analysts:
+            self.cur.execute(''' SELECT sub_category FROM addanalyst WHERE name=%s ''',(ii,))
+            data1=self.cur.fetchall()
+            categorys.append(data1[0][0])
+
+        prev_category=''
+        g=Counter(categorys)
+        num_of_category_analysts=list(g.values())
+        print(categorys,'here1')
+        print(num_of_category_analysts,'here2')
         if number_of_analysts < 23:
             f = open(r'%s\test-mydocx.docx' % word_files, 'rb')
             f.read()
@@ -2084,10 +2080,12 @@ class mainapp(QMainWindow, FORM_CLASS):
             document3 = Document(f3)
         row_num = False
         row_num2 = False
-        my_ss_num=0
-        my_ss_num2=0
         number_of_analysts_in_que2 = 0
         number_of_analysts_in_que3 = 0
+        myVar=0
+        myVar2=0
+        next_category=0
+        mynum=0
         for i in document.tables:
             for k in i.rows:
                 for j in k.cells:
@@ -2132,6 +2130,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                             font.name = 'Monotype Koufi'
                             font.bold = True
                             font.size = Pt(11)
+
+
                         for row in range(0, len(analysts)):
                             analyst_and_result = {
                                 'analyst': analysts[row],
@@ -2139,7 +2139,14 @@ class mainapp(QMainWindow, FORM_CLASS):
                                 'unit': units[row],
                                 'defult': defults[row]
                             }
-                            if n.text == str(row + 1):
+
+                            number_of_analysts_in_que = 23
+                            if row > number_of_analysts_in_que:
+                                number_of_analysts_in_que2 = number_of_analysts_in_que
+                                row_num = True
+                                break
+                            if n.text == str(row+1):
+                                # print(myVar,str(analyst_and_result['analyst']))
                                 n.text = str(analyst_and_result['analyst']) + ' :'
                                 run = n.runs
                                 font = run[0].font
@@ -2152,30 +2159,23 @@ class mainapp(QMainWindow, FORM_CLASS):
                                 font.bold = False
                                 font.size = Pt(11)
                                 font.name = 'Tahoma'
-                            if n.text == str(row + 1) + 'unit':
+                            if n.text == str(row +1) + 'unit':
                                 n.text = analyst_and_result['unit']
                                 run1 = n
                                 font1 = run1.runs[0].font
                                 font1.bold = True
                                 font1.size = Pt(12)
                                 font1.name = 'Times New Roman'
-                            if n.text == str(row + 1) + 'defult':
+                            if n.text == str(row +1) + 'defult':
                                 n.text = analyst_and_result['defult']
                                 run1 = n
                                 font1 = run1.runs[0].font
                                 font1.bold = True
                                 font1.size = Pt(12)
                                 font1.name = 'Times New Roman'
-                            number_of_analysts_in_que = 23
-                            for igh in all_sub_category_len:
-                                if igh !=0:
-                                    number_of_analysts_in_que -= 1
-                                    my_ss_num+=1
-                            for indexr, igh2 in enumerate(all_sub_category_len):
-                                if igh2 != 0:
-                                    if row == (all_sub_category_len[index] + 1):
-                                        if n.text == str(row+1):
-                                            n.text = str(word_types[all_sub_category[index]])
+                        # continued=False
+
+
                            # if bio_analysts != 0:
                             #     number_of_analysts_in_que -= 1
                             # if hemo_analysts != 0:
@@ -2188,12 +2188,10 @@ class mainapp(QMainWindow, FORM_CLASS):
                             #     number_of_analysts_in_que -= 1
                             # if HRMON_analysts != 0:
                             #     number_of_analysts_in_que -= 1
-                            if row > number_of_analysts:
-                                number_of_analysts_in_que2 = number_of_analysts_in_que
-                                row_num = True
-                                break
+
 
         if row_num:
+            print('start')
             for i2 in document2.tables:
                 for k2 in i2.rows:
                     for j2 in k2.cells:
@@ -2245,46 +2243,12 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     'unit': units[row],
                                     'defult': defults[row]
                                 }
-                                for indexr3,igh3 in enumerate(all_sub_category_len[my_ss_num:]):
-                                    if igh3!=0:
-                                        number_of_analysts_in_que2 -= 1
-                                        my_ss_num2 += 1
-                                        if row ==(all_sub_category_len[index]+1+number_of_analysts_in_que2):
-                                            if n.text == str((row - number_of_analysts_in_que2)+1):
-
-                                                n.text = str(word_types[all_sub_category[index]])
-                                # if hemo_analysts != 0:
-                                #     if row == (bio_analysts + 1 + number_of_analysts_in_que2):
-                                #         if n.text == str(row - number_of_analysts_in_que2):
-                                #             n.text = str(word_types[bio_analysts])
-                                # if bio_analysts != 0:
-                                #     if row == 0 + 1 + number_of_analysts_in_que2:
-                                #         if n.text == str(row - number_of_analysts_in_que2):
-                                #             n.text = str(word_types[0])
-                                # if GSE_analysts != 0:
-                                #     if row == (hemo_analysts + bio_analysts + 1 + number_of_analysts_in_que2):
-                                #         if n.text == str(row - number_of_analysts_in_que2):
-                                #             n.text = str(word_types[hemo_analysts + bio_analysts])
-                                # if GUE_analysts != 0:
-                                #     if row == (
-                                #             hemo_analysts + bio_analysts + GSE_analysts + 1 + number_of_analysts_in_que2):
-                                #         if n.text == str(row - number_of_analysts_in_que2):
-                                #             n.text = str(word_types[hemo_analysts + bio_analysts + GSE_analysts])
-                                #
-                                # if SFA_analysts != 0:
-                                #     if row == (
-                                #             hemo_analysts + bio_analysts + GSE_analysts + GUE_analysts + 1 + number_of_analysts_in_que2):
-                                #         if n.text == str(row - number_of_analysts_in_que2):
-                                #             n.text = str(
-                                #                 word_types[hemo_analysts + bio_analysts + GSE_analysts + GUE_analysts])
-                                #
-                                # if HRMON_analysts != 0:
-                                #     if row == (
-                                #             hemo_analysts + bio_analysts + GSE_analysts + GUE_analysts + SFA_analysts + 1 + number_of_analysts_in_que2):
-                                #         if n.text == str(row - number_of_analysts_in_que2):
-                                #             n.text = str(word_types[
-                                #                              hemo_analysts + bio_analysts + GSE_analysts + GUE_analysts + SFA_analysts])
-                                if n2.text == str((row - number_of_analysts_in_que2)+1):
+                                if row > 46:
+                                    number_of_analysts_in_que3 = number_of_analysts_in_que2
+                                    row_num2 = True
+                                    break
+                                if n2.text == str(row-22):
+                                    print('fuck')
                                     n2.text = str(analyst_and_result['analyst']) + ' :'
                                     run = n2.runs
                                     font = run[0].font
@@ -2297,24 +2261,21 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.bold = False
                                     font.size = Pt(11)
                                     font.name = 'Tahoma'
-                                if n2.text == str((row - number_of_analysts_in_que2)+1) + 'unit':
+                                if n2.text == str(row-23) + 'unit':
                                     n2.text = analyst_and_result['unit']
                                     run1 = n2
                                     font1 = run1.runs[0].font
                                     font1.bold = True
                                     font1.size = Pt(12)
                                     font1.name = 'Times New Roman'
-                                if n2.text == str((row - number_of_analysts_in_que2)+1) + 'defult':
+                                if n2.text == str(row-23) + 'defult':
                                     n2.text = analyst_and_result['defult']
                                     run1 = n2
                                     font1 = run1.runs[0].font
                                     font1.bold = True
                                     font1.size = Pt(12)
                                     font1.name = 'Times New Roman'
-                                if row > 46:
-                                    number_of_analysts_in_que3=number_of_analysts_in_que2
-                                    row_num2 = True
-                                    break
+
         if row_num2:
             for i3 in document3.tables:
                 for k3 in i3.rows:
@@ -2367,7 +2328,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     'unit': units[row],
                                     'defult': defults[row]
                                 }
-                                if n3.text == str(row - 45):
+                                if n3.text == str((row - number_of_analysts_in_que3)+1):
                                     n3.text = str(analyst_and_result['analyst']) + ' :'
                                     run = n3.runs
                                     font = run[0].font
@@ -2380,14 +2341,14 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.bold = False
                                     font.size = Pt(11)
                                     font.name = 'Tahoma'
-                                if n3.text == str(row + 1) + 'unit':
+                                if n3.text == str((row - number_of_analysts_in_que3)+1) + 'unit':
                                     n3.text = analyst_and_result['unit']
                                     run1 = n3
                                     font1 = run1.runs[0].font
                                     font1.bold = True
                                     font1.size = Pt(12)
                                     font1.name = 'Times New Roman'
-                                if n3.text == str(row + 1) + 'defult':
+                                if n3.text == str((row - number_of_analysts_in_que3)+1) + 'defult':
                                     n3.text = analyst_and_result['defult']
                                     run1 = n3
                                     font1 = run1.runs[0].font
@@ -2406,155 +2367,160 @@ class mainapp(QMainWindow, FORM_CLASS):
         try:
             if prev == 'T':
                 word = client.Dispatch("Word.Application")
-                if os.path.exists(r'%s\bio latest17.docx' % save_word_files):
-                    word.Documents.Open(r'%s\bio latest17.docx' % save_word_files)
-                if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
-                    word.Documents.Open(r'%s\GSE latest.docx' % save_word_files)
-                if os.path.exists(r'%s\SFA latest.docx' % save_word_files):
-                    word.Documents.Open(r'%s\SFA latest.docx' % save_word_files)
-                if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
-                    word.Documents.Open(r'%s\GUE latest.docx' % save_word_files)
-                if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
-                    word.Documents.Open(r'%s\hematology latest.docx' % save_word_files)
-                if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
-                    word.Documents.Open(r'%s\هرمونات مشترك latest.docx' % save_word_files)
+                if os.path.exists(r'%s\result.docx' % save_word_files):
+                    word.Documents.Open(r'%s\result.docx' % save_word_files)
+                if os.path.exists(r'%s\result2.docx' % save_word_files):
+                    word.Documents.Open(r'%s\result2.docx' % save_word_files)
+                if os.path.exists(r'%s\result3.docx' % save_word_files):
+                    word.Documents.Open(r'%s\result3.docx' % save_word_files)
+                # if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
+                #     word.Documents.Open(r'%s\GSE latest.docx' % save_word_files)
+                # if os.path.exists(r'%s\SFA latest.docx' % save_word_files):
+                #     word.Documents.Open(r'%s\SFA latest.docx' % save_word_files)
+                # if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
+                #     word.Documents.Open(r'%s\GUE latest.docx' % save_word_files)
+                # if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
+                #     word.Documents.Open(r'%s\hematology latest.docx' % save_word_files)
+                # if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
+                #     word.Documents.Open(r'%s\هرمونات مشترك latest.docx' % save_word_files)
 
 
             else:
-                move = 1
-                word = client.Dispatch("Word.Application")
-                if move == 1:
-                    if os.path.exists(r'%s\bio latest17.docx' % save_word_files):
-
-                        word.Documents.Open(r'%s\bio latest17.docx' % save_word_files)
-                        # word.ActiveDocument()
-
-                        # word.ActiveDocument.ActiveWindow.View()
-                        word.ActiveDocument.PrintOut(Background=False)
-                        # time.sleep(2)
-                        # pyautogui.press('enter')
-                        # time.sleep(1.5)
-                        # word.ActiveDocument.Close()
-                        move = 0
-                        warning = QMessageBox.warning(self, '',
-                                                      "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
-                                                      QMessageBox.Yes | QMessageBox.No)
-                        if warning == QMessageBox.Yes:
-                            move = 1
-                            try:
-                                word.ActiveDocument.Close()
-                            except:
-                                pass
-                        os.remove(r'%s\bio latest17.docx' % save_word_files)
-
-                if move == 1:
-                    if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
-                        word.Documents.Open(r'%s\GSE latest.docx' % save_word_files)
-                        word.ActiveDocument.PrintOut(Background=False)
-                        # time.sleep(2)
-                        # pyautogui.press('enter')
-                        # time.sleep(1.5)
-                        # word.ActiveDocument.Close()
-                        move = 0
-                        warning = QMessageBox.warning(self, '',
-                                                      "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
-                                                      QMessageBox.Yes | QMessageBox.No)
-                        if warning == QMessageBox.Yes:
-                            move = 1
-                            try:
-                                word.ActiveDocument.Close()
-                            except:
-                                pass
-                        os.remove(r'%s\GSE latest.docx' % save_word_files)
-
-                if move == 1:
-
-                    if os.path.exists(r'%s\SFA latest.docx' % save_word_files):
-                        word.Documents.Open(r'%s\SFA latest.docx' % save_word_files)
-                        word.ActiveDocument.PrintOut(Background=False)
-                        # time.sleep(2)
-                        # pyautogui.press('enter')
-                        # time.sleep(1.5)
-                        # word.ActiveDocument.Close()
-                        move = 0
-                        warning = QMessageBox.warning(self, '',
-                                                      "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
-                                                      QMessageBox.Yes | QMessageBox.No)
-                        if warning == QMessageBox.Yes:
-                            move = 1
-                            try:
-                                word.ActiveDocument.Close()
-                            except:
-                                pass
-                        # word.ActiveDocument.Close()
-                        os.remove(r'%s\SFA latest.docx' % save_word_files)
-
-                if move == 1:
-
-                    if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
-                        word.Documents.Open(r'%s\GUE latest.docx' % save_word_files)
-                        word.ActiveDocument.PrintOut(Background=False)
-                        # time.sleep(2)
-                        # pyautogui.press('enter')
-                        # time.sleep(1.5)
-                        # word.ActiveDocument.Close()
-                        move = 0
-                        warning = QMessageBox.warning(self, '',
-                                                      "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
-                                                      QMessageBox.Yes | QMessageBox.No)
-                        if warning == QMessageBox.Yes:
-                            move = 1
-                            try:
-                                word.ActiveDocument.Close()
-                            except:
-                                pass
-                        # word.ActiveDocument.Close()
-                        os.remove(r'%s\GUE latest.docx' % save_word_files)
-
-                if move == 1:
-
-                    if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
-                        word.Documents.Open(r'%s\hematology latest.docx' % save_word_files)
-                        word.ActiveDocument.PrintOut(Background=False)
-                        # time.sleep(2)
-                        # pyautogui.press('enter')
-                        # time.sleep(1.5)
-                        # word.ActiveDocument.Close()
-                        move = 0
-                        warning = QMessageBox.warning(self, '',
-                                                      "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
-                                                      QMessageBox.Yes | QMessageBox.No)
-                        if warning == QMessageBox.Yes:
-                            move = 1
-                            try:
-                                word.ActiveDocument.Close()
-                            except:
-                                pass
-                        # word.ActiveDocument.Close()
-                        os.remove(r'%s\hematology latest.docx' % save_word_files)
-
-                if move == 1:
-
-                    if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
-                        word.Documents.Open(r'%s\هرمونات مشترك latest.docx' % save_word_files)
-                        word.ActiveDocument.PrintOut(Background=False)
-                        # time.sleep(2)
-                        # pyautogui.press('enter')
-                        # time.sleep(1.5)
-                        # word.ActiveDocument.Close()
-                        move = 0
-                        warning = QMessageBox.warning(self, '',
-                                                      "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
-                                                      QMessageBox.Yes | QMessageBox.No)
-                        if warning == QMessageBox.Yes:
-                            move = 1
-                            try:
-                                word.ActiveDocument.Close()
-                            except:
-                                pass
-                        # word.ActiveDocument.Close()
-                        os.remove(r'%s\هرمونات مشترك latest.docx' % save_word_files)
-                self.Delete_Files()
+                pass
+                # move = 1
+                # word = client.Dispatch("Word.Application")
+                # if move == 1:
+                #     if os.path.exists(r'%s\bio latest17.docx' % save_word_files):
+                #
+                #         word.Documents.Open(r'%s\bio latest17.docx' % save_word_files)
+                #         # word.ActiveDocument()
+                #
+                #         # word.ActiveDocument.ActiveWindow.View()
+                #         word.ActiveDocument.PrintOut(Background=False)
+                #         # time.sleep(2)
+                #         # pyautogui.press('enter')
+                #         # time.sleep(1.5)
+                #         # word.ActiveDocument.Close()
+                #         move = 0
+                #         warning = QMessageBox.warning(self, '',
+                #                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
+                #                                       QMessageBox.Yes | QMessageBox.No)
+                #         if warning == QMessageBox.Yes:
+                #             move = 1
+                #             try:
+                #                 word.ActiveDocument.Close()
+                #             except:
+                #                 pass
+                #         os.remove(r'%s\bio latest17.docx' % save_word_files)
+                #
+                # if move == 1:
+                #     if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
+                #         word.Documents.Open(r'%s\GSE latest.docx' % save_word_files)
+                #         word.ActiveDocument.PrintOut(Background=False)
+                #         # time.sleep(2)
+                #         # pyautogui.press('enter')
+                #         # time.sleep(1.5)
+                #         # word.ActiveDocument.Close()
+                #         move = 0
+                #         warning = QMessageBox.warning(self, '',
+                #                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
+                #                                       QMessageBox.Yes | QMessageBox.No)
+                #         if warning == QMessageBox.Yes:
+                #             move = 1
+                #             try:
+                #                 word.ActiveDocument.Close()
+                #             except:
+                #                 pass
+                #         os.remove(r'%s\GSE latest.docx' % save_word_files)
+                #
+                # if move == 1:
+                #
+                #     if os.path.exists(r'%s\SFA latest.docx' % save_word_files):
+                #         word.Documents.Open(r'%s\SFA latest.docx' % save_word_files)
+                #         word.ActiveDocument.PrintOut(Background=False)
+                #         # time.sleep(2)
+                #         # pyautogui.press('enter')
+                #         # time.sleep(1.5)
+                #         # word.ActiveDocument.Close()
+                #         move = 0
+                #         warning = QMessageBox.warning(self, '',
+                #                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
+                #                                       QMessageBox.Yes | QMessageBox.No)
+                #         if warning == QMessageBox.Yes:
+                #             move = 1
+                #             try:
+                #                 word.ActiveDocument.Close()
+                #             except:
+                #                 pass
+                #         # word.ActiveDocument.Close()
+                #         os.remove(r'%s\SFA latest.docx' % save_word_files)
+                #
+                # if move == 1:
+                #
+                #     if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
+                #         word.Documents.Open(r'%s\GUE latest.docx' % save_word_files)
+                #         word.ActiveDocument.PrintOut(Background=False)
+                #         # time.sleep(2)
+                #         # pyautogui.press('enter')
+                #         # time.sleep(1.5)
+                #         # word.ActiveDocument.Close()
+                #         move = 0
+                #         warning = QMessageBox.warning(self, '',
+                #                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
+                #                                       QMessageBox.Yes | QMessageBox.No)
+                #         if warning == QMessageBox.Yes:
+                #             move = 1
+                #             try:
+                #                 word.ActiveDocument.Close()
+                #             except:
+                #                 pass
+                #         # word.ActiveDocument.Close()
+                #         os.remove(r'%s\GUE latest.docx' % save_word_files)
+                #
+                # if move == 1:
+                #
+                #     if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
+                #         word.Documents.Open(r'%s\hematology latest.docx' % save_word_files)
+                #         word.ActiveDocument.PrintOut(Background=False)
+                #         # time.sleep(2)
+                #         # pyautogui.press('enter')
+                #         # time.sleep(1.5)
+                #         # word.ActiveDocument.Close()
+                #         move = 0
+                #         warning = QMessageBox.warning(self, '',
+                #                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
+                #                                       QMessageBox.Yes | QMessageBox.No)
+                #         if warning == QMessageBox.Yes:
+                #             move = 1
+                #             try:
+                #                 word.ActiveDocument.Close()
+                #             except:
+                #                 pass
+                #         # word.ActiveDocument.Close()
+                #         os.remove(r'%s\hematology latest.docx' % save_word_files)
+                #
+                # if move == 1:
+                #
+                #     if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
+                #         word.Documents.Open(r'%s\هرمونات مشترك latest.docx' % save_word_files)
+                #         word.ActiveDocument.PrintOut(Background=False)
+                #         # time.sleep(2)
+                #         # pyautogui.press('enter')
+                #         # time.sleep(1.5)
+                #         # word.ActiveDocument.Close()
+                #         move = 0
+                #         warning = QMessageBox.warning(self, '',
+                #                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
+                #                                       QMessageBox.Yes | QMessageBox.No)
+                #         if warning == QMessageBox.Yes:
+                #             move = 1
+                #             try:
+                #                 word.ActiveDocument.Close()
+                #             except:
+                #                 pass
+                #         # word.ActiveDocument.Close()
+                #         os.remove(r'%s\هرمونات مشترك latest.docx' % save_word_files)
+                # self.Delete_Files()
 
 
         except Exception as e:
