@@ -767,27 +767,17 @@ class mainapp(QMainWindow, FORM_CLASS):
         genuses = self.comboBox_14.currentIndex()
         all_analyst = []
         all_result = []
-        all_units = []
-        all_defults = []
         date = datetime.datetime.now()
         day = date.year
         month = date.month
         year = date.day
-        word_type = []
         for row in range(0, self.tableWidget_5.rowCount() - 1):
             try:
                 real_name = self.tableWidget_5.item(row, 0).text()
                 analyst = self.tableWidget_5.item(row, 1).text()
+                all_analyst.append(analyst)
             except:
                 pass
-            self.cur.execute(''' SELECT sub_category,unit,defult FROM addanalyst WHERE name=%s ''', (analyst,))
-            if analyst not in all_analyst:
-                all_analyst.append(str(analyst))
-            data = self.cur.fetchone()
-            if data != None:
-                word_type.append(data[0])
-                all_units.append(data[1])
-                all_defults.append(data[2])
             try:
                 result = self.tableWidget_5.cellWidget(row, 2).currentText()
             except:
@@ -801,8 +791,8 @@ class mainapp(QMainWindow, FORM_CLASS):
             except:
                 pass
         # try:
-        self.Bio_Word(real_name, real_doctor, all_analyst, all_result, all_units, all_defults, year, month, day,
-                          word_type, prev, genuses)
+        print(all_analyst,'first')
+        self.Bio_Word(real_name, real_doctor, all_analyst, all_result, year, month, day, prev, genuses)
 
         # except Exception as e:
         #     print(e)
@@ -2030,7 +2020,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         style = style.read()
         self.setStyleSheet(style)
 
-    def Bio_Word(self, name, doctor, analysts, results, units, defults, year, month, day, word_types, prev, genus):
+    def Bio_Word(self, name, doctor, analysts, results, year, month, day, prev, genus):
         global if_print
         # analysts=['Random  blood sugar','Blood Urea','S. Creatinin','new2','S.Calcium','Total serum Bilirubin','Vitamin D','S. Uric acid','Blood Group','Hb','PCV','Rh','Color:GSE']
         categorys=[]
@@ -2081,6 +2071,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         row_num2 = False
         number_of_analysts_in_que2 = 0
         number_of_analysts_in_que3 = 0
+        print(analysts)
         count=1
         for c in categorys:
             all_items.append(str(c + ' :'))
@@ -2096,6 +2087,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                     # print("\t ", count, sub)
             count += 1
         myd=0
+        print(all_items)
         for iplz in all_items_for_units_defults:
             for inm in categorys:
                 if inm in iplz:
@@ -2114,8 +2106,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                     else:
                         units.append('')
                         defults.append('')
-        print(len(all_items_for_units_defults),myd,'kdjdije')
-        print(all_items_for_units_defults)
+        # print(len(all_items_for_units_defults),myd,'kdjdije')
+        # print(all_items_for_units_defults)
         for my_index2,rowgh in enumerate(analysts):
             for item in categorys:
                 if item in analysts[my_index2]:
@@ -2125,7 +2117,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                 if item2 in all_items[my_index3]:
                     if all_items[my_index3].startswith('   '):
                         all_items[my_index3]=str(all_items[my_index3][:-len(item2)])
-        # print(analysts)
+        print(all_items)
         for i in document.tables:
             for k in i.rows:
                 for j in k.cells:
@@ -2215,6 +2207,9 @@ class mainapp(QMainWindow, FORM_CLASS):
             all_items2=[]
             all_items_index2=[]
             analysts2=[]
+            all_items_for_units_defults2 = []
+            units2=[]
+            defults2=[]
             for my_index2, ii2 in enumerate(analysts[number_of_analysts_in_que2:]):
                 self.cur.execute(''' SELECT sub_category FROM addanalyst WHERE name=%s ''', (ii2,))
                 data2 = self.cur.fetchall()
@@ -2227,15 +2222,35 @@ class mainapp(QMainWindow, FORM_CLASS):
             count2 = 1
             for c2 in categorys2:
                 all_items2.append(str(c2 + ' :'))
+                all_items_for_units_defults2.append(str(c + ' :'))
                 all_items_index2.append(count2)
                 # print(count, c)
                 for sub2 in analysts2:
                     if c2 in sub2:
                         count2 += 1
                         all_items2.append(str('   ' + sub2))
+                        all_items_for_units_defults2.append(str(sub2))
                         all_items_index2.append(count2)
                         # print("\t ", count, sub)
-                count += 1
+                count2 += 1
+            for iplz2 in all_items_for_units_defults2:
+                for inm2 in categorys2:
+                    if inm2 in iplz2:
+                        iplz2 = iplz2[:-len(inm2)]
+                        self.cur.execute(''' SELECT unit,defult FROM addanalyst WHERE name=%s ''', (str(iplz2),))
+                        myplzdata2 = self.cur.fetchall()
+                        if myplzdata2:
+                            if myplzdata2[0][0]:
+                                units2.append(myplzdata2[0][0])
+                            else:
+                                units2.append('')
+                            if myplzdata2[0][1]:
+                                defults2.append(myplzdata2[0][1])
+                            else:
+                                defults2.append('')
+                        else:
+                            units2.append('')
+                            defults2.append('')
             for my_index22, rowgh2 in enumerate(analysts2):
                 for item2 in categorys2:
                     if item2 in analysts2[my_index22]:
@@ -2301,7 +2316,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.bold = True
                                     font.size = Pt(11)
                                     font.name = 'Tahoma'
-                                    n3 = n2.add_run(str(results[number_of_analysts_in_que2:][row4]))
+                                    n3 = n2.add_run(str(results[row4]))
                                     run = n3
                                     font = run.font
                                     font.bold = False
@@ -2309,37 +2324,82 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.name = 'Tahoma'
                                 if row4 > 46:
                                     number_of_analysts_in_que3 = number_of_analysts_in_que2
+                                    number_of_analysts_in_que3 -= len(categorys2)
                                     row_num2 = True
                                     break
-                                # if n2.text == str(row-22):
-                                #     n2.text = str(analyst_and_result['analyst']) + ' :'
-                                #     run = n2.runs
-                                #     font = run[0].font
-                                #     font.bold = True
-                                #     font.size = Pt(11)
-                                #     font.name = 'Tahoma'
-                                #     n3 = n2.add_run(str(analyst_and_result['result']))
-                                #     run = n3
-                                #     font = run.font
-                                #     font.bold = False
-                                #     font.size = Pt(11)
-                                #     font.name = 'Tahoma'
-                                # if n2.text == str(row-23) + 'unit':
-                                #     n2.text = analyst_and_result['unit']
-                                #     run1 = n2
-                                #     font1 = run1.runs[0].font
-                                #     font1.bold = True
-                                #     font1.size = Pt(12)
-                                #     font1.name = 'Times New Roman'
-                                # if n2.text == str(row-23) + 'defult':
-                                #     n2.text = analyst_and_result['defult']
-                                #     run1 = n2
-                                #     font1 = run1.runs[0].font
-                                #     font1.bold = True
-                                #     font1.size = Pt(12)
-                                #     font1.name = 'Times New Roman'
+                                if n2.text == str(all_items_index2[row4]) + 'unit':
+                                    n2.text = str(units2[row4])
+                                    run1 = n2
+                                    font1 = run1.runs[0].font
+                                    font1.bold = True
+                                    font1.size = Pt(12)
+                                    font1.name = 'Times New Roman'
+                                if n2.text == str(all_items_index2[row4]) + 'defult':
+                                    n2.text = str(defults2[row4])
+                                    run1 = n2
+                                    font1 = run1.runs[0].font
+                                    font1.bold = True
+                                    font1.size = Pt(12)
+                                    font1.name = 'Times New Roman'
 
         if row_num2:
+            categorys3=[]
+            all_items3=[]
+            all_items_index3=[]
+            analysts3=[]
+            all_items_for_units_defults3 = []
+            units3=[]
+            defults3=[]
+            for my_index3, ii3 in enumerate(analysts[number_of_analysts_in_que3:]):
+                self.cur.execute(''' SELECT sub_category FROM addanalyst WHERE name=%s ''', (ii2,))
+                data3 = self.cur.fetchall()
+                ii3 = str(ii3 + data3[0][0])
+                analysts3.append(ii3)
+                if data3[0][0] not in categorys3:
+                    categorys3.append(data3[0][0])
+            # print(categorys2,',,,,,',analysts[number_of_analysts_in_que2:])
+            # print(analysts2)
+            count3 = 1
+            for c3 in categorys3:
+                all_items3.append(str(c3 + ' :'))
+                all_items_for_units_defults3.append(str(c3 + ' :'))
+                all_items_index3.append(count3)
+                # print(count, c)
+                for sub3 in analysts3:
+                    if c3 in sub3:
+                        count3 += 1
+                        all_items3.append(str('   ' + sub3))
+                        all_items_for_units_defults3.append(str(sub3))
+                        all_items_index3.append(count3)
+                        # print("\t ", count, sub)
+                count3 += 1
+            for iplz3 in all_items_for_units_defults3:
+                for inm3 in categorys3:
+                    if inm3 in iplz3:
+                        iplz3 = iplz3[:-len(inm3)]
+                        self.cur.execute(''' SELECT unit,defult FROM addanalyst WHERE name=%s ''', (str(iplz3),))
+                        myplzdata3 = self.cur.fetchall()
+                        if myplzdata3:
+                            if myplzdata3[0][0]:
+                                units3.append(myplzdata3[0][0])
+                            else:
+                                units3.append('')
+                            if myplzdata3[0][1]:
+                                defults3.append(myplzdata3[0][1])
+                            else:
+                                defults3.append('')
+                        else:
+                            units3.append('')
+                            defults3.append('')
+            for my_index223, rowgh23 in enumerate(analysts2):
+                for item23 in categorys3:
+                    if item23 in analysts3[my_index223]:
+                        analysts3[my_index223] = str(analysts3[my_index223][:-len(item23)])
+            for my_index323, rowgh223 in enumerate(all_items3):
+                for item223 in categorys3:
+                    if item223 in all_items3[my_index323]:
+                        if all_items3[my_index323].startswith('   '):
+                            all_items3[my_index323] = str(all_items3[my_index323][:-len(item223)])
             for i3 in document3.tables:
                 for k3 in i3.rows:
                     for j3 in k3.cells:
@@ -2384,34 +2444,31 @@ class mainapp(QMainWindow, FORM_CLASS):
                                 font.name = 'Monotype Koufi'
                                 font.bold = True
                                 font.size = Pt(11)
-                            for row in range(number_of_analysts_in_que3, len(analysts)):
-                                analyst_and_result = {
-                                    'analyst': analysts[row],
-                                    'result': results[row],
-                                    'unit': units[row],
-                                    'defult': defults[row]
-                                }
-                                if n3.text == str((row - number_of_analysts_in_que3)+1):
-                                    n3.text = str(analyst_and_result['analyst']) + ' :'
-                                    run = n3.runs
+                            for row33 in range(0, len(all_items3)):
+                                if n2.text == str(all_items_index3[row33]):
+                                    n2.text = str(all_items3[row33])
+                            for row44 in range(0, len(analysts3)):
+                                if n2.text == '   ' + str(analysts3[row44]):
+                                    n2.text = '   ' + str(analysts3[row44]) + ' :'
+                                    run = n2.runs
                                     font = run[0].font
                                     font.bold = True
                                     font.size = Pt(11)
                                     font.name = 'Tahoma'
-                                    n4 = n3.add_run(str(analyst_and_result['result']))
-                                    run = n4
+                                    n3 = n2.add_run(str(results[row4]))
+                                    run = n3
                                     font = run.font
                                     font.bold = False
                                     font.size = Pt(11)
                                     font.name = 'Tahoma'
-                                if n3.text == str((row - number_of_analysts_in_que3)+1) + 'unit':
+                                if n3.text == str(all_items_index3[row44]) + 'unit':
                                     n3.text = analyst_and_result['unit']
                                     run1 = n3
                                     font1 = run1.runs[0].font
                                     font1.bold = True
                                     font1.size = Pt(12)
                                     font1.name = 'Times New Roman'
-                                if n3.text == str((row - number_of_analysts_in_que3)+1) + 'defult':
+                                if n3.text == str(all_items_index3[row44]) + 'defult':
                                     n3.text = analyst_and_result['defult']
                                     run1 = n3
                                     font1 = run1.runs[0].font
