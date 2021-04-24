@@ -2034,27 +2034,26 @@ class mainapp(QMainWindow, FORM_CLASS):
         global if_print
         # analysts=['Random  blood sugar','Blood Urea','S. Creatinin','new2','S.Calcium','Total serum Bilirubin','Vitamin D','S. Uric acid','Blood Group','Hb','PCV','Rh','Color:GSE']
         categorys=[]
+        all_items = []
+        all_items_for_units_defults = []
+        all_items_index = []
         self.cur.execute(''' SELECT * FROM paths WHERE id=1 ''')
         mydata = self.cur.fetchone()
         word_files = mydata[1]
         save_word_files = mydata[2]
         number_of_analysts = 0
         files = 0
-        all_sub_category=[]
-        all_sub_category_len=[]
-        num_of_category_analysts=[]
+        units=[]
+        defults=[]
         number_of_analysts = len(analysts)
-        gg6_num=1
-        for ii in analysts:
+        for my_index,ii in enumerate(analysts):
             self.cur.execute(''' SELECT sub_category FROM addanalyst WHERE name=%s ''',(ii,))
             data1=self.cur.fetchall()
-            categorys.append(data1[0][0])
+            analysts[my_index]=str(analysts[my_index]+data1[0][0])
+            if data1[0][0] not in categorys:
+                categorys.append(data1[0][0])
 
-        prev_category=''
-        g=Counter(categorys)
-        num_of_category_analysts=list(g.values())
-        print(categorys,'here1')
-        print(num_of_category_analysts,'here2')
+        # print(categorys,'hjioj')
         if number_of_analysts < 23:
             f = open(r'%s\test-mydocx.docx' % word_files, 'rb')
             f.read()
@@ -2082,10 +2081,51 @@ class mainapp(QMainWindow, FORM_CLASS):
         row_num2 = False
         number_of_analysts_in_que2 = 0
         number_of_analysts_in_que3 = 0
-        myVar=0
-        myVar2=0
-        next_category=0
-        mynum=0
+        count=1
+        for c in categorys:
+            all_items.append(str(c + ' :'))
+            all_items_for_units_defults.append(str(c + ' :'))
+            all_items_index.append(count)
+            # print(count, c)
+            for sub in analysts:
+                if c in sub:
+                    count += 1
+                    all_items.append(str('   ' + sub))
+                    all_items_for_units_defults.append(str(sub))
+                    all_items_index.append(count)
+                    # print("\t ", count, sub)
+            count += 1
+        myd=0
+        for iplz in all_items_for_units_defults:
+            for inm in categorys:
+                if inm in iplz:
+                    iplz=iplz[:-len(inm)]
+                    self.cur.execute(''' SELECT unit,defult FROM addanalyst WHERE name=%s ''',(str(iplz),))
+                    myplzdata=self.cur.fetchall()
+                    if myplzdata:
+                        if myplzdata[0][0]:
+                            units.append(myplzdata[0][0])
+                        else:
+                            units.append('')
+                        if myplzdata[0][1]:
+                            defults.append(myplzdata[0][1])
+                        else:
+                            defults.append('')
+                    else:
+                        units.append('')
+                        defults.append('')
+        print(len(all_items_for_units_defults),myd,'kdjdije')
+        print(all_items_for_units_defults)
+        for my_index2,rowgh in enumerate(analysts):
+            for item in categorys:
+                if item in analysts[my_index2]:
+                    analysts[my_index2]=str(analysts[my_index2][:-len(item)])
+        for my_index3,rowgh2 in enumerate(all_items):
+            for item2 in categorys:
+                if item2 in all_items[my_index3]:
+                    if all_items[my_index3].startswith('   '):
+                        all_items[my_index3]=str(all_items[my_index3][:-len(item2)])
+        # print(analysts)
         for i in document.tables:
             for k in i.rows:
                 for j in k.cells:
@@ -2130,68 +2170,82 @@ class mainapp(QMainWindow, FORM_CLASS):
                             font.name = 'Monotype Koufi'
                             font.bold = True
                             font.size = Pt(11)
-
-
-                        for row in range(0, len(analysts)):
-                            analyst_and_result = {
-                                'analyst': analysts[row],
-                                'result': results[row],
-                                'unit': units[row],
-                                'defult': defults[row]
-                            }
-
-                            number_of_analysts_in_que = 23
-                            if row > number_of_analysts_in_que:
-                                number_of_analysts_in_que2 = number_of_analysts_in_que
-                                row_num = True
-                                break
-                            if n.text == str(row+1):
-                                # print(myVar,str(analyst_and_result['analyst']))
-                                n.text = str(analyst_and_result['analyst']) + ' :'
+                        for row in range(0, len(all_items)):
+                            if n.text == str(all_items_index[row]):
+                                n.text = str(all_items[row])
+                        for row2 in range(0, len(analysts)):
+                            if n.text == '   ' + str(analysts[row2]):
+                                n.text='   ' + str(analysts[row2]) + ' :'
                                 run = n.runs
                                 font = run[0].font
                                 font.bold = True
                                 font.size = Pt(11)
                                 font.name = 'Tahoma'
-                                n2 = n.add_run(str(analyst_and_result['result']))
+                                n2 = n.add_run(str(results[row2]))
                                 run = n2
                                 font = run.font
                                 font.bold = False
                                 font.size = Pt(11)
                                 font.name = 'Tahoma'
-                            if n.text == str(row +1) + 'unit':
-                                n.text = analyst_and_result['unit']
+                            number_of_analysts_in_que = 23
+                            if row2 > number_of_analysts_in_que:
+                                # print('yes its >')
+                                number_of_analysts_in_que2 = number_of_analysts_in_que
+                                number_of_analysts_in_que2-=len(categorys)
+                                row_num = True
+                                break
+                            if n.text == str(all_items_index[row2]) + 'unit':
+                                n.text = str(units[row2])
                                 run1 = n
                                 font1 = run1.runs[0].font
                                 font1.bold = True
                                 font1.size = Pt(12)
                                 font1.name = 'Times New Roman'
-                            if n.text == str(row +1) + 'defult':
-                                n.text = analyst_and_result['defult']
+                            if n.text == str(all_items_index[row2]) + 'defult':
+                                n.text = str(defults[row2])
                                 run1 = n
                                 font1 = run1.runs[0].font
                                 font1.bold = True
                                 font1.size = Pt(12)
                                 font1.name = 'Times New Roman'
-                        # continued=False
-
-
-                           # if bio_analysts != 0:
-                            #     number_of_analysts_in_que -= 1
-                            # if hemo_analysts != 0:
-                            #     number_of_analysts_in_que -= 1
-                            # if GSE_analysts != 0:
-                            #     number_of_analysts_in_que -= 1
-                            # if GUE_analysts != 0:
-                            #     number_of_analysts_in_que -= 1
-                            # if SFA_analysts != 0:
-                            #     number_of_analysts_in_que -= 1
-                            # if HRMON_analysts != 0:
-                            #     number_of_analysts_in_que -= 1
 
 
         if row_num:
-            print('start')
+            categorys2=[]
+            all_items2=[]
+            all_items_index2=[]
+            analysts2=[]
+            for my_index2, ii2 in enumerate(analysts[number_of_analysts_in_que2:]):
+                self.cur.execute(''' SELECT sub_category FROM addanalyst WHERE name=%s ''', (ii2,))
+                data2 = self.cur.fetchall()
+                ii2 = str(ii2 + data2[0][0])
+                analysts2.append(ii2)
+                if data2[0][0] not in categorys2:
+                    categorys2.append(data2[0][0])
+            # print(categorys2,',,,,,',analysts[number_of_analysts_in_que2:])
+            # print(analysts2)
+            count2 = 1
+            for c2 in categorys2:
+                all_items2.append(str(c2 + ' :'))
+                all_items_index2.append(count2)
+                # print(count, c)
+                for sub2 in analysts2:
+                    if c2 in sub2:
+                        count2 += 1
+                        all_items2.append(str('   ' + sub2))
+                        all_items_index2.append(count2)
+                        # print("\t ", count, sub)
+                count += 1
+            for my_index22, rowgh2 in enumerate(analysts2):
+                for item2 in categorys2:
+                    if item2 in analysts2[my_index22]:
+                        analysts2[my_index22] = str(analysts2[my_index22][:-len(item2)])
+            for my_index32, rowgh22 in enumerate(all_items2):
+                for item22 in categorys2:
+                    if item22 in all_items2[my_index32]:
+                        if all_items2[my_index32].startswith('   '):
+                            all_items2[my_index32] = str(all_items2[my_index32][:-len(item22)])
+            # print(all_items2,'jxioj',categorys2,analysts2)
             for i2 in document2.tables:
                 for k2 in i2.rows:
                     for j2 in k2.cells:
@@ -2236,45 +2290,54 @@ class mainapp(QMainWindow, FORM_CLASS):
                                 font.name = 'Monotype Koufi'
                                 font.bold = True
                                 font.size = Pt(11)
-                            for row in range(number_of_analysts_in_que2, len(analysts)):
-                                analyst_and_result = {
-                                    'analyst': analysts[row],
-                                    'result': results[row],
-                                    'unit': units[row],
-                                    'defult': defults[row]
-                                }
-                                if row > 46:
-                                    number_of_analysts_in_que3 = number_of_analysts_in_que2
-                                    row_num2 = True
-                                    break
-                                if n2.text == str(row-22):
-                                    print('fuck')
-                                    n2.text = str(analyst_and_result['analyst']) + ' :'
+                            for row3 in range(0, len(all_items2)):
+                                if n2.text == str(all_items_index2[row3]):
+                                    n2.text = str(all_items2[row3])
+                            for row4 in range(0, len(analysts2)):
+                                if n2.text == '   ' + str(analysts2[row4]):
+                                    n2.text = '   ' + str(analysts2[row4]) + ' :'
                                     run = n2.runs
                                     font = run[0].font
                                     font.bold = True
                                     font.size = Pt(11)
                                     font.name = 'Tahoma'
-                                    n3 = n2.add_run(str(analyst_and_result['result']))
+                                    n3 = n2.add_run(str(results[number_of_analysts_in_que2:][row4]))
                                     run = n3
                                     font = run.font
                                     font.bold = False
                                     font.size = Pt(11)
                                     font.name = 'Tahoma'
-                                if n2.text == str(row-23) + 'unit':
-                                    n2.text = analyst_and_result['unit']
-                                    run1 = n2
-                                    font1 = run1.runs[0].font
-                                    font1.bold = True
-                                    font1.size = Pt(12)
-                                    font1.name = 'Times New Roman'
-                                if n2.text == str(row-23) + 'defult':
-                                    n2.text = analyst_and_result['defult']
-                                    run1 = n2
-                                    font1 = run1.runs[0].font
-                                    font1.bold = True
-                                    font1.size = Pt(12)
-                                    font1.name = 'Times New Roman'
+                                if row4 > 46:
+                                    number_of_analysts_in_que3 = number_of_analysts_in_que2
+                                    row_num2 = True
+                                    break
+                                # if n2.text == str(row-22):
+                                #     n2.text = str(analyst_and_result['analyst']) + ' :'
+                                #     run = n2.runs
+                                #     font = run[0].font
+                                #     font.bold = True
+                                #     font.size = Pt(11)
+                                #     font.name = 'Tahoma'
+                                #     n3 = n2.add_run(str(analyst_and_result['result']))
+                                #     run = n3
+                                #     font = run.font
+                                #     font.bold = False
+                                #     font.size = Pt(11)
+                                #     font.name = 'Tahoma'
+                                # if n2.text == str(row-23) + 'unit':
+                                #     n2.text = analyst_and_result['unit']
+                                #     run1 = n2
+                                #     font1 = run1.runs[0].font
+                                #     font1.bold = True
+                                #     font1.size = Pt(12)
+                                #     font1.name = 'Times New Roman'
+                                # if n2.text == str(row-23) + 'defult':
+                                #     n2.text = analyst_and_result['defult']
+                                #     run1 = n2
+                                #     font1 = run1.runs[0].font
+                                #     font1.bold = True
+                                #     font1.size = Pt(12)
+                                #     font1.name = 'Times New Roman'
 
         if row_num2:
             for i3 in document3.tables:
@@ -2363,7 +2426,6 @@ class mainapp(QMainWindow, FORM_CLASS):
         if files == 3:
             document3.save(r'%s\result3.docx' % save_word_files)
             f3.close()
-
         try:
             if prev == 'T':
                 word = client.Dispatch("Word.Application")
