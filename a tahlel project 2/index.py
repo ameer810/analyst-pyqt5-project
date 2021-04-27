@@ -21,6 +21,7 @@ import multyclass
 from collections import Counter
 from mymain import Ui_MainWindow as main_wind
 from SimpleLoadingScreen import LoadingDialog
+
 FORM_CLASS, _ = loadUiType("design.ui")
 show_all_sales_in_clients_page = False
 user_id = 4
@@ -35,22 +36,19 @@ first_text = ''
 first_text2 = ''
 first_text3 = ''
 addTrue = True
-first_text_category1 =''
-first_text_category2 =''
+first_text_category1 = ''
+first_text_category2 = ''
 mylist = []
-My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
-          'Crystals',
-          'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active',
-          'Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal',
-          'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
-          'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE', 'Bacteria:GSE', 'Bacteria:GUE', 'Monillia:GSE', 'Monillia:GUE',
-          'Fatty drop:GSE', 'Fatty drop:GUE', 'Mucuse:GUE']
-
+for_loop = False
 select_by_date = False
 sd = None
+echo_mode_num = 0
+echo_mode_num2 = 0
 
+edit_employee_check = True
+Edit_employee = False
+from functools import partial
 
-# GSE_row1=[]
 
 class mainapp(QMainWindow, FORM_CLASS):
     def __init__(self, parent=None):
@@ -59,8 +57,8 @@ class mainapp(QMainWindow, FORM_CLASS):
         QMainWindow.__init__(self)
         self.setupUi(self)
         self.tabWidget.tabBar().setVisible(False)
-        self.DB_Connect()
-
+        self.DB()
+        self.Show_default_statics()
         self.Delete_Files()
         self.add_clients_to_combo()
         from_start = True
@@ -79,36 +77,68 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.add_client_to_list4()
         self.Auto_complete_combo4()
 
-    def DB_Connect(self):
+    def DB(self):
         self.db = MySQLdb.connect(host='localhost', user='root', password='12345', db='tahlel2', charset="utf8",
                                   use_unicode=True, port=3306)
         self.cur = self.db.cursor()
 
+    def all_per(self):
+        if self.checkBox.isChecked() == True:
+            self.checkBox_8.setCheckState(True)
+            self.checkBox_15.setCheckState(True)
+            self.checkBox_16.setCheckState(True)
+            # self.checkBox_3.setCheckState(False)
+            self.checkBox_14.setCheckState(True)
+            self.checkBox_7.setCheckState(True)
+            self.checkBox_11.setCheckState(True)
+            self.checkBox_12.setCheckState(True)
+            self.checkBox_46.setCheckState(True)
+            self.checkBox_49.setCheckState(True)
+            self.checkBox_50.setCheckState(True)
+            self.checkBox_47.setCheckState(True)
+            self.checkBox_48.setCheckState(True)
+            self.checkBox_51.setCheckState(True)
+            self.checkBox_52.setCheckState(True)
+            self.checkBox_53.setCheckState(True)
+            self.checkBox_54.setCheckState(True)
+            self.checkBox_44.setCheckState(True)
+            self.checkBox_45.setCheckState(True)
+            self.checkBox_42.setCheckState(True)
+            self.checkBox_43.setCheckState(True)
+            self.checkBox_41.setCheckState(True)
+        else:
+            self.False_checkState()
+
     def handel_buttons(self):
         global addTrue
+        global edit_employee_check
+        if not edit_employee_check:
+            self.comboBox_3.hide()
         self.pushButton_15.clicked.connect(self.Light_Blue_Theme)
         self.pushButton_9.clicked.connect(self.Dark_Orange_Theme)
         self.pushButton_13.clicked.connect(self.Dark_Blue_Theme)
         self.pushButton_14.clicked.connect(self.Dark_Theme)
         self.pushButton_11.clicked.connect(self.Dark_Gray_Theme)
         self.pushButton.clicked.connect(self.Open_Sales_Page)
-        self.pushButton_6.clicked.connect(self.Open_Login_Page)
+        # self.pushButton_6.clicked.connect(self.Open_Login_Page)
         self.pushButton_21.clicked.connect(self.Open_Login_Page)
         self.pushButton_4.clicked.connect(self.Open_Settings_Page)
-        self.pushButton_12.clicked.connect(self.Open_Print_Page)
+        self.pushButton_12.clicked.connect(self.Open_Login_Page)
         self.pushButton_3.clicked.connect(self.Open_History_Page)
         self.pushButton_5.clicked.connect(self.Open_clients_Page)
         self.pushButton_2.clicked.connect(self.Open_Analyse_Page)
         self.pushButton_8.clicked.connect(self.Open_ResetPassword_Page)
-        self.pushButton_17.clicked.connect(self.Sales_Page)
+        self.pushButton_17.clicked.connect(lambda arg='yes': self.Sales_Page(for_loop2=arg))
         self.pushButton_30.clicked.connect(self.get_client_id)
         # if not addTrue:
         self.comboBox_16.currentIndexChanged.connect(self.Show_Type_of_result_category)
+        self.comboBox_2.currentIndexChanged.connect(self.Show_permissions)
         # QListView.currentChanged()
         # self.pushButton_31.clicked.connect(self.Chick_analyst_category)
         self.pushButton_32.clicked.connect(self.get_total_price)
         # self.pushButton_33.clicked.connect(self.Show_analyst_in_Edit_Or_Delete)
         self.comboBox_21.currentIndexChanged.connect(self.Show_analyst_in_Edit_Or_Delete)
+        self.comboBox_3.currentIndexChanged.connect(self.Show_employee_data)
         self.pushButton_29.clicked.connect(self.Clients_Page)
         self.pushButton_16.clicked.connect(self.Add_Buys)
         self.pushButton_20.clicked.connect(self.Show_All_The_Analysts)
@@ -125,7 +155,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_10.clicked.connect(self.Reset_password)
         self.pushButton_26.clicked.connect(self.Add_Analyst)
         self.pushButton_34.clicked.connect(self.Preview)
-        self.pushButton_23.clicked.connect(self.Print_empty_papers)
+        # self.pushButton_23.clicked.connect(self.Print_empty_papers)
         self.pushButton_24.clicked.connect(self.Add_Path)
         self.pushButton_36.clicked.connect(self.Show_All_Clients)
         self.pushButton_39.clicked.connect(self.ADD_one_REsult_to_ANalyst_results)
@@ -135,9 +165,71 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.pushButton_44.clicked.connect(self.Show_multy_Dialog)
         self.comboBox_16.view().pressed.connect(self.Set_Chick_State2)
         self.pushButton_46.clicked.connect(self.ADD_one_category_to_analyst_categoryes)
+        self.pushButton_25.clicked.connect(self.Add_permissions)
+        self.pushButton_25.clicked.connect(self.Add_employee)
+        self.pushButton_23.clicked.connect(self.Show_statics)
         self.pushButton_45.clicked.connect(self.ADD_one_category_to_analyst_categoryes_IN_EDITMODE)
+        self.pushButton_33.pressed.connect(self.echo_mode)
+        self.pushButton_33.released.connect(self.echo_mode)
+        self.pushButton_38.pressed.connect(self.echo_mode2)
+        self.pushButton_38.released.connect(self.echo_mode2)
+        self.checkBox.clicked.connect(self.all_per)
+        self.Add_all_employee_to_comboBox()
+        self.comboBox_4.currentIndexChanged.connect(self.Show_client_data_by_current_index)
         self.my_def()
         self.add_all_subCategory_toList()
+
+    def Show_client_data_by_current_index(self):
+        self.cur.execute(
+            '''SELECT client_name,doctor_name,client_age,genus,notes,client_id FROM addnewitem WHERE client_name = %s''',
+            (self.comboBox_4.currentText(),))
+        analyst_data = self.cur.fetchone()
+        if analyst_data:
+            self.spinBox.setValue(int(analyst_data[5]))
+            self.comboBox_15.setCurrentText(str(analyst_data[1]))
+            self.comboBox_15.setEnabled(False)
+            self.comboBox_14.setEnabled(False)
+            self.comboBox_4.setCurrentText(analyst_data[0])
+            # self.comboBox_4.setEnabled(False)
+            self.spinBox_7.setValue(int(analyst_data[2]))
+            self.spinBox_7.setEnabled(False)
+            if analyst_data[3] == 'ذكر':
+                self.comboBox_14.setCurrentIndex(1)
+                self.comboBox_14.setEnabled(False)
+            if analyst_data[3] == 'انثى':
+                self.comboBox_14.setCurrentIndex(0)
+                self.comboBox_14.setEnabled(False)
+            self.textEdit.setPlainText(str(analyst_data[4]))
+            self.textEdit.setEnabled(False)
+        else:
+            self.spinBox.setValue(0)
+            self.comboBox_15.setCurrentText('')
+            self.comboBox_15.setEnabled(True)
+            self.comboBox_14.setEnabled(True)
+            self.comboBox_4.setCurrentText('')
+            # self.comboBox_4.setEnabled(False)
+            self.spinBox_7.setValue(20)
+            self.spinBox_7.setEnabled(True)
+            self.comboBox_14.setCurrentIndex(0)
+            self.comboBox_14.setEnabled(True)
+            self.textEdit.setPlainText('')
+            self.textEdit.setEnabled(True)
+
+    def echo_mode(self):
+        global echo_mode_num
+        if echo_mode_num % 2 == 0:
+            self.lineEdit_17.setEchoMode(QLineEdit.Normal)
+        else:
+            self.lineEdit_17.setEchoMode(QLineEdit.Password)
+        echo_mode_num += 1
+
+    def echo_mode2(self):
+        global echo_mode_num2
+        if echo_mode_num2 % 2 == 0:
+            self.lineEdit_2.setEchoMode(QLineEdit.Normal)
+        else:
+            self.lineEdit_2.setEchoMode(QLineEdit.Password)
+        echo_mode_num2 += 1
 
     def add_all_subCategory_toList(self):
         global mylist
@@ -224,6 +316,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                     self.comboBox_16.setCurrentText(str(listWidget_object.item(row).text()))
                     self.Sales_Page()
                     # print('1')
+        self.Add_buttons_combo_spin_to_tableWidget()
         self.Dialog.close()
 
     def Show_search_Widget(self):
@@ -240,15 +333,6 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.Show_All_one_client_analyst()
         self.searchWidget.close()
 
-    def add_data_to_my_num(self):
-        global My_num
-        self.cur.execute(
-            ''' SELECT name FROM addanalyst WHERE sub_category=%s OR sub_category=%s Or sub_category=%s ''',
-            ('GSE', 'GUE', 'SFA',))
-        data = self.cur.fetchall()
-        for item in data:
-            My_num.append(item[0])
-
     def add_clients_to_combo(self):
         clients = []
         self.cur.execute(''' SELECT client_name FROM addclient ''')
@@ -259,6 +343,7 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.comboBox_4.clear()
         self.comboBox_4.addItem('')
         self.comboBox_4.addItems(clients)
+        self.comboBox_4.addItem('')
 
     def ADD_one_category_to_analyst_categoryes_IN_EDITMODE(self):
         global first_text_category1
@@ -349,10 +434,11 @@ class mainapp(QMainWindow, FORM_CLASS):
             for col, item in enumerate(form):
                 if col == 3:
                     self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(l_data[row][4])))
+                elif col == 4:
+                    self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(l_data[row][5])[:9]))
                 else:
                     self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
-
             row_pos2 = self.tableWidget_2.rowCount()
             self.tableWidget_2.insertRow(row_pos2)
 
@@ -377,8 +463,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             latest_data = self.cur.fetchall()
             data = [{'name': s, 'value': latest_data}]
             all_data.append(data)
-        # self.tableWidget_2.setRowCount(0)
-        # self.tableWidget_2.insertRow(0)
+
         l_data = ()
         for ih in all_data:
             hs_data = ih[0]['value']
@@ -388,6 +473,9 @@ class mainapp(QMainWindow, FORM_CLASS):
             for col, item in enumerate(form):
                 if col == 3:
                     self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(l_data[row][4])))
+
+                elif col == 4:
+                    self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(l_data[row][5])[:9]))
                 else:
                     self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
@@ -455,23 +543,12 @@ class mainapp(QMainWindow, FORM_CLASS):
         word_files = mydata[1]
         save_word_files = mydata[2]
         try:
-            if os.path.exists(r'%s\bio latest17.docx' % save_word_files):
-                os.remove(r'%s\bio latest17.docx' % save_word_files)
-
-            if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
-                os.remove(r'%s\GSE latest.docx' % save_word_files)
-
-            if os.path.exists(r'%s\SFA latest.docx' % save_word_files):
-                os.remove(r'%s\SFA latest.docx' % save_word_files)
-
-            if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
-                os.remove(r'%s\GUE latest.docx' % save_word_files)
-
-            if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
-                os.remove(r'%s\hematology latest.docx' % save_word_files)
-
-            if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
-                os.remove(r'%s\هرمونات مشترك latest.docx' % save_word_files)
+            if os.path.exists(r'%s\result.docx' % save_word_files):
+                os.remove(r'%s\result.docx' % save_word_files)
+            if os.path.exists(r'%s\result2.docx' % save_word_files):
+                os.remove(r'%s\result2.docx' % save_word_files)
+            if os.path.exists(r'%s\result3.docx' % save_word_files):
+                os.remove(r'%s\result3.docx' % save_word_files)
         except Exception as e:
             word = client.Dispatch("Word.Application")
             word.ActiveDocument.Close()
@@ -495,53 +572,53 @@ class mainapp(QMainWindow, FORM_CLASS):
         QMessageBox.information(self, '', 'تم تطبيق المعلومات بنجاح')
         self.Show_paths()
 
-    def Print_empty_papers(self):
-        self.cur.execute(''' SELECT * FROM paths WHERE id=1 ''')
-        mydata = self.cur.fetchone()
-        word_files = mydata[1]
-        save_word_files = mydata[2]
-        paper_type = self.comboBox_27.currentIndex()
-        copyes_num = self.spinBox_4.value()
-        word = client.Dispatch("Word.Application")
-
-        category = ''
-        file = ''
-        if paper_type == 0:
-            category = 'bio'
-            file = 'bio org.docx'
-        if paper_type == 1:
-            category = 'GSE'
-            file = 'GSE org.docx'
-        if paper_type == 2:
-            category = 'GUE'
-            file = 'GUE org.docx'
-        if paper_type == 3:
-            category = 'hematology'
-            file = 'hematology org.docx'
-        if paper_type == 5:
-            category = 'SFA'
-            file = 'SFA org.docx'
-        if paper_type == 4:
-            category = 'هرمونات مشترك'
-            file = 'هرمونات مشترك الاصلي.docx'
-        word.Documents.Open(r'%s\%s' % (word_files, file))
-        for ihjk in range(1, copyes_num + 1):
-            word.ActiveDocument.PrintOut(Background=False)
-        QMessageBox.information(self, 'info', 'تمت الطباعة بنجاح')
-
-        # time.sleep(2)
-        # pyautogui.press('enter')
-        # time.sleep(1.5)
-        warning = QMessageBox.warning(self, '',
-                                      "هل قمت بطباعة الملفات؟\n لا تضغط نعم الا لو قمت بطباعته",
-                                      QMessageBox.Yes | QMessageBox.No)
-        if warning == QMessageBox.Yes:
-            move = 1
-            try:
-                word.ActiveDocument.Close()
-            except:
-                pass
-        # word.ActiveDocument.Close()
+    # def Print_empty_papers(self):
+    #     self.cur.execute(''' SELECT * FROM paths WHERE id=1 ''')
+    #     mydata = self.cur.fetchone()
+    #     word_files = mydata[1]
+    #     save_word_files = mydata[2]
+    #     paper_type = self.comboBox_27.currentIndex()
+    #     copyes_num = self.spinBox_4.value()
+    #     word = client.Dispatch("Word.Application")
+    #
+    #     category = ''
+    #     file = ''
+    #     if paper_type == 0:
+    #         category = 'bio'
+    #         file = 'bio org.docx'
+    #     if paper_type == 1:
+    #         category = 'GSE'
+    #         file = 'GSE org.docx'
+    #     if paper_type == 2:
+    #         category = 'GUE'
+    #         file = 'GUE org.docx'
+    #     if paper_type == 3:
+    #         category = 'hematology'
+    #         file = 'hematology org.docx'
+    #     if paper_type == 5:
+    #         category = 'SFA'
+    #         file = 'SFA org.docx'
+    #     if paper_type == 4:
+    #         category = 'هرمونات مشترك'
+    #         file = 'هرمونات مشترك الاصلي.docx'
+    #     word.Documents.Open(r'%s\%s' % (word_files, file))
+    #     for ihjk in range(1, copyes_num + 1):
+    #         word.ActiveDocument.PrintOut(Background=False)
+    #     QMessageBox.information(self, 'info', 'تمت الطباعة بنجاح')
+    #
+    #     # time.sleep(2)
+    #     # pyautogui.press('enter')
+    #     # time.sleep(1.5)
+    #     warning = QMessageBox.warning(self, '',
+    #                                   "هل قمت بطباعة الملفات؟\n لا تضغط نعم الا لو قمت بطباعته",
+    #                                   QMessageBox.Yes | QMessageBox.No)
+    #     if warning == QMessageBox.Yes:
+    #         move = 1
+    #         try:
+    #             word.ActiveDocument.Close()
+    #         except:
+    #             pass
+    #     # word.ActiveDocument.Close()
 
     def Preview(self):
         global if_print
@@ -651,6 +728,8 @@ class mainapp(QMainWindow, FORM_CLASS):
                 for i, k in enumerate(analyst_data[0]):
                     if i == 3:
                         self.tableWidget_2.setItem(0, i, QTableWidgetItem(str(analyst_data[0][4])))
+                    elif i == 4:
+                        self.tableWidget_2.setItem(0, i, QTableWidgetItem(str(analyst_data[0][5])[:9]))
                     else:
                         self.tableWidget_2.setItem(0, i, QTableWidgetItem(str(k)))
             else:
@@ -658,8 +737,6 @@ class mainapp(QMainWindow, FORM_CLASS):
                 self.Show_all_clients_without_search()
         except:
             pass
-            # self.tableWidget_2.setRowCount(0)
-            # self.tableWidget_2.insertRow(0)
 
     def Search_In_History(self):
         actionsd = self.comboBox_24.currentIndex()
@@ -776,22 +853,26 @@ class mainapp(QMainWindow, FORM_CLASS):
                 real_name = self.tableWidget_5.item(row, 0).text()
                 analyst = self.tableWidget_5.item(row, 1).text()
                 all_analyst.append(analyst)
+
             except:
                 pass
             try:
-                result = self.tableWidget_5.cellWidget(row, 2).currentText()
+                result = self.tableWidget_5.cellWidget(row, 2).value()
             except:
                 try:
-                    result = self.tableWidget_5.item(row, 2).text()
+                    result = self.tableWidget_5.cellWidget(row, 2).currentText()
                 except:
-                    pass
+                    try:
+                        result = self.tableWidget_5.item(row, 2).text()
+                    except:
+                        pass
             all_result.append(str(result))
             try:
                 real_doctor = self.tableWidget_5.item(row, 3).text()
             except:
                 pass
         # try:
-        print(all_analyst,'first')
+        print(all_analyst, 'first')
         self.Bio_Word(real_name, real_doctor, all_analyst, all_result, year, month, day, prev, genuses)
 
         # except Exception as e:
@@ -823,38 +904,12 @@ class mainapp(QMainWindow, FORM_CLASS):
 
     def get_total_price(self):
         total_price = 0
-        GSE = ['Color:GSE', 'Consistency', 'Pus cells:GSE', 'R.B.Cs:GSE', 'E. Histolytica', 'Ova', 'Other:GSE',
-               'Bacteria:GSE', 'Monillia:GSE', 'Fatty drop:GSE']
-        GUE = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
-               'Crystals', 'Casts', 'Other:GUE', 'Bacteria:GUE', 'Monillia:GUE', 'Mucuse:GUE']
-        SFA = ['Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active', 'Motility:Sluggish',
-               'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal', 'Morphology:Pus cells', 'Other:SFA',
-               'Count']
-        My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
-                  'Crystals',
-                  'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active',
-                  'Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal',
-                  'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
-                  'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE', 'Bacteria:GSE', 'Bacteria:GUE', 'Monillia:GSE', 'Monillia:GUE',
-                  'Fatty drop:GSE', 'Fatty drop:GUE', 'Mucuse:GUE']
-        c_GSE = False
-        c_GUE = False
-        c_SFA = False
-        rMy_num = 0
         for row in range(0, self.tableWidget_5.rowCount() - 1):
             try:
                 analyst_name = self.tableWidget_5.item(row, 1).text()
             except:
                 analyst_name = ''
-            for kg in GSE:
-                if kg == analyst_name:
-                    c_GSE = True
-            for kg1 in GUE:
-                if kg1 == analyst_name:
-                    c_GUE = True
-            for kg2 in SFA:
-                if kg2 == analyst_name:
-                    c_SFA = True
+
             try:
                 a = self.tableWidget_5.item(row, 4).text()
             except:
@@ -863,12 +918,6 @@ class mainapp(QMainWindow, FORM_CLASS):
                 total_price += int(a)
             except ValueError:
                 a = 0
-        if c_SFA == True:
-            total_price += 3
-        if c_GSE == True:
-            total_price += 3
-        if c_GUE == True:
-            total_price += 3
         self.lineEdit_24.setText(str(total_price))
 
     def Update_addNewItem_Data(self):
@@ -896,8 +945,8 @@ class mainapp(QMainWindow, FORM_CLASS):
             except:
                 print('except')
 
-    def Sales_Page(self):
-        # print('iam run')
+    def Sales_Page(self, for_loop2=None):
+        print('please dont print')
         # if self.comboBox_4.currentText()=='':
         #     QMessageBox.information(self,'تحذير','يرجى ادخال اسم المراجع')
         self.comboBox_4.setEnabled(False)
@@ -908,14 +957,6 @@ class mainapp(QMainWindow, FORM_CLASS):
         global client_id_glob
         global chick_if_add_new
         global clients_name_glo
-        global My_num
-        # My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
-        #           'Crystals',
-        #           'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active',
-        #           'Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal',
-        #           'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
-        #           'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE', 'Bacteria:GSE', 'Bacteria:GUE', 'Monillia:GSE', 'Monillia:GUE',
-        #           'Fatty drop:GSE', 'Fatty drop:GUE', 'Mucuse:GUE']
         analyst_name = self.comboBox_16.currentText()
         client_name = self.comboBox_4.currentText()
         client_age = self.spinBox_7.value()
@@ -951,14 +992,16 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.db.commit()
         self.cur.execute('''SELECT id FROM addclient WHERE client_name = %s''', (client_name,))
         real_client_id = self.cur.fetchone()
+        self.cur.execute(''' SELECT sub_category FROM addanalyst WHERE name=%s''', (analyst_name,))
+        sub_category = self.cur.fetchone()
         self.cur.execute('''
-           INSERT INTO addnewitem (client_name,client_id,client_age,genus,doctor_name,notes,analyst_name,analyst_result,price,total_price,date)
-           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+           INSERT INTO addnewitem (client_name,client_id,client_age,genus,doctor_name,notes,analyst_name,analyst_result,price,total_price,date,sub_category)
+           VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         ''', (
             client_name, real_client_id, client_age, client_genus, client_doctor, analyst_or_clients_notes,
             analyst_name,
             latest_result,
-            total_price, total_price, datetime.datetime.now()))
+            total_price, total_price, datetime.datetime.now(), sub_category[0],))
         self.db.commit()
         clients_name_glo.append(str(client_name))
         self.Update_addNewItem_Data()
@@ -1003,16 +1046,28 @@ class mainapp(QMainWindow, FORM_CLASS):
             row_pos = self.tableWidget_5.rowCount()
             self.tableWidget_5.insertRow(row_pos)
         chick_if_add_new = True
+        self.Show_All_The_Sales()
+        if for_loop2 == 'no':
+            self.Add_buttons_combo_spin_to_tableWidget()
+        self.tableWidget_5.scrollToBottom()
+        self.get_total_price()
+        self.Show_all_clients_without_search()
+        self.Add_Data_To_history(3, 1)
+        self.History()
+        # self.add_clients_to_combo()
+
+    def Add_buttons_combo_spin_to_tableWidget(self):
         try:
-            axd1 = self.tableWidget_5.findItems('Fatty drop:GSE', Qt.MatchContains)
-            axd2 = self.tableWidget_5.findItems('Mucuse:GUE', Qt.MatchContains)
-            axd3 = self.tableWidget_5.findItems('Morphology:Pus cells', Qt.MatchContains)
-            self.tableWidget_5.insertRow(axd1[0].row() + 1)
-            # self.tableWidget_5.insertRow(axd1[0].row() + 2)
-            self.tableWidget_5.insertRow(axd2[0].row() + 1)
-            # self.tableWidget_5.insertRow(axd2[0].row() + 2)
-            self.tableWidget_5.insertRow(axd3[0].row() + 1)
-            # self.tableWidget_5.insertRow(axd3[0].row() + 2)
+            pass
+            # axd1 = self.tableWidget_5.findItems('Fatty drop:GSE', Qt.MatchContains)
+            # axd2 = self.tableWidget_5.findItems('Mucuse:GUE', Qt.MatchContains)
+            # axd3 = self.tableWidget_5.findItems('Morphology:Pus cells', Qt.MatchContains)
+            # self.tableWidget_5.insertRow(axd1[0].row() + 1)
+            # # self.tableWidget_5.insertRow(axd1[0].row() + 2)
+            # self.tableWidget_5.insertRow(axd2[0].row() + 1)
+            # # self.tableWidget_5.insertRow(axd2[0].row() + 2)
+            # self.tableWidget_5.insertRow(axd3[0].row() + 1)
+            # # self.tableWidget_5.insertRow(axd3[0].row() + 2)
         except:
             pass
         for rowd in range(0, self.tableWidget_5.rowCount() - 1):
@@ -1021,8 +1076,8 @@ class mainapp(QMainWindow, FORM_CLASS):
             mypush_button.setStyleSheet('border-radius:12px;')
             mypush_button.clicked.connect(self.buttonClicked)
             try:
-                row_analyst_name = self.tableWidget_5.item(rowd,1).text()
-                if row_analyst_name and row_analyst_name !='':
+                row_analyst_name = self.tableWidget_5.item(rowd, 1).text()
+                if row_analyst_name and row_analyst_name != '':
                     self.tableWidget_5.setCellWidget(rowd, 5, mypush_button)
             except:
                 pass
@@ -1031,7 +1086,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                 name = self.tableWidget_5.item(rowd, 0).text()
             except:
                 pass
-            rs_name=''
+            rs_name = ''
             try:
                 rs_name = self.tableWidget_5.item(rowd, 1).text()
             except:
@@ -1060,57 +1115,6 @@ class mainapp(QMainWindow, FORM_CLASS):
                 if results_data[0][1] == 'حقل كتابة':
                     mycobmbo = QLineEdit(self)
                     object_type = 'حقل كتابة'
-                # self.tableWidget_5.setItem(rowd, 0, QTableWidgetItem(the_name))
-                # if rs_name == 'Color:GSE' or rs_name == 'Colour:SFA':
-                #     mycobmbo = QComboBox(self)
-                #     mycobmbo.addItems(['yallow', 'brown', 'green', 'milk'])
-                # if rs_name == 'Consistency':
-                #     mycobmbo = QComboBox(self)
-                #     mycobmbo.addItems(['Solid', 'Liquid', 'Semi solid', 'Semi liquid', 'Mucoid'])
-                # if rs_name == 'R.B.Cs:GSE' or rs_name == 'Pus cells:GSE' or rs_name == 'RBCs:GUE' or rs_name == 'Pus cells:GUE':
-                #     mycobmbo = QComboBox(self)
-                #     mycobmbo.addItems(['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
-                #                        '5 - 7', '6 - 8', '6 - 7', '+', '++', '+++', '++++', 'Full Field'])
-                # if rs_name == 'E. Histolytica' or rs_name == 'G. Lembilia':
-                #     mycobmbo = QComboBox(self)
-                #     mycobmbo.addItems(['Cyst', 'Trophozoite'])
-                # if rs_name == 'Ova':
-                #     mycobmbo = QComboBox(self)
-                #     mycobmbo.addItems(['Nill'])
-                # if rs_name == 'Appearance':
-                #     mycobmbo = QComboBox(self)
-                #     mycobmbo.addItems(['Turbid', 'Clear'])
-                # if rs_name == 'Reaction:GUE' or rs_name == 'Reaction:SFA':
-                #     mycobmbo = QComboBox(self)
-                #     mycobmbo.addItems(['Acidic', 'Alkaline'])
-                # if rs_name == 'Albumin' or rs_name == 'Sugar':
-                #     mycobmbo = QComboBox(self)
-                #     mycobmbo.addItems(['Nil', '+', '++', '+++', 'Trace'])
-                # if rs_name == 'Epith .cells':
-                #     mycobmbo = QComboBox(self)
-                #     mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
-                # if rs_name == 'Crystals':
-                #     mycobmbo = QComboBox(self)
-                #     mycobmbo.addItems(['Am.Urate', 'Am.Phosphatase', 'Uric Acid', 'Ca.Oxalate'])
-                # if rs_name == 'Casts':
-                #     mycobmbo = QComboBox(self)
-                #     mycobmbo.addItems(['Granular cast +', 'Granular cast ++', 'Granular cast +++'])
-                #
-                # if rs_name == 'Bacteria:GSE' or rs_name == 'Monillia:GSE' or rs_name == 'Fatty drop:GSE' or rs_name == 'Monillia:GUE' or rs_name == 'Fatty drop:GUE' or rs_name == 'Bacteria:GUE' or rs_name == 'Mucuse:GUE':
-                #     mycobmbo = QComboBox(self)
-                #     mycobmbo.addItems(['Few', '+', '++', '+++', '++++'])
-                # if rs_name == 'Motility:Active' or rs_name == 'Motility:Sluggish' or rs_name == 'Motility:Dead' or rs_name == 'Morphology:Normal' or rs_name == 'Morphology:Abnormal' or rs_name == 'Morphology:Pus cells':
-                #     mycobmbo = QComboBox(self)
-                #     mycobmbo.addItems(
-                #         ['5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80',
-                #          '85'])
-                # if rs_name == 'Volume':
-                #     mycobmbo = QComboBox(self)
-                #     mycobmbo.addItems(['0.5', '0.6', '0.7'])
-                # if rs_name == 'Liquefaction':
-                #     mycobmbo = QComboBox(self)
-                #     mycobmbo.addItems(['5', '10', '15', '20', '25', '30', '35', '40', '45'])
-                # print('mystatrt')
                 try:
                     r2_analyst_name = self.tableWidget_5.item(rowd, 1).text()
                     r2_client_name = self.comboBox_4.currentText()
@@ -1135,26 +1139,12 @@ class mainapp(QMainWindow, FORM_CLASS):
                             mycobmbo.setCurrentIndex(0)
                 except:
                     pass
-        self.tableWidget_5.scrollToBottom()
-        self.get_total_price()
-        self.Show_All_The_Sales()
-        self.Show_all_clients_without_search()
-        self.Add_Data_To_history(3, 1)
-        self.History()
-        # self.add_clients_to_combo()
 
     def Show_All_one_client_analyst(self):
         global client_id_glob
         global chick_if_add_new
         global select_by_date
         # print(select_by_date)
-        My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
-                  'Crystals',
-                  'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active',
-                  'Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal',
-                  'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
-                  'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE', 'Bacteria:GSE', 'Bacteria:GUE', 'Monillia:GSE', 'Monillia:GUE',
-                  'Fatty drop:GSE', 'Fatty drop:GUE', 'Mucuse:GUE']
         client_name = self.comboBox_4.currentText()
         # self.cur.execute('''
         #      SELECT client_name,analyst_name,analyst_result,doctor_name FROM addnewitem WHERE client_name = %s AND DATE(date)=%s
@@ -1224,15 +1214,16 @@ class mainapp(QMainWindow, FORM_CLASS):
                     self.Show_All_The_Sales()
 
                     try:
-                        axd1 = self.tableWidget_5.findItems('Fatty drop:GSE', Qt.MatchContains)
-                        axd2 = self.tableWidget_5.findItems('Mucuse:GUE', Qt.MatchContains)
-                        axd3 = self.tableWidget_5.findItems('Morphology:Pus cells', Qt.MatchContains)
-                        self.tableWidget_5.insertRow(axd1[0].row() + 1)
-                        # self.tableWidget_5.insertRow(axd1[0].row() + 2)
-                        self.tableWidget_5.insertRow(axd2[0].row() + 1)
-                        # self.tableWidget_5.insertRow(axd2[0].row() + 2)
-                        self.tableWidget_5.insertRow(axd3[0].row() + 1)
-                        # self.tableWidget_5.insertRow(axd3[0].row() + 2)
+                        pass
+                        # axd1 = self.tableWidget_5.findItems('Fatty drop:GSE', Qt.MatchContains)
+                        # axd2 = self.tableWidget_5.findItems('Mucuse:GUE', Qt.MatchContains)
+                        # axd3 = self.tableWidget_5.findItems('Morphology:Pus cells', Qt.MatchContains)
+                        # self.tableWidget_5.insertRow(axd1[0].row() + 1)
+                        # # self.tableWidget_5.insertRow(axd1[0].row() + 2)
+                        # self.tableWidget_5.insertRow(axd2[0].row() + 1)
+                        # # self.tableWidget_5.insertRow(axd2[0].row() + 2)
+                        # self.tableWidget_5.insertRow(axd3[0].row() + 1)
+                        # # self.tableWidget_5.insertRow(axd3[0].row() + 2)
                     except:
                         print('ecxehue')
                         pass
@@ -1254,7 +1245,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                         except:
                             name = ''
                         self.tableWidget_5.setItem(rowd, 0, QTableWidgetItem(name))
-                        rs_name=''
+                        rs_name = ''
                         try:
                             rs_name = self.tableWidget_5.item(rowd, 1).text()
                         except:
@@ -1360,11 +1351,12 @@ class mainapp(QMainWindow, FORM_CLASS):
 
                 else:
                     QMessageBox.information(self, 'Error',
-                                            'الرقم الذي ادخلته غير صحيح يرجى ادخال رقم صحيح او مراجعة صفحة "كل المبيعات" للتأكد من الرقم')
+                                            'الرقم الذي ادخلته غير صحيح يرجى ادخال رقم صحيح او مراجعة صفحة "مبيعات اليوم" للتأكد من الرقم')
             except Exception as e:
                 print(e)
                 self.get_total_price()
             select_by_date = False
+
     def Show_Type_of_result_category(self):
         global addTrue
         analyst_name = self.comboBox_16.currentText()
@@ -1407,6 +1399,7 @@ class mainapp(QMainWindow, FORM_CLASS):
                 if not addTrue:
                     QMessageBox.information(self, 'تحذير', "يرجى اختيار تحليل صحيح")
             print('error here2')
+
     def analyst_category_function(self, name):
         global mylist
         # print('starthh')
@@ -1425,6 +1418,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             for new in my_DATA:
                 self.comboBox_16.setCurrentText(str(new[0]))
                 self.Sales_Page()
+            self.Add_buttons_combo_spin_to_tableWidget()
             # self.loading.close()
         # colors = ['yallow', 'brown', 'green', 'milk']
         # RBCs_Pus_cells_GUE_GSE = ['1 - 2', '1 - 3', '2 - 3', '2 - 4', '0 - 1', '0 - 2', '3 - 5', '4 - 6', '5 - 6',
@@ -1453,7 +1447,7 @@ class mainapp(QMainWindow, FORM_CLASS):
     def Chick_analyst_category(self, sd=None):
         # print(item,'here')
         global mylist
-        print(self.comboBox_16.currentText(),'jjjjj')
+        print(self.comboBox_16.currentText(), 'jjjjj')
         if self.comboBox_16.currentText() not in mylist and self.comboBox_16.currentIndex() != 0:
             self.analyst_category_function(self.comboBox_16.currentText())
         if self.comboBox_16.currentText() in mylist:
@@ -1502,9 +1496,7 @@ class mainapp(QMainWindow, FORM_CLASS):
             all_data.append(data)
         self.tableWidget_6.setRowCount(0)
         self.tableWidget_6.insertRow(0)
-        # if show_all_sales_in_clients_page:
-        #     self.tableWidget_2.setRowCount(0)
-        #     self.tableWidget_2.insertRow(0)
+
         l_data = ()
         for ih in all_data:
             hs_data = ih[0]['value']
@@ -1513,20 +1505,11 @@ class mainapp(QMainWindow, FORM_CLASS):
             for col, item in enumerate(form):
                 if col == 3:
                     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(l_data[row][4])))
-                    # if show_all_sales_in_clients_page:
-                    #
-                    #     self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(l_data[row][4])))
                 else:
                     self.tableWidget_6.setItem(row, col, QTableWidgetItem(str(item)))
-                    # if show_all_sales_in_clients_page:
-                    #     self.tableWidget_2.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
             row_pos = self.tableWidget_6.rowCount()
             self.tableWidget_6.insertRow(row_pos)
-            # if show_all_sales_in_clients_page:
-            #     row_pos2 = self.tableWidget_2.rowCount()
-            #     self.tableWidget_2.insertRow(row_pos2)
-        # print(all_data)
 
     def Show_All_The_Analysts(self):
         global from_start
@@ -1679,7 +1662,8 @@ class mainapp(QMainWindow, FORM_CLASS):
             results.append(str(self.comboBox_31.currentText()))
         mysql = '''UPDATE addanalyst SET name=%s,defult=%s,unit=%s,price=%s,category=%s,sub_category=%s,date=%s,results=%s where name=%s'''
         values = (
-            str(analyst_name), defult, unit, analyst_price, analyst_result_category, sub_category, date, str(results)[1:-1],
+            str(analyst_name), defult, unit, analyst_price, analyst_result_category, sub_category, date,
+            str(results)[1:-1],
             analyst_name)
         self.cur.execute(mysql, values)
         self.db.commit()
@@ -1724,17 +1708,16 @@ class mainapp(QMainWindow, FORM_CLASS):
         self.comboBox_23.addItem('----------------')
         self.comboBox_21.addItem('----------------')
         self.comboBox_16.addItem('----------------')
-        self.comboBox_3.addItem('----------------')
-        self.comboBox_3.addItem('كل الاصناف')
+        self.comboBox_5.addItem('الكل')
 
         self.comboBox_16.addItems(mylist)
+        self.comboBox_5.addItems(mylist)
         self.comboBox_26.addItems(mylist)
         self.comboBox_23.addItems(mylist)
-        self.comboBox_3.addItems(mylist)
         for item in data:
             self.comboBox_21.addItem(str(item[0]))
             self.comboBox_16.addItem(str(item[0]))
-            self.comboBox_3.addItem(str(item[0]))
+            self.comboBox_5.addItem(str(item[0]))
         for ii in range(0, self.comboBox_16.count()):
             self.comboBox_16.setCurrentIndex(ii)
             if self.comboBox_16.currentText() in mylist:
@@ -1757,59 +1740,22 @@ class mainapp(QMainWindow, FORM_CLASS):
         client_data = self.cur.fetchall()
         self.cur.execute(
             ''' SELECT price,analyst_name,analyst_result,client_name,date FROM addnewitem WHERE client_id=%s AND DATE(date=%s)''',
-            (str(id),'2021-04-23'))
+            (str(id), '2021-04-23'))
         client_analyst_data = self.cur.fetchall()
         print()
         num = 0
         all_client_analyst = []
         total = 0
-        rMy_num = 0
-        GSE = ['Color:GSE', 'Consistency', 'Pus cells:GSE', 'R.B.Cs:GSE', 'E. Histolytica', 'Ova', 'Other:GSE',
-               'Bacteria:GSE', 'Monillia:GSE', 'Fatty drop:GSE']
-        GUE = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
-               'Crystals', 'Casts', 'Other:GUE', 'Bacteria:GUE', 'Monillia:GUE', 'Mucuse:GUE']
-        SFA = ['Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active', 'Motility:Sluggish',
-               'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal', 'Morphology:Pus cells', 'Other:SFA',
-               'Count']
 
-        c_GSE = False
-        c_GUE = False
-        c_SFA = False
-        My_num = ['Appearance', 'Reaction:GUE', 'Albumin', 'Sugar', 'RBCs:GUE', 'Pus cells:GUE', 'Epith .cells',
-                  'Crystals',
-                  'Casts', 'Other:GUE', 'Volume', 'Reaction:SFA', 'Colour:SFA', 'Liquefaction', 'Motility:Active',
-                  'Motility:Sluggish', 'Motility:Dead', 'Morphology:Normal', 'Morphology:Abnormal',
-                  'Morphology:Pus cells', 'Other:SFA', 'Color:GSE', 'Consistency', 'E. Histolytica', 'G. Lembilia',
-                  'Ova', 'Pus cells:GSE', 'R.B.Cs:GSE', 'Bacteria:GSE', 'Bacteria:GUE', 'Monillia:GSE', 'Monillia:GUE',
-                  'Fatty drop:GSE', 'Fatty drop:GUE', 'Mucuse:GUE']
         for i in client_analyst_data:
             num += 1
         for price in range(0, num):
-            if client_analyst_data[price][1] not in GSE and client_analyst_data[price][1] not in GUE and \
-                    client_analyst_data[price][1] not in SFA:
-                total += client_analyst_data[price][0]
-        for k in range(0, num):
-            for kg in GSE:
-                if kg == client_analyst_data[k][1]:
-                    c_GSE = True
-            for kg1 in GUE:
-                if kg1 == client_analyst_data[k][1]:
-                    c_GUE = True
-            for kg2 in SFA:
-                if kg2 == client_analyst_data[k][1]:
-                    c_SFA = True
+            total += client_analyst_data[price][0]
         for j in range(0, num):
             all_client_analyst.append(str(client_analyst_data[j][1]))
-        if c_SFA == True:
-            total += 3
-        if c_GSE == True:
-            total += 3
-        if c_GUE == True:
-            total += 3
         self.tableWidget_4.setRowCount(0)
         self.tableWidget_4.insertRow(0)
         for row, form in enumerate(client_data):
-
             for col, item in enumerate(form):
                 self.tableWidget_4.setItem(row, 4, QTableWidgetItem(str(num)))
                 self.tableWidget_4.setItem(row, 5, QTableWidgetItem(str(','.join(all_client_analyst))))
@@ -1841,23 +1787,23 @@ class mainapp(QMainWindow, FORM_CLASS):
 
     def Add_Buys(self):
         item_name = self.lineEdit_13.text()
-        item_type = self.comboBox_6.currentText()
         quantity = self.spinBox_3.value()
-        quantity_avaliable = quantity
-        signal_item_price = self.lineEdit_12.text()
-        total_item_price = self.lineEdit_11.text()
-        date_create_before = self.dateEdit.date()
-        date_create = str(date_create_before.toPyDate())
+        signal_item_price = self.spinBox_8.value()
+        total_item_price = signal_item_price * quantity
+        date_create_before = str(self.dateEdit.date().toPyDate())
         self.cur.execute(
-            ''' INSERT INTO addbuys (item_name,signal_item_price,total_price,buys_type,quantity,date) VALUES (%s,%s,%s,%s,%s,%s)'''
-            , (item_name, signal_item_price, total_item_price, item_type, quantity, date_create))
+            ''' INSERT INTO addbuys (item_name,signal_item_price,total_price,quantity,date) VALUES (%s,%s,%s,%s,%s)'''
+            , (item_name, signal_item_price, total_item_price, quantity, date_create))
         self.db.commit()
         self.Show_all_buys()
+        self.lineEdit_13.setText('')
+        self.spinBox_3.setValue(0)
+        self.spinBox_8.setValue(0)
         self.Add_Data_To_history(3, 4)
         self.History()
 
     def Show_all_buys(self):
-        self.cur.execute(''' SELECT item_name,buys_type,quantity,signal_item_price,total_price,date FROM addbuys ''')
+        self.cur.execute(''' SELECT item_name,quantity,signal_item_price,total_price,date FROM addbuys ''')
         data = self.cur.fetchall()
         self.tableWidget_3.setRowCount(0)
         self.tableWidget_3.insertRow(0)
@@ -1868,6 +1814,49 @@ class mainapp(QMainWindow, FORM_CLASS):
             row_pos = self.tableWidget_3.rowCount()
             self.tableWidget_3.insertRow(row_pos)
 
+    def Show_statics(self):
+        from_date = self.dateEdit_6.date().toPyDate()
+        to_date = self.dateEdit_5.date().toPyDate()
+        item = self.comboBox_5.currentText()
+        self.cur.execute(''' SELECT total_price FROM addbuys WHERE DATE(date)>=%s AND DATE(date)<=%s''',
+                         (str(from_date), str(to_date),))
+        data = self.cur.fetchall()
+        self.cur.execute(
+            ''' SELECT price FROM addnewitem WHERE DATE(date)>=%s AND DATE(date)<=%s AND analyst_name=%s''',
+            (str(from_date), str(to_date), item,))
+        data2 = self.cur.fetchall()
+        total_buys_price = 0
+        total_sales_price = 0
+        if data:
+            for i in data:
+                total_buys_price += i[0]
+        if data2:
+            pass
+        else:
+            self.cur.execute(
+                ''' SELECT price FROM addnewitem WHERE DATE(date)>=%s AND DATE(date)<=%s AND sub_category=%s''',
+                (str(from_date), str(to_date), item,))
+            data2 = self.cur.fetchall()
+
+        for i2 in data2:
+            total_sales_price += i2[0]
+        self.lineEdit_30.setText(str(total_buys_price))
+        self.lineEdit_33.setText(str(total_sales_price))
+        self.lineEdit_31.setText(str(total_sales_price - total_buys_price))
+
+    def Show_default_statics(self):
+        analysts_counts=[]
+        self.cur.execute(''' SELECT analyst_name ,COUNT(analyst_name) FROM addnewitem GROUP BY analyst_name ''')
+        data=self.cur.fetchall()
+        # print(data)
+        for index,item in enumerate(data):
+            analysts_counts.append(data[index][1])
+        self.cur.execute(''' SELECT analyst_name,sub_category FROM addnewitem GROUP BY analyst_name,sub_category HAVING COUNT(analyst_name)=%s''',(max(analysts_counts),))
+        data2=self.cur.fetchall()
+        print(data2)
+        # print(max(analysts_counts))
+        self.lineEdit_34.setText(data2[0][1])
+        self.lineEdit_35.setText(data2[0][0])
     def Add_Data_To_history(self, action, table):
         global user_id
         self.cur.execute(
@@ -1927,29 +1916,95 @@ class mainapp(QMainWindow, FORM_CLASS):
             row_pos = self.tableWidget_8.rowCount()
             self.tableWidget_8.insertRow(row_pos)
 
-    def Show_avaliable_quantity(self):
-        self.cur.execute(''' SELECT quantity FROM addbuys WHERE ''')
-        quantity_avaliable = 0
-        if quantity_avaliable < 1:
-            date_quantity_ended = datetime.datetime.now()
-            self.cur.execute(''' UPDATE addbuys SET quantity_avaliable=%s,date_ended=%s''',
-                             (quantity_avaliable, date_quantity_ended))
-            self.db.commit()
-
+    # def Show_avaliable_quantity(self):
+    #     self.cur.execute(''' SELECT quantity FROM addbuys WHERE ''')
+    #     quantity_avaliable = 0
+    #     if quantity_avaliable < 1:
+    #         date_quantity_ended = datetime.datetime.now()
+    #         self.cur.execute(''' UPDATE addbuys SET quantity_avaliable=%s,date_ended=%s''',
+    #                          (quantity_avaliable, date_quantity_ended))
+    #         self.db.commit()
     def Log_In_Chieck(self):
         global user_id
+        global edit_employee_check
         user_name = self.lineEdit.text()
         user_password = self.lineEdit_2.text()
         self.cur.execute(''' SELECT id,user_password,user_name FROM adduser WHERE user_name=%s ''', (user_name,))
         # self.cur.execute(''' SELECT * FROM adduser ''')
+
         data = self.cur.fetchone()
         if data != None:
             if data[2] == user_name and data[1] == user_password:
-                user_id = data[0]
+                self.Dialog = multyclass.MultyDialog
                 self.groupBox.setEnabled(True)
+                user_id = data[0]
+                try:
+                    self.cur.execute(f' SELECT * FROM userper WHERE employee_name=%s ', (str(user_name),))
+                    PerData = self.cur.fetchone()
+
+                    if not PerData[2]:
+                        self.pushButton_17.setEnabled(False)
+                        self.pushButton_44.setEnabled(False)
+                    if not PerData[3]:
+                        self.pushButton.setEnabled(False)
+                    if not PerData[4]:
+                        self.pushButton_2.setEnabled(False)
+                    if not PerData[5]:
+                        static_check = False
+                    if not PerData[6]:
+                        self.pushButton_5.setEnabled(False)
+                    if not PerData[7]:
+                        self.pushButton_3.setEnabled(False)
+                    if not PerData[8]:
+                        self.pushButton_4.setEnabled(False)
+                    if not PerData[9]:
+                        self.groupBox_4.setEnabled(False)
+                    if not PerData[10]:
+                        self.pushButton_27.setEnabled(False)
+                    if not PerData[11]:
+                        self.pushButton_28.setEnabled(False)
+                    if not PerData[12]:
+                        self.pushButton_15.setEnabled(False)
+                        self.pushButton_13.setEnabled(False)
+                        self.pushButton_9.setEnabled(False)
+                        self.pushButton_14.setEnabled(False)
+                        self.pushButton_11.setEnabled(False)
+                    if not PerData[13]:
+                        self.pushButton_16.setEnabled(False)
+                    if not PerData[14]:
+                        pass  # edit report
+                    if not PerData[15]:
+                        self.pushButton_24.setEnabled(False)
+                    if not PerData[16]:
+                        self.pushButton_22.setEnabled(True)
+                    if not PerData[17]:
+                        self.pushButton_25.setEnabled(False)
+                    if not PerData[18]:
+                        edit_employee_check = False
+                    if not PerData[19]:
+                        self.pushButton_37.setEnabled(False)
+                    if not PerData[20]:
+                        self.pushButton_43.setEnabled(False)
+                    if not PerData[21]:
+                        show_clients_check = False
+                    if not PerData[22]:
+                        self.pushButton_36.setEnabled(False)
+                    if not PerData[23]:
+                        self.pushButton_29.setEnabled(False)
+                    if not PerData[24]:
+                        self.pushButton_34.setEnabled(False)
+                    if not PerData[25]:
+                        self.pushButton_18.setEnabled(False)
+                    if not PerData[26]:
+                        self.pushButton_19.setEnabled(False)
+                except Exception as e:
+                    print(e)
+                self.lineEdit.setText('')
+                self.lineEdit_2.setText('')
                 self.tabWidget.setCurrentIndex(3)
                 self.Add_Data_To_history(1, 5)
                 self.History()
+
             else:
                 warning = QMessageBox.warning(self, '',
                                               "كلمة المرور او اسم المستخدم غير صحيحة هل تريد استعادة كلمة المرور؟",
@@ -1962,6 +2017,248 @@ class mainapp(QMainWindow, FORM_CLASS):
                                           QMessageBox.Yes | QMessageBox.No)
             if warning == QMessageBox.Yes:
                 self.Open_ResetPassword_Page()
+
+    def Add_all_employee_to_comboBox(self):
+        self.comboBox_3.clear()
+        self.cur.execute(''' SELECT user_name FROM adduser ''')
+        data = self.cur.fetchall()
+        self.comboBox_3.addItem('-----------------')
+        for i in data:
+            self.comboBox_3.addItem(i[0])
+
+    def False_checkState(self):
+        self.checkBox_8.setCheckState(False)
+        self.checkBox_15.setCheckState(False)
+        self.checkBox_16.setCheckState(False)
+        # self.checkBox_3.setCheckState(False)
+        self.checkBox_14.setCheckState(False)
+        self.checkBox_7.setCheckState(False)
+        self.checkBox_11.setCheckState(False)
+        self.checkBox_12.setCheckState(False)
+        self.checkBox_46.setCheckState(False)
+        self.checkBox_49.setCheckState(False)
+        self.checkBox_50.setCheckState(False)
+        self.checkBox_47.setCheckState(False)
+        self.checkBox_48.setCheckState(False)
+        self.checkBox_51.setCheckState(False)
+        self.checkBox_52.setCheckState(False)
+        self.checkBox_53.setCheckState(False)
+        self.checkBox_54.setCheckState(False)
+        self.checkBox_44.setCheckState(False)
+        self.checkBox_45.setCheckState(False)
+        self.checkBox_42.setCheckState(False)
+        self.checkBox_43.setCheckState(False)
+        self.checkBox_41.setCheckState(False)
+
+    def Add_employee(self):
+        global Edit_employee
+        employee_name = self.comboBox_3.currentText()
+        employee_password = self.lineEdit_17.text()
+        employee_email = self.lineEdit_3.text()
+        if not Edit_employee:
+            self.cur.execute(''' INSERT INTO adduser (user_name,user_password,user_email,date) VALUES (%s,%s,%s,%s) ''',
+                             (employee_name, employee_password, employee_email, str(datetime.datetime.now())))
+        else:
+            self.cur.execute(''' UPDATE adduser SET user_name=%s,user_password=%s,user_email=%s,date=%s ''',
+                             (employee_name, employee_password, employee_email, str(datetime.datetime.now())))
+        self.db.commit()
+
+        self.Add_all_employee_to_comboBox()
+        self.False_checkState()
+        self.lineEdit_17.setText('')
+        self.lineEdit_3.setText('')
+
+    def Show_employee_data(self):
+        global Edit_employee
+        if self.comboBox_3.currentIndex() != 0:
+
+            self.False_checkState()
+            # try:
+            self.cur.execute(''' SELECT user_name,user_password,user_email FROM adduser WHERE user_name=%s ''',
+                             (self.comboBox_3.currentText(),))
+            data = self.cur.fetchone()
+            if data:
+                Edit_employee = True
+                self.pushButton_25.setText('حفظ')
+                # self.comboBox_3.setCurrentText(data[0])
+                self.lineEdit_17.setText(data[1])
+                self.lineEdit_3.setText(data[2])
+                self.cur.execute(''' SELECT * FROM userper WHERE employee_name=%s ''', (self.comboBox_3.currentText(),))
+                perData = self.cur.fetchone()
+                if perData:
+                    if perData[2]:
+                        self.checkBox_8.setCheckState(True)
+                    if perData[24]:
+                        self.checkBox_15.setCheckState(True)
+                    if perData[25]:
+                        self.checkBox_16.setCheckState(True)
+                    if perData[26]:
+                        self.checkBox_3.setCheckState(True)
+                    if perData[20]:
+                        self.checkBox_14.setCheckState(True)
+                    if perData[21]:
+                        self.checkBox_7.setCheckState(True)
+                    if perData[22]:
+                        self.checkBox_11.setCheckState(True)
+                    if perData[23]:
+                        self.checkBox_12.setCheckState(True)
+                    if perData[8]:
+                        self.checkBox_46.setCheckState(True)
+                    if perData[12]:
+                        self.checkBox_49.setCheckState(True)
+                    if perData[15]:
+                        self.checkBox_50.setCheckState(True)
+                    if perData[14]:
+                        self.checkBox_47.setCheckState(True)
+                    if perData[13]:
+                        self.checkBox_48.setCheckState(True)
+                    if perData[17]:
+                        self.checkBox_51.setCheckState(True)
+                    if perData[18]:
+                        self.checkBox_52.setCheckState(True)
+                    if perData[19]:
+                        self.checkBox_53.setCheckState(True)
+                    if perData[5]:
+                        self.checkBox_54.setCheckState(True)
+                    if perData[7]:
+                        self.checkBox_44.setCheckState(True)
+                    if perData[16]:
+                        self.checkBox_45.setCheckState(True)
+                    # if self.checkBox_40.isChecked() == True:
+                    #     analysts_page = 1
+                    if perData[9]:
+                        self.checkBox_42.setCheckState(True)
+                    if perData[10]:
+                        self.checkBox_43.setCheckState(True)
+                    if perData[11]:
+                        self.checkBox_41.setCheckState(True)
+            # except Exception as e:
+            #     print(e)
+        else:
+            self.False_checkState()
+            self.lineEdit_17.setText('')
+            self.lineEdit_3.setText('')
+
+    def Show_permissions(self):
+        if self.comboBox_2.currentIndex() != 0:
+            if self.comboBox_2.currentIndex() == 1:
+                self.frame.hide()
+                self.groupBox_21.show()
+                self.groupBox_16.hide()
+                self.groupBox_20.hide()
+                self.groupBox_19.hide()
+                self.groupBox_15.hide()
+            if self.comboBox_2.currentIndex() == 2:
+                self.frame.hide()
+                self.groupBox_15.show()
+                self.groupBox_21.hide()
+                self.groupBox_16.hide()
+                self.groupBox_20.hide()
+                self.groupBox_19.hide()
+            if self.comboBox_2.currentIndex() == 3:
+                self.frame.hide()
+                self.groupBox_16.show()
+                self.groupBox_15.hide()
+                self.groupBox_21.hide()
+                self.groupBox_20.hide()
+                self.groupBox_19.hide()
+            if self.comboBox_2.currentIndex() == 4:
+                self.frame.hide()
+                self.groupBox_19.show()
+                self.groupBox_15.hide()
+                self.groupBox_21.hide()
+                self.groupBox_16.hide()
+                self.groupBox_20.hide()
+            if self.comboBox_2.currentIndex() == 5:
+                self.frame.hide()
+                self.groupBox_20.show()
+                self.groupBox_15.hide()
+                self.groupBox_21.hide()
+                self.groupBox_16.hide()
+                self.groupBox_19.hide()
+        else:
+            self.frame.show()
+
+    def Add_permissions(self):
+        employee_name = self.comboBox_3.currentText()
+        sales_page = 0
+        analysts_page = 0
+        settings_page = 0
+        clients_page = 0
+        history_page = 0
+        add_sales = 0
+        print_report = 0
+        prev_report = 0
+        search_by_date_in_sales = 0
+        add_employee = 0
+        edit_employee = 0
+        delete_employee = 0
+        add_analyst = 0
+        edit_analyst = 0
+        delete_analyst = 0
+        show_client_info = 0
+        change_path = 0
+        change_theme = 0
+        edit_report = 0
+        add_buys = 0
+        statics = 0
+        search_in_all_sales = 0
+        show_all_clients = 0
+        search_client = 0
+        delete_all_history = 0
+        if self.checkBox_8.isChecked() == True:
+            add_sales = 1
+        if self.checkBox_15.isChecked() == True:
+            prev_report = 1
+        if self.checkBox_16.isChecked() == True:
+            print_report = 1
+        if self.checkBox_13.isChecked() == True:
+            search_in_all_sales = 1
+        if self.checkBox_14.isChecked() == True:
+            search_by_date_in_sales = 1
+        if self.checkBox_7.isChecked() == True:
+            show_all_clients = 1
+        if self.checkBox_11.isChecked() == True:
+            search_client = 1
+        if self.checkBox_12.isChecked() == True:
+            show_client_info = 1
+        if self.checkBox_46.isChecked() == True:
+            settings_page = 1
+        if self.checkBox_49.isChecked() == True:
+            change_theme = 1
+        if self.checkBox_50.isChecked() == True:
+            change_path = 1
+        if self.checkBox_47.isChecked() == True:
+            edit_report = 1
+        if self.checkBox_48.isChecked() == True:
+            add_buys = 1  #
+        if self.checkBox_51.isChecked() == True:
+            add_employee = 1
+        if self.checkBox_52.isChecked() == True:
+            edit_employee = 1
+        if self.checkBox_53.isChecked() == True:
+            delete_employee = 1
+        if self.checkBox_54.isChecked() == True:
+            statics = 1
+        if self.checkBox_44.isChecked() == True:
+            history_page = 1
+        if self.checkBox_45.isChecked() == True:
+            delete_all_history = 1
+        if self.checkBox_40.isChecked() == True:
+            analysts_page = 1
+        if self.checkBox_42.isChecked() == True:
+            add_analyst = 1
+        if self.checkBox_43.isChecked() == True:
+            edit_analyst = 1
+        if self.checkBox_41.isChecked() == True:
+            delete_analyst = 1
+        self.cur.execute(
+            ''' INSERT INTO userper (employee_name,add_sale_item_page,sales_page,analyst_page,statics,clients_page,history_page,settings_page,add_analyst,edit_analyst,delete_analyst,change_theme,add_buys,edit_report,change_path,delet_history,add_user,edit_user,delete_user,search_by_date_in_sales_page,show_clients,search_client,search_client_info,prev_report,print_report,search_in_all_sales) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ''',
+            (employee_name, add_sales, sales_page, analysts_page, statics, clients_page, history_page, settings_page,
+             add_analyst, edit_analyst, delete_analyst, change_theme, add_buys, edit_report, change_path,
+             delete_all_history, add_employee, edit_employee, delete_employee, search_by_date_in_sales,
+             show_all_clients, search_client, show_client_info, prev_report, print_report, search_in_all_sales,))
+        self.db.commit()
 
     def Delete_All_History_Data(self):
         sql = '''DELETE FROM his'''
@@ -1980,8 +2277,8 @@ class mainapp(QMainWindow, FORM_CLASS):
     def Open_Settings_Page(self):
         self.tabWidget.setCurrentIndex(6)
 
-    def Open_Print_Page(self):
-        self.tabWidget.setCurrentIndex(7)
+    # def Open_Print_Page(self):
+    #     self.tabWidget.setCurrentIndex(7)
 
     def Open_History_Page(self):
         self.tabWidget.setCurrentIndex(5)
@@ -2023,7 +2320,7 @@ class mainapp(QMainWindow, FORM_CLASS):
     def Bio_Word(self, name, doctor, analysts, results, year, month, day, prev, genus):
         global if_print
         # analysts=['Random  blood sugar','Blood Urea','S. Creatinin','new2','S.Calcium','Total serum Bilirubin','Vitamin D','S. Uric acid','Blood Group','Hb','PCV','Rh','Color:GSE']
-        categorys=[]
+        categorys = []
         all_items = []
         all_items_for_units_defults = []
         all_items_index = []
@@ -2033,13 +2330,13 @@ class mainapp(QMainWindow, FORM_CLASS):
         save_word_files = mydata[2]
         number_of_analysts = 0
         files = 0
-        units=[]
-        defults=[]
+        units = []
+        defults = []
         number_of_analysts = len(analysts)
-        for my_index,ii in enumerate(analysts):
-            self.cur.execute(''' SELECT sub_category FROM addanalyst WHERE name=%s ''',(ii,))
-            data1=self.cur.fetchall()
-            analysts[my_index]=str(analysts[my_index]+data1[0][0])
+        for my_index, ii in enumerate(analysts):
+            self.cur.execute(''' SELECT sub_category FROM addanalyst WHERE name=%s ''', (ii,))
+            data1 = self.cur.fetchall()
+            analysts[my_index] = str(analysts[my_index] + data1[0][0])
             if data1[0][0] not in categorys:
                 categorys.append(data1[0][0])
 
@@ -2071,29 +2368,24 @@ class mainapp(QMainWindow, FORM_CLASS):
         row_num2 = False
         number_of_analysts_in_que2 = 0
         number_of_analysts_in_que3 = 0
-        print(analysts)
-        count=1
+        count = 1
         for c in categorys:
             all_items.append(str(c + ' :'))
             all_items_for_units_defults.append(str(c + ' :'))
             all_items_index.append(count)
-            # print(count, c)
             for sub in analysts:
                 if c in sub:
                     count += 1
                     all_items.append(str('   ' + sub))
                     all_items_for_units_defults.append(str(sub))
                     all_items_index.append(count)
-                    # print("\t ", count, sub)
             count += 1
-        myd=0
-        print(all_items)
         for iplz in all_items_for_units_defults:
             for inm in categorys:
                 if inm in iplz:
-                    iplz=iplz[:-len(inm)]
-                    self.cur.execute(''' SELECT unit,defult FROM addanalyst WHERE name=%s ''',(str(iplz),))
-                    myplzdata=self.cur.fetchall()
+                    iplz = iplz[:-len(inm)]
+                    self.cur.execute(''' SELECT unit,defult FROM addanalyst WHERE name=%s ''', (str(iplz),))
+                    myplzdata = self.cur.fetchall()
                     if myplzdata:
                         if myplzdata[0][0]:
                             units.append(myplzdata[0][0])
@@ -2106,18 +2398,15 @@ class mainapp(QMainWindow, FORM_CLASS):
                     else:
                         units.append('')
                         defults.append('')
-        # print(len(all_items_for_units_defults),myd,'kdjdije')
-        # print(all_items_for_units_defults)
-        for my_index2,rowgh in enumerate(analysts):
+        for my_index2, rowgh in enumerate(analysts):
             for item in categorys:
                 if item in analysts[my_index2]:
-                    analysts[my_index2]=str(analysts[my_index2][:-len(item)])
-        for my_index3,rowgh2 in enumerate(all_items):
+                    analysts[my_index2] = str(analysts[my_index2][:-len(item)])
+        for my_index3, rowgh2 in enumerate(all_items):
             for item2 in categorys:
                 if item2 in all_items[my_index3]:
                     if all_items[my_index3].startswith('   '):
-                        all_items[my_index3]=str(all_items[my_index3][:-len(item2)])
-        print(all_items)
+                        all_items[my_index3] = str(all_items[my_index3][:-len(item2)])
         for i in document.tables:
             for k in i.rows:
                 for j in k.cells:
@@ -2165,25 +2454,32 @@ class mainapp(QMainWindow, FORM_CLASS):
                         for row in range(0, len(all_items)):
                             if n.text == str(all_items_index[row]):
                                 n.text = str(all_items[row])
-                        for row2 in range(0, len(analysts)):
-                            if n.text == '   ' + str(analysts[row2]):
-                                n.text='   ' + str(analysts[row2]) + ' :'
                                 run = n.runs
+                                run[0].underline = True
                                 font = run[0].font
                                 font.bold = True
+                                font.size = Pt(11)
+                                font.name = 'Tahoma'
+                        for row2 in range(0, len(analysts)):
+                            if n.text == '   ' + str(analysts[row2]):
+                                n.text = '   ' + str(analysts[row2]) + ' :'
+                                run = n.runs
+                                run[0].underline = False
+                                font = run[0].font
+                                font.bold = False
                                 font.size = Pt(11)
                                 font.name = 'Tahoma'
                                 n2 = n.add_run(str(results[row2]))
                                 run = n2
                                 font = run.font
-                                font.bold = False
+                                font.bold = True
                                 font.size = Pt(11)
                                 font.name = 'Tahoma'
                             number_of_analysts_in_que = 23
                             if row2 > number_of_analysts_in_que:
                                 # print('yes its >')
                                 number_of_analysts_in_que2 = number_of_analysts_in_que
-                                number_of_analysts_in_que2-=len(categorys)
+                                number_of_analysts_in_que2 -= len(categorys)
                                 row_num = True
                                 break
                             if n.text == str(all_items_index[row2]) + 'unit':
@@ -2191,25 +2487,24 @@ class mainapp(QMainWindow, FORM_CLASS):
                                 run1 = n
                                 font1 = run1.runs[0].font
                                 font1.bold = True
-                                font1.size = Pt(12)
+                                font1.size = Pt(10)
                                 font1.name = 'Times New Roman'
                             if n.text == str(all_items_index[row2]) + 'defult':
                                 n.text = str(defults[row2])
                                 run1 = n
                                 font1 = run1.runs[0].font
                                 font1.bold = True
-                                font1.size = Pt(12)
+                                font1.size = Pt(10)
                                 font1.name = 'Times New Roman'
 
-
         if row_num:
-            categorys2=[]
-            all_items2=[]
-            all_items_index2=[]
-            analysts2=[]
+            categorys2 = []
+            all_items2 = []
+            all_items_index2 = []
+            analysts2 = []
             all_items_for_units_defults2 = []
-            units2=[]
-            defults2=[]
+            units2 = []
+            defults2 = []
             for my_index2, ii2 in enumerate(analysts[number_of_analysts_in_que2:]):
                 self.cur.execute(''' SELECT sub_category FROM addanalyst WHERE name=%s ''', (ii2,))
                 data2 = self.cur.fetchall()
@@ -2332,24 +2627,24 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     run1 = n2
                                     font1 = run1.runs[0].font
                                     font1.bold = True
-                                    font1.size = Pt(12)
+                                    font1.size = Pt(10)
                                     font1.name = 'Times New Roman'
                                 if n2.text == str(all_items_index2[row4]) + 'defult':
                                     n2.text = str(defults2[row4])
                                     run1 = n2
                                     font1 = run1.runs[0].font
                                     font1.bold = True
-                                    font1.size = Pt(12)
+                                    font1.size = Pt(10)
                                     font1.name = 'Times New Roman'
 
         if row_num2:
-            categorys3=[]
-            all_items3=[]
-            all_items_index3=[]
-            analysts3=[]
+            categorys3 = []
+            all_items3 = []
+            all_items_index3 = []
+            analysts3 = []
             all_items_for_units_defults3 = []
-            units3=[]
-            defults3=[]
+            units3 = []
+            defults3 = []
             for my_index3, ii3 in enumerate(analysts[number_of_analysts_in_que3:]):
                 self.cur.execute(''' SELECT sub_category FROM addanalyst WHERE name=%s ''', (ii2,))
                 data3 = self.cur.fetchall()
@@ -2462,18 +2757,18 @@ class mainapp(QMainWindow, FORM_CLASS):
                                     font.size = Pt(11)
                                     font.name = 'Tahoma'
                                 if n3.text == str(all_items_index3[row44]) + 'unit':
-                                    n3.text = analyst_and_result['unit']
+                                    n3.text = str(units3[row44])
                                     run1 = n3
                                     font1 = run1.runs[0].font
                                     font1.bold = True
-                                    font1.size = Pt(12)
+                                    font1.size = Pt(10)
                                     font1.name = 'Times New Roman'
                                 if n3.text == str(all_items_index3[row44]) + 'defult':
-                                    n3.text = analyst_and_result['defult']
+                                    n3.text = str(defults3[row44])
                                     run1 = n3
                                     font1 = run1.runs[0].font
                                     font1.bold = True
-                                    font1.size = Pt(12)
+                                    font1.size = Pt(10)
                                     font1.name = 'Times New Roman'
         document.save(r'%s\result.docx' % save_word_files)
         f.close()
@@ -2492,156 +2787,18 @@ class mainapp(QMainWindow, FORM_CLASS):
                     word.Documents.Open(r'%s\result2.docx' % save_word_files)
                 if os.path.exists(r'%s\result3.docx' % save_word_files):
                     word.Documents.Open(r'%s\result3.docx' % save_word_files)
-                # if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
-                #     word.Documents.Open(r'%s\GSE latest.docx' % save_word_files)
-                # if os.path.exists(r'%s\SFA latest.docx' % save_word_files):
-                #     word.Documents.Open(r'%s\SFA latest.docx' % save_word_files)
-                # if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
-                #     word.Documents.Open(r'%s\GUE latest.docx' % save_word_files)
-                # if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
-                #     word.Documents.Open(r'%s\hematology latest.docx' % save_word_files)
-                # if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
-                #     word.Documents.Open(r'%s\هرمونات مشترك latest.docx' % save_word_files)
-
-
             else:
-                pass
-                # move = 1
-                # word = client.Dispatch("Word.Application")
-                # if move == 1:
-                #     if os.path.exists(r'%s\bio latest17.docx' % save_word_files):
-                #
-                #         word.Documents.Open(r'%s\bio latest17.docx' % save_word_files)
-                #         # word.ActiveDocument()
-                #
-                #         # word.ActiveDocument.ActiveWindow.View()
-                #         word.ActiveDocument.PrintOut(Background=False)
-                #         # time.sleep(2)
-                #         # pyautogui.press('enter')
-                #         # time.sleep(1.5)
-                #         # word.ActiveDocument.Close()
-                #         move = 0
-                #         warning = QMessageBox.warning(self, '',
-                #                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
-                #                                       QMessageBox.Yes | QMessageBox.No)
-                #         if warning == QMessageBox.Yes:
-                #             move = 1
-                #             try:
-                #                 word.ActiveDocument.Close()
-                #             except:
-                #                 pass
-                #         os.remove(r'%s\bio latest17.docx' % save_word_files)
-                #
-                # if move == 1:
-                #     if os.path.exists(r'%s\GSE latest.docx' % save_word_files):
-                #         word.Documents.Open(r'%s\GSE latest.docx' % save_word_files)
-                #         word.ActiveDocument.PrintOut(Background=False)
-                #         # time.sleep(2)
-                #         # pyautogui.press('enter')
-                #         # time.sleep(1.5)
-                #         # word.ActiveDocument.Close()
-                #         move = 0
-                #         warning = QMessageBox.warning(self, '',
-                #                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
-                #                                       QMessageBox.Yes | QMessageBox.No)
-                #         if warning == QMessageBox.Yes:
-                #             move = 1
-                #             try:
-                #                 word.ActiveDocument.Close()
-                #             except:
-                #                 pass
-                #         os.remove(r'%s\GSE latest.docx' % save_word_files)
-                #
-                # if move == 1:
-                #
-                #     if os.path.exists(r'%s\SFA latest.docx' % save_word_files):
-                #         word.Documents.Open(r'%s\SFA latest.docx' % save_word_files)
-                #         word.ActiveDocument.PrintOut(Background=False)
-                #         # time.sleep(2)
-                #         # pyautogui.press('enter')
-                #         # time.sleep(1.5)
-                #         # word.ActiveDocument.Close()
-                #         move = 0
-                #         warning = QMessageBox.warning(self, '',
-                #                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
-                #                                       QMessageBox.Yes | QMessageBox.No)
-                #         if warning == QMessageBox.Yes:
-                #             move = 1
-                #             try:
-                #                 word.ActiveDocument.Close()
-                #             except:
-                #                 pass
-                #         # word.ActiveDocument.Close()
-                #         os.remove(r'%s\SFA latest.docx' % save_word_files)
-                #
-                # if move == 1:
-                #
-                #     if os.path.exists(r'%s\GUE latest.docx' % save_word_files):
-                #         word.Documents.Open(r'%s\GUE latest.docx' % save_word_files)
-                #         word.ActiveDocument.PrintOut(Background=False)
-                #         # time.sleep(2)
-                #         # pyautogui.press('enter')
-                #         # time.sleep(1.5)
-                #         # word.ActiveDocument.Close()
-                #         move = 0
-                #         warning = QMessageBox.warning(self, '',
-                #                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
-                #                                       QMessageBox.Yes | QMessageBox.No)
-                #         if warning == QMessageBox.Yes:
-                #             move = 1
-                #             try:
-                #                 word.ActiveDocument.Close()
-                #             except:
-                #                 pass
-                #         # word.ActiveDocument.Close()
-                #         os.remove(r'%s\GUE latest.docx' % save_word_files)
-                #
-                # if move == 1:
-                #
-                #     if os.path.exists(r'%s\hematology latest.docx' % save_word_files):
-                #         word.Documents.Open(r'%s\hematology latest.docx' % save_word_files)
-                #         word.ActiveDocument.PrintOut(Background=False)
-                #         # time.sleep(2)
-                #         # pyautogui.press('enter')
-                #         # time.sleep(1.5)
-                #         # word.ActiveDocument.Close()
-                #         move = 0
-                #         warning = QMessageBox.warning(self, '',
-                #                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
-                #                                       QMessageBox.Yes | QMessageBox.No)
-                #         if warning == QMessageBox.Yes:
-                #             move = 1
-                #             try:
-                #                 word.ActiveDocument.Close()
-                #             except:
-                #                 pass
-                #         # word.ActiveDocument.Close()
-                #         os.remove(r'%s\hematology latest.docx' % save_word_files)
-                #
-                # if move == 1:
-                #
-                #     if os.path.exists(r'%s\هرمونات مشترك latest.docx' % save_word_files):
-                #         word.Documents.Open(r'%s\هرمونات مشترك latest.docx' % save_word_files)
-                #         word.ActiveDocument.PrintOut(Background=False)
-                #         # time.sleep(2)
-                #         # pyautogui.press('enter')
-                #         # time.sleep(1.5)
-                #         # word.ActiveDocument.Close()
-                #         move = 0
-                #         warning = QMessageBox.warning(self, '',
-                #                                       "هل قمت بطباعة الملف؟\n لا تضغط نعم الا لو قمت بطباعته",
-                #                                       QMessageBox.Yes | QMessageBox.No)
-                #         if warning == QMessageBox.Yes:
-                #             move = 1
-                #             try:
-                #                 word.ActiveDocument.Close()
-                #             except:
-                #                 pass
-                #         # word.ActiveDocument.Close()
-                #         os.remove(r'%s\هرمونات مشترك latest.docx' % save_word_files)
-                # self.Delete_Files()
-
-
+                word = client.Dispatch("Word.Application")
+                if os.path.exists(r'%s\result.docx' % save_word_files):
+                    word.Documents.Open(r'%s\result.docx' % save_word_files)
+                    word.ActiveDocument.PrintOut(Background=False)
+                if os.path.exists(r'%s\result2.docx' % save_word_files):
+                    word.Documents.Open(r'%s\result2.docx' % save_word_files)
+                    word.ActiveDocument.PrintOut(Background=False)
+                if os.path.exists(r'%s\result3.docx' % save_word_files):
+                    word.Documents.Open(r'%s\result3.docx' % save_word_files)
+                    word.ActiveDocument.PrintOut(Background=False)
+                self.Delete_Files()
         except Exception as e:
             print(e)
 
