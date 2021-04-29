@@ -2125,8 +2125,8 @@ class Ui_Dialog(object):
         # self.tab.setObjectName("tab")
         # self.listWidget = QtWidgets.QListWidget(self.tab)
         # self.listWidget.setGeometry(QtCore.QRect(0, 10, 641, 431))
-        # font = QtGui.QFont()
-        # font.setPointSize(11)
+        font = QtGui.QFont()
+        font.setPointSize(11)
         # self.listWidget.setFont(font)
         # self.listWidget.setObjectName("listWidget")
         # item = QtWidgets.QListWidgetItem()
@@ -2145,8 +2145,8 @@ class Ui_Dialog(object):
         # self.tab_2 = QtWidgets.QWidget()
         # self.tab_2.setObjectName("tab_2")
         # self.tabWidget.addTab(self.tab_2, "")
-        #
-        # self.retranslateUi(Dialog)
+
+        self.retranslateUi(Dialog)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -2163,7 +2163,6 @@ class Ui_Dialog(object):
         self.pushButton.setText(_translate("Dialog", "تطبيق"))
         # self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Dialog", "Tab 1"))
         # self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("Dialog", "Tab 2"))
-
 
 if __name__ == "__main__":
     import sys

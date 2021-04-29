@@ -6,5 +6,5 @@ from multy import Ui_Dialog as dialog
 class MultyDialog(QDialog,dialog):
     def __init__(self,parent=None):
         super(MultyDialog, self).__init__(parent)
-        QWidget.__init__(self)
+        QDialog.__init__(self)
         self.setupUi(self)
