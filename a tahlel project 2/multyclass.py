@@ -8,3 +8,4 @@ class MultyDialog(QDialog,dialog):
         super(MultyDialog, self).__init__(parent)
         QDialog.__init__(self)
         self.setupUi(self)
+

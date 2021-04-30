@@ -5741,7 +5741,7 @@ font: 14pt &quot;Segoe UI&quot;;
        <string notr="true"/>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="tab_14">
        <attribute name="title">
@@ -7777,7 +7777,7 @@ font: 14pt &quot;Segoe UI&quot;;
        <widget class="QWidget" name="widget_2" native="true">
         <property name="geometry">
          <rect>
-          <x>470</x>
+          <x>490</x>
           <y>180</y>
           <width>6</width>
           <height>441</height>
@@ -7793,9 +7793,9 @@ font: 14pt &quot;Segoe UI&quot;;
         </property>
         <property name="geometry">
          <rect>
-          <x>260</x>
+          <x>280</x>
           <y>190</y>
-          <width>171</width>
+          <width>191</width>
           <height>51</height>
          </rect>
         </property>
@@ -7808,7 +7808,7 @@ font: 14pt &quot;Segoe UI&quot;;
          </font>
         </property>
         <property name="text">
-         <string>الصنف الاعلى مبيعاً</string>
+         <string>الاصناف الاعلى مبيعاً</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_28">
@@ -7817,7 +7817,7 @@ font: 14pt &quot;Segoe UI&quot;;
         </property>
         <property name="geometry">
          <rect>
-          <x>235</x>
+          <x>265</x>
           <y>260</y>
           <width>201</width>
           <height>51</height>
@@ -7841,7 +7841,7 @@ font: 14pt &quot;Segoe UI&quot;;
         </property>
         <property name="geometry">
          <rect>
-          <x>260</x>
+          <x>290</x>
           <y>333</y>
           <width>171</width>
           <height>51</height>
@@ -7865,7 +7865,7 @@ font: 14pt &quot;Segoe UI&quot;;
         </property>
         <property name="geometry">
          <rect>
-          <x>240</x>
+          <x>270</x>
           <y>410</y>
           <width>191</width>
           <height>51</height>
@@ -7889,7 +7889,7 @@ font: 14pt &quot;Segoe UI&quot;;
         </property>
         <property name="geometry">
          <rect>
-          <x>240</x>
+          <x>270</x>
           <y>540</y>
           <width>191</width>
           <height>51</height>
@@ -7904,7 +7904,7 @@ font: 14pt &quot;Segoe UI&quot;;
          </font>
         </property>
         <property name="text">
-         <string>اليوم الاعلى حصداً للمال</string>
+         <string>الايام الاعلى حصداً للمال</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_34">
@@ -7913,7 +7913,7 @@ font: 14pt &quot;Segoe UI&quot;;
         </property>
         <property name="geometry">
          <rect>
-          <x>260</x>
+          <x>290</x>
           <y>470</y>
           <width>171</width>
           <height>51</height>
@@ -7928,79 +7928,7 @@ font: 14pt &quot;Segoe UI&quot;;
          </font>
         </property>
         <property name="text">
-         <string>اليوم الاعلى مبيعاً</string>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="lineEdit_38">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>2</x>
-          <y>541</y>
-          <width>231</width>
-          <height>51</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <family>Segoe UI</family>
-          <pointsize>14</pointsize>
-          <weight>50</weight>
-          <italic>false</italic>
-          <bold>false</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">border-radius: 20px;
-font: 14pt &quot;Segoe UI&quot;;
-</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-        <property name="placeholderText">
-         <string/>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="lineEdit_39">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>477</y>
-          <width>231</width>
-          <height>51</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <family>Segoe UI</family>
-          <pointsize>14</pointsize>
-          <weight>50</weight>
-          <italic>false</italic>
-          <bold>false</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">border-radius: 20px;
-font: 14pt &quot;Segoe UI&quot;;
-</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-        <property name="placeholderText">
-         <string/>
+         <string>الايام الاعلى مبيعاً</string>
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEdit_36">
@@ -8068,7 +7996,7 @@ font: 14pt &quot;Segoe UI&quot;;
          <rect>
           <x>2</x>
           <y>410</y>
-          <width>231</width>
+          <width>261</width>
           <height>51</height>
          </rect>
         </property>
@@ -8092,7 +8020,7 @@ font: 11pt &quot;Segoe UI&quot;;
          <rect>
           <x>2</x>
           <y>260</y>
-          <width>231</width>
+          <width>261</width>
           <height>51</height>
          </rect>
         </property>
@@ -8116,7 +8044,7 @@ font: 11pt &quot;Segoe UI&quot;;
          <rect>
           <x>2</x>
           <y>336</y>
-          <width>231</width>
+          <width>261</width>
           <height>51</height>
          </rect>
         </property>
@@ -8135,22 +8063,19 @@ font: 11pt &quot;Segoe UI&quot;;
 </string>
         </property>
        </widget>
-       <widget class="QLineEdit" name="lineEdit_40">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
+       <widget class="QComboBox" name="comboBox_8">
         <property name="geometry">
          <rect>
-          <x>0</x>
-          <y>193</y>
-          <width>231</width>
+          <x>1</x>
+          <y>190</y>
+          <width>261</width>
           <height>51</height>
          </rect>
         </property>
         <property name="font">
          <font>
           <family>Segoe UI</family>
-          <pointsize>14</pointsize>
+          <pointsize>11</pointsize>
           <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
@@ -8158,17 +8083,56 @@ font: 11pt &quot;Segoe UI&quot;;
         </property>
         <property name="styleSheet">
          <string notr="true">border-radius: 20px;
-font: 14pt &quot;Segoe UI&quot;;
+font: 11pt &quot;Segoe UI&quot;;
 </string>
         </property>
-        <property name="text">
-         <string/>
+       </widget>
+       <widget class="QComboBox" name="comboBox_9">
+        <property name="geometry">
+         <rect>
+          <x>1</x>
+          <y>478</y>
+          <width>261</width>
+          <height>51</height>
+         </rect>
         </property>
-        <property name="readOnly">
-         <bool>true</bool>
+        <property name="font">
+         <font>
+          <family>Segoe UI</family>
+          <pointsize>11</pointsize>
+          <weight>50</weight>
+          <italic>false</italic>
+          <bold>false</bold>
+         </font>
         </property>
-        <property name="placeholderText">
-         <string/>
+        <property name="styleSheet">
+         <string notr="true">border-radius: 20px;
+font: 11pt &quot;Segoe UI&quot;;
+</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="comboBox_10">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>545</y>
+          <width>261</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>Segoe UI</family>
+          <pointsize>11</pointsize>
+          <weight>50</weight>
+          <italic>false</italic>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border-radius: 20px;
+font: 11pt &quot;Segoe UI&quot;;
+</string>
         </property>
        </widget>
       </widget>
