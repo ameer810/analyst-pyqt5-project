@@ -818,46 +818,12 @@ from docx.shared import Pt, Inches
 # a=5
 # j=6
 # print(r'%s\%s'% (a,j))
-from docx import Document
+from docx import *
 
-from docx.text.paragraph import Paragraph
-from docx.oxml.xmlchemy import OxmlElement
-from docx.enum.text import WD_TAB_ALIGNMENT
+f = open('gg.docx', 'rb')
+f.read()
+document = Document(f)
 
-def insert_paragraph_after(paragraph, text=None, style=None):
-    """Insert a new paragraph after the given paragraph."""
-    new_p = OxmlElement("w:p")
-    paragraph._p.addnext(new_p)
-    new_para = Paragraph(new_p, paragraph._parent)
-
-    if text:
-        new_para.add_run(text)
-
-    new_para.style.font.name = 'Tahoma'
-    new_para.style.font.size = Pt(9)
-
-    return new_para
-
-def main():
-    # Create a minimal document
-    f = open('احمد سعد.docx', 'rb')
-    f.read()
-    document = Document(f)
-    # p1 = document.add_paragraph("First Paragraph.")
-    # p2 = document.add_paragraph("Second Paragraph.")
-    # Insert a paragraph wedged between p1 and p2
-    for p in document.paragraphs:
-        if p.text=='علي:':
-            print('start')
-            n2=n.add_run()
-            new.font.bold=False
-            new.font.size=Pt(10)
-        # print('2'+p.text+'1')
-        # if p.text=='علي  قاسم':
-        #     print('d')
-        #     insert_paragraph_after(p, "Paragraph One And A Half.")
-
-
-    # Test if the function succeeded
-    document.save('gg.docx')
-main()
+for i in document.sections:
+	print(i.paragraphs)    
+document.save('gg.docx')
