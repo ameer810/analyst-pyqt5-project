@@ -2872,10 +2872,10 @@ QPushButton:pressed{
         <widget class="QLineEdit" name="lineEdit_27">
          <property name="geometry">
           <rect>
-           <x>150</x>
-           <y>36</y>
+           <x>240</x>
+           <y>31</y>
            <width>551</width>
-           <height>41</height>
+           <height>51</height>
           </rect>
          </property>
          <property name="font">
@@ -2896,9 +2896,9 @@ QPushButton:pressed{
          </property>
          <property name="geometry">
           <rect>
-           <x>750</x>
+           <x>820</x>
            <y>27</y>
-           <width>181</width>
+           <width>111</width>
            <height>51</height>
           </rect>
          </property>
@@ -2912,6 +2912,41 @@ QPushButton:pressed{
          </property>
          <property name="text">
           <string>اسم للمراجع</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_54">
+         <property name="geometry">
+          <rect>
+           <x>50</x>
+           <y>26</y>
+           <width>181</width>
+           <height>61</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">border-radius:26px;</string>
+         </property>
+         <property name="text">
+          <string>بحث</string>
+         </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/icons8-search-512.png</normaloff>:/icons8-search-512.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
          </property>
         </widget>
        </widget>
@@ -6581,6 +6616,11 @@ font: 14pt &quot;Segoe UI&quot;;
         </row>
         <column>
          <property name="text">
+          <string>id</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
           <string>اسم التحليل</string>
          </property>
         </column>
@@ -6607,6 +6647,16 @@ font: 14pt &quot;Segoe UI&quot;;
         <column>
          <property name="text">
           <string>الصنف</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>حفظ</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>حذف</string>
          </property>
         </column>
        </widget>
@@ -9626,6 +9676,12 @@ QPushButton:hover {
           <width>291</width>
           <height>51</height>
          </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>Segoe UI</family>
+          <pointsize>12</pointsize>
+         </font>
         </property>
         <property name="layoutDirection">
          <enum>Qt::RightToLeft</enum>
